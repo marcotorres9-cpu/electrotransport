@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./custom.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  phone         String?
+  role          String    @default("store") // "store" | "driver"
+  avatar        String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  store         Store?
+  driver        Driver?
+  ordersCreated Order[]   @relation("CreatedBy")
+  acceptedOrders Order[]  @relation("AcceptedBy")
+}
+
+model Store {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  storeName   String
+  storeType   String?  // tipo de electrodomésticos
+  address     String?
+  city        String?
+  lat         Float?
+  lng         Float?
+  rutNumber   String?  // RUC o número fiscal
+  description String?
+  rating      Float    @default(0)
+  totalOrders Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+}
+
+model Driver {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  vehicleType   String   // "camioneta" | "doble_cabina" | "camion"
+  vehicleBrand  String?
+  vehicleModel  String?
+  vehicleYear   Int?
+  vehiclePlate  String?
+  licenseNumber String?
+  driverLicense String?
+  lat           Float?
+  lng           Float?
+  isOnline      Boolean  @default(false)
+  rating        Float    @default(0)
+  totalTrips    Int      @default(0)
+  earnings      Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  orderNumber     String    @unique
+  createdBy       String
+  acceptedBy      String?
+  storeId         String?
+  status          String    @default("pending") // "pending" | "accepted" | "in_progress" | "delivered" | "cancelled"
+  
+  // Origen y destino
+  originAddress   String
+  originLat       Float
+  originLng       Float
+  destAddress     String
+  destLat         Float
+  destLng         Float
+  
+  // Info del pedido
+  cargoType       String?   // tipo de electrodoméstico
+  cargoWeight     Float?    // peso en kg
+  cargoQuantity   Int?      // cantidad
+  cargoVolume     String?   // volumen estimado
+  cargoImage      String?   // foto del electrodoméstico
+  specialNotes    String?   // notas especiales
+  
+  // Tarifas (estilo inDrive)
+  proposedPrice   Float     // tarifa propuesta por el local
+  acceptedPrice   Float?    // tarifa aceptada por el transportista
+  counterPrice    Float?    // contraoferta
+  distanceKm      Float?
+  estimatedTime   Int?      // minutos estimados
+  
+  // Fechas
+  pickupDate      DateTime? // fecha de recogida programada
+  deliveryDate    DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  
+  // Calificación
+  ratingByStore   Float?
+  ratingByDriver  Float?
+  reviewByStore   String?
+  reviewByDriver  String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  creator  User   @relation("CreatedBy", fields: [createdBy], references: [id])
+  driver   User?  @relation("AcceptedBy", fields: [acceptedBy], references: [id])
+  store    Store? @relation(fields: [storeId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info") // "info" | "order" | "payment" | "system"
+  isRead    Boolean  @default(false)
+  orderId   String?
+  createdAt DateTime @default(now())
+}
