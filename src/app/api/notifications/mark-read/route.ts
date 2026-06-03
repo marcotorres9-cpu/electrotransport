@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest) {
     const { notificationIds, markAll } = body
 
     if (markAll) {
-      await db.notification.updateMany({
+      await db.etNotification.updateMany({
         where: { userId, isRead: false },
         data: { isRead: true },
       })
@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (notificationIds && Array.isArray(notificationIds)) {
-      await db.notification.updateMany({
+      await db.etNotification.updateMany({
         where: { id: { in: notificationIds }, userId },
         data: { isRead: true },
       })

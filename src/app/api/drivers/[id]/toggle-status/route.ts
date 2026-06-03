@@ -14,13 +14,13 @@ export async function POST(
     }
 
     const { id } = await params
-    const driver = await db.driver.findFirst({ where: { id } })
+    const driver = await db.etDriver.findFirst({ where: { id } })
 
     if (!driver || driver.userId !== userId) {
       return NextResponse.json({ error: 'Driver not found' }, { status: 404 })
     }
 
-    const updated = await db.driver.update({
+    const updated = await db.etDriver.update({
       where: { id },
       data: { isOnline: !driver.isOnline },
       include: { user: { select: { id: true, name: true } } },

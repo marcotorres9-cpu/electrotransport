@@ -8,7 +8,8 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
+/// Tabla de usuarios de ElectroTransport
+model EtUser {
   id            String    @id @default(cuid())
   name          String
   email         String    @unique
@@ -20,33 +21,35 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  store         Store?
-  driver        Driver?
-  ordersCreated Order[]   @relation("CreatedBy")
-  acceptedOrders Order[]  @relation("AcceptedBy")
+  store         EtStore?
+  driver        EtDriver?
+  ordersCreated EtOrder[]   @relation("CreatedBy")
+  acceptedOrders EtOrder[]  @relation("AcceptedBy")
 }
 
-model Store {
+/// Tabla de locales comerciales
+model EtStore {
   id          String   @id @default(cuid())
   userId      String   @unique
   storeName   String
-  storeType   String?  // tipo de electrodomésticos
+  storeType   String?
   address     String?
   city        String?
   lat         Float?
   lng         Float?
-  rutNumber   String?  // RUC o número fiscal
+  rutNumber   String?
   description String?
   rating      Float    @default(0)
   totalOrders Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orders Order[]
+  user   EtUser    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders EtOrder[]
 }
 
-model Driver {
+/// Tabla de transportistas
+model EtDriver {
   id            String   @id @default(cuid())
   userId        String   @unique
   vehicleType   String   // "camioneta" | "doble_cabina" | "camion"
@@ -65,18 +68,18 @@ model Driver {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user EtUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Order {
+/// Tabla de pedidos de transporte
+model EtOrder {
   id              String    @id @default(cuid())
   orderNumber     String    @unique
   createdBy       String
   acceptedBy      String?
   storeId         String?
-  status          String    @default("pending") // "pending" | "accepted" | "in_progress" | "delivered" | "cancelled"
+  status          String    @default("pending")
   
-  // Origen y destino
   originAddress   String
   originLat       Float
   originLng       Float
@@ -84,29 +87,25 @@ model Order {
   destLat         Float
   destLng         Float
   
-  // Info del pedido
-  cargoType       String?   // tipo de electrodoméstico
-  cargoWeight     Float?    // peso en kg
-  cargoQuantity   Int?      // cantidad
-  cargoVolume     String?   // volumen estimado
-  cargoImage      String?   // foto del electrodoméstico
-  specialNotes    String?   // notas especiales
+  cargoType       String?
+  cargoWeight     Float?
+  cargoQuantity   Int?
+  cargoVolume     String?
+  cargoImage      String?
+  specialNotes    String?
   
-  // Tarifas (estilo inDrive)
-  proposedPrice   Float     // tarifa propuesta por el local
-  acceptedPrice   Float?    // tarifa aceptada por el transportista
-  counterPrice    Float?    // contraoferta
+  proposedPrice   Float
+  acceptedPrice   Float?
+  counterPrice    Float?
   distanceKm      Float?
-  estimatedTime   Int?      // minutos estimados
+  estimatedTime   Int?
   
-  // Fechas
-  pickupDate      DateTime? // fecha de recogida programada
+  pickupDate      DateTime?
   deliveryDate    DateTime?
   completedAt     DateTime?
   cancelledAt     DateTime?
   cancelReason    String?
   
-  // Calificación
   ratingByStore   Float?
   ratingByDriver  Float?
   reviewByStore   String?
@@ -115,17 +114,18 @@ model Order {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  creator  User   @relation("CreatedBy", fields: [createdBy], references: [id])
-  driver   User?  @relation("AcceptedBy", fields: [acceptedBy], references: [id])
-  store    Store? @relation(fields: [storeId], references: [id])
+  creator EtUser    @relation("CreatedBy", fields: [createdBy], references: [id])
+  driver  EtUser?   @relation("AcceptedBy", fields: [acceptedBy], references: [id])
+  store   EtStore?  @relation(fields: [storeId], references: [id])
 }
 
-model Notification {
+/// Tabla de notificaciones
+model EtNotification {
   id        String   @id @default(cuid())
   userId    String
   title     String
   message   String
-  type      String   @default("info") // "info" | "order" | "payment" | "system"
+  type      String   @default("info")
   isRead    Boolean  @default(false)
   orderId   String?
   createdAt DateTime @default(now())

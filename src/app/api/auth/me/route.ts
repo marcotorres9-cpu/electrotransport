@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const user = await db.user.findUnique({
+    const user = await db.etUser.findUnique({
       where: { id: userId },
       include: {
         store: true,

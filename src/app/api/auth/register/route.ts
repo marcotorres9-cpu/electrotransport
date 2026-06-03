@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
-    const existingUser = await db.user.findUnique({ where: { email } })
+    const existingUser = await db.etUser.findUnique({ where: { email } })
     if (existingUser) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = hashPassword(password)
     const token = generateToken()
 
-    const user = await db.user.create({
+    const user = await db.etUser.create({
       data: {
         name,
         email,
@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
     if (role === 'store') {
       const { storeName, storeType, address, city, rutNumber } = body
       if (!storeName) {
-        await db.user.delete({ where: { id: user.id } })
+        await db.etUser.delete({ where: { id: user.id } })
         return NextResponse.json({ error: 'Store name is required' }, { status: 400 })
       }
 
-      const store = await db.store.create({
+      const store = await db.etStore.create({
         data: {
           userId: user.id,
           storeName,
@@ -87,16 +87,16 @@ export async function POST(request: NextRequest) {
     if (role === 'driver') {
       const { vehicleType, vehicleBrand, vehicleModel, vehicleYear, vehiclePlate, licenseNumber, driverLicense } = body
       if (!vehicleType) {
-        await db.user.delete({ where: { id: user.id } })
+        await db.etUser.delete({ where: { id: user.id } })
         return NextResponse.json({ error: 'Vehicle type is required' }, { status: 400 })
       }
 
       if (!['camioneta', 'doble_cabina', 'camion'].includes(vehicleType)) {
-        await db.user.delete({ where: { id: user.id } })
+        await db.etUser.delete({ where: { id: user.id } })
         return NextResponse.json({ error: 'Invalid vehicle type' }, { status: 400 })
       }
 
-      const driver = await db.driver.create({
+      const driver = await db.etDriver.create({
         data: {
           userId: user.id,
           vehicleType,

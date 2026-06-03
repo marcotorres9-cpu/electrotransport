@@ -17,7 +17,7 @@ export async function POST(
     const body = await request.json()
     const { rating, review } = body
 
-    const order = await db.order.findUnique({ where: { id } })
+    const order = await db.etOrder.findUnique({ where: { id } })
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -34,7 +34,7 @@ export async function POST(
       return NextResponse.json({ error: 'Order must be accepted or in progress' }, { status: 400 })
     }
 
-    const updatedOrder = await db.order.update({
+    const updatedOrder = await db.etOrder.update({
       where: { id },
       data: {
         status: 'delivered',
@@ -50,7 +50,7 @@ export async function POST(
 
     // Update driver stats
     if (order.acceptedBy) {
-      await db.driver.update({
+      await db.etDriver.update({
         where: { userId: order.acceptedBy },
         data: {
           totalTrips: { increment: 1 },
@@ -61,7 +61,7 @@ export async function POST(
 
     // Notify store
     if (order.createdBy !== userId) {
-      await db.notification.create({
+      await db.etNotification.create({
         data: {
           userId: order.createdBy,
           title: 'Pedido entregado',
@@ -74,7 +74,7 @@ export async function POST(
 
     // Notify driver
     if (order.acceptedBy && order.acceptedBy !== userId) {
-      await db.notification.create({
+      await db.etNotification.create({
         data: {
           userId: order.acceptedBy,
           title: 'Entrega completada',

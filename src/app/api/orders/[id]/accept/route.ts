@@ -17,7 +17,7 @@ export async function POST(
     const body = await request.json()
     const { acceptedPrice } = body
 
-    const order = await db.order.findUnique({ where: { id } })
+    const order = await db.etOrder.findUnique({ where: { id } })
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -32,7 +32,7 @@ export async function POST(
 
     const finalPrice = acceptedPrice !== undefined ? parseFloat(String(acceptedPrice)) : order.proposedPrice
 
-    const updatedOrder = await db.order.update({
+    const updatedOrder = await db.etOrder.update({
       where: { id },
       data: {
         status: 'accepted',
@@ -46,7 +46,7 @@ export async function POST(
       },
     })
 
-    await db.notification.create({
+    await db.etNotification.create({
       data: {
         userId: order.createdBy,
         title: 'Transportista asignado',
@@ -56,7 +56,7 @@ export async function POST(
       },
     })
 
-    await db.notification.create({
+    await db.etNotification.create({
       data: {
         userId,
         title: 'Pedido aceptado',

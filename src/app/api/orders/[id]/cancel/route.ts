@@ -17,7 +17,7 @@ export async function POST(
     const body = await request.json()
     const { cancelReason } = body
 
-    const order = await db.order.findUnique({ where: { id } })
+    const order = await db.etOrder.findUnique({ where: { id } })
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -31,7 +31,7 @@ export async function POST(
       return NextResponse.json({ error: 'Cannot cancel this order' }, { status: 400 })
     }
 
-    const updatedOrder = await db.order.update({
+    const updatedOrder = await db.etOrder.update({
       where: { id },
       data: {
         status: 'cancelled',
@@ -46,7 +46,7 @@ export async function POST(
 
     // Notify relevant parties
     if (order.createdBy !== userId) {
-      await db.notification.create({
+      await db.etNotification.create({
         data: {
           userId: order.createdBy,
           title: 'Pedido cancelado',
@@ -57,7 +57,7 @@ export async function POST(
       })
     }
     if (order.acceptedBy && order.acceptedBy !== userId) {
-      await db.notification.create({
+      await db.etNotification.create({
         data: {
           userId: order.acceptedBy,
           title: 'Pedido cancelado',

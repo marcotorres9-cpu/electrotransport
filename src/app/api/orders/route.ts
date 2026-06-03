@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     if (type === 'available' && role === 'driver') {
       // Drivers see pending orders they haven't accepted
-      const orders = await db.order.findMany({
+      const orders = await db.etOrder.findMany({
         where: {
           status: 'pending',
           acceptedBy: null,
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (role === 'driver') {
-      const orders = await db.order.findMany({
+      const orders = await db.etOrder.findMany({
         where: {
           acceptedBy: userId,
           ...(status && status !== 'all' ? { status } : {}),
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Store: see own orders
-    const orders = await db.order.findMany({
+    const orders = await db.etOrder.findMany({
       where: {
         createdBy: userId,
         ...(status && status !== 'all' ? { status } : {}),
@@ -99,14 +99,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Origin, destination and proposed price are required' }, { status: 400 })
     }
 
-    const store = await db.store.findFirst({ where: { userId } })
+    const store = await db.etStore.findFirst({ where: { userId } })
     if (!store) {
       return NextResponse.json({ error: 'Store profile not found' }, { status: 404 })
     }
 
     const orderNumber = generateOrderNumber()
 
-    const order = await db.order.create({
+    const order = await db.etOrder.create({
       data: {
         orderNumber,
         createdBy: userId,
@@ -129,13 +129,13 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    await db.store.update({
+    await db.etStore.update({
       where: { id: store.id },
       data: { totalOrders: { increment: 1 } },
     })
 
     // Create notification for the order
-    await db.notification.create({
+    await db.etNotification.create({
       data: {
         userId,
         title: 'Pedido creado',

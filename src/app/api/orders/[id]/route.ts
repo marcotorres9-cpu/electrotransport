@@ -13,7 +13,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const order = await db.order.findUnique({
+    const order = await db.etOrder.findUnique({
       where: { id },
       include: {
         creator: { select: { id: true, name: true, phone: true } },
@@ -55,7 +55,7 @@ export async function PATCH(
     const body = await request.json()
     const { status, acceptedPrice, counterPrice, ratingByStore, ratingByDriver, reviewByStore, reviewByDriver } = body
 
-    const existingOrder = await db.order.findUnique({ where: { id } })
+    const existingOrder = await db.etOrder.findUnique({ where: { id } })
     if (!existingOrder) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -72,7 +72,7 @@ export async function PATCH(
     if (status === 'delivered') updateData.completedAt = new Date()
     if (status === 'cancelled') updateData.cancelledAt = new Date()
 
-    const order = await db.order.update({
+    const order = await db.etOrder.update({
       where: { id },
       data: updateData,
       include: {

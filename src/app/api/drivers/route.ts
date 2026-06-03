@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
-    const drivers = await db.driver.findMany({
+    const drivers = await db.etDriver.findMany({
       where: { isOnline: true },
       include: {
         user: { select: { id: true, name: true, phone: true, isActive: true } },

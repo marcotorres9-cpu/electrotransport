@@ -8,13 +8,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const notifications = await db.notification.findMany({
+    const notifications = await db.etNotification.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
       take: 50,
     })
 
-    const unreadCount = await db.notification.count({
+    const unreadCount = await db.etNotification.count({
       where: { userId, isRead: false },
     })
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title and message are required' }, { status: 400 })
     }
 
-    const notification = await db.notification.create({
+    const notification = await db.etNotification.create({
       data: {
         userId,
         title,

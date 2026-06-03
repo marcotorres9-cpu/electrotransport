@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
-    const user = await db.user.findUnique({
+    const user = await db.etUser.findUnique({
       where: { email },
       include: {
         store: true,
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     const token = generateToken()
 
-    await db.user.update({
+    await db.etUser.update({
       where: { id: user.id },
       data: { isActive: true },
     })
