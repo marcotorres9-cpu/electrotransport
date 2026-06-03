@@ -1,4 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://help.github.com/articles/ignoring files/ for more about ignoring files.
 
 # dependencies
 node_modules
@@ -30,12 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files - IMPORTANT: don't commit real secrets
+.env
+.env.local
+.env.production.local
+.env*.local
 
 # vercel
 .vercel
-
 
 # typescript
 *.tsbuildinfo
@@ -46,9 +48,22 @@ local-*
 *.log
 dev.log
 dev.out.log
-test
-prompt
-
 server.log
+
 # Skills directory
 /skills/
+
+# Prisma SQLite (we use PostgreSQL now)
+db/*.db
+db/*.db-journal
+prisma/*.db
+prisma/*.db-journal
+
+# Z scripts
+.zscripts/
+
+# Worklog
+worklog.md
+
+test
+prompt
