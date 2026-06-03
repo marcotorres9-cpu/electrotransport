@@ -67,3 +67,4 @@ worklog.md
 
 test
 prompt
+node_modules/\n.next/\nandroid/app/build/\n*.db\n*.db-journal\n.env\n.vercel/\n.zscripts/\nworklog.md\n*.log

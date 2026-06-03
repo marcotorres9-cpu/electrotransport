@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import { Truck, Shield, Zap, TrendingUp, ArrowRight } from 'lucide-react'
@@ -6,6 +7,12 @@ import { Card, CardContent } from '@/components/ui/card'
 
 export default function LandingPage() {
   const { setCurrentView } = useAppStore()
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    }
+  }, [])
 
   const features = [
     {

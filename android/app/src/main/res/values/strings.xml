@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ElectroTransport</string>
+    <string name="title_activity_main">ElectroTransport</string>
+    <string name="package_name">com.electrotransport.app</string>
+    <string name="custom_url_scheme">com.electrotransport.app</string>
+</resources>
