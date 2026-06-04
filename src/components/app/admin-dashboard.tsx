@@ -95,14 +95,14 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#050505]">
+    <div className="min-h-screen bg-[#181818]">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Admin Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#0a0a0a] border-r border-[#1a1a1a] z-50 transform transition-transform duration-300 lg:transform-none ${
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#1e1e1e] border-r border-[#333333] z-50 transform transition-transform duration-300 lg:transform-none ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex flex-col h-full">
@@ -113,14 +113,14 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h2 className="font-bold text-white text-sm">ElectroTransport</h2>
-                <p className="text-xs text-[#666]">Panel de Administración</p>
+                <p className="text-xs text-[#888888]">Panel de Administración</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#666]">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#888888]">
               <X className="h-5 w-5" />
             </button>
           </div>
-          <Separator className="bg-[#1a1a1a]" />
+          <Separator className="bg-[#333333]" />
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#845EF7]/15 flex items-center justify-center">
@@ -128,11 +128,11 @@ export default function AdminDashboard() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-white truncate">{currentUser?.name}</p>
-                <p className="text-xs text-[#666] truncate">{currentUser?.email}</p>
+                <p className="text-xs text-[#888888] truncate">{currentUser?.email}</p>
               </div>
             </div>
           </div>
-          <Separator className="bg-[#1a1a1a]" />
+          <Separator className="bg-[#333333]" />
           <nav className="flex-1 p-3 space-y-1">
             {adminNavItems.map((item) => {
               const isActive = useAppStore.getState().currentView === item.id
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
-                    isActive ? 'bg-[#845EF7]/10 text-[#845EF7]' : 'text-[#8a8a8a] hover:bg-[#111]'
+                    isActive ? 'bg-[#845EF7]/10 text-[#845EF7]' : 'text-[#8a8a8a] hover:bg-[#262626]'
                   }`}
                 >
                   <Shield className="h-4 w-4" />
@@ -151,15 +151,15 @@ export default function AdminDashboard() {
             })}
           </nav>
           <div className="p-4">
-            <div className="bg-[#111] border border-[#1a1a1a] rounded-xl p-3 flex items-center gap-3">
+            <div className="bg-[#262626] border border-[#333333] rounded-xl p-3 flex items-center gap-3">
               <Shield className="h-5 w-5 text-[#845EF7]" />
               <div>
                 <p className="text-sm font-semibold text-white">Administrador</p>
-                <p className="text-xs text-[#666]">Acceso total</p>
+                <p className="text-xs text-[#888888]">Acceso total</p>
               </div>
             </div>
           </div>
-          <Separator className="bg-[#1a1a1a]" />
+          <Separator className="bg-[#333333]" />
           <div className="p-3">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors">
               Cerrar Sesión
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-[#0a0a0a] border-b border-[#1a1a1a] px-4 py-3 flex items-center gap-3">
+        <header className="lg:hidden sticky top-0 z-30 bg-[#1e1e1e] border-b border-[#333333] px-4 py-3 flex items-center gap-3">
           <button onClick={() => setSidebarOpen(true)} className="text-[#8a8a8a]">
             <Menu className="h-6 w-6" />
           </button>
@@ -189,19 +189,19 @@ export default function AdminDashboard() {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Usuarios', value: stats.totalUsers, icon: Users, color: 'bg-[#111] text-[#8a8a8a]' },
+              { label: 'Total Usuarios', value: stats.totalUsers, icon: Users, color: 'bg-[#262626] text-[#8a8a8a]' },
               { label: 'Locales Activos', value: stats.activeStores, icon: Store, color: 'bg-[#1DB954]/10 text-[#1DB954]' },
               { label: 'Transportistas Activos', value: stats.activeDrivers, icon: Truck, color: 'bg-[#00C9A7]/10 text-[#00C9A7]' },
               { label: 'Pedidos Pendientes', value: stats.pendingOrders, icon: Package, color: 'bg-[#FFC145]/10 text-[#FFC145]' },
             ].map((stat, i) => (
               <motion.div key={stat.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
+                <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
                       <stat.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-[#666]">{stat.label}</p>
+                      <p className="text-xs text-[#888888]">{stat.label}</p>
                       <p className="text-lg font-bold text-white">{stat.value}</p>
                     </div>
                   </CardContent>
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
           {/* User Management */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
+            <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
               <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
                 <CardTitle className="text-lg font-semibold flex items-center gap-2 text-white">
                   <Users className="h-5 w-5" />
@@ -223,12 +223,12 @@ export default function AdminDashboard() {
                 {/* Search & Filter */}
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
                     <Input
                       placeholder="Buscar por nombre o email..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="pl-10 bg-[#111] border-[#222] text-white"
+                      className="pl-10 bg-[#262626] border-[#2e2e2e] text-white"
                     />
                   </div>
                   <div className="flex gap-2">
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                         className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                           roleFilter === f.value
                             ? 'bg-[#845EF7] text-white'
-                            : 'bg-[#111] text-[#8a8a8a] hover:bg-[#1a1a1a] border border-[#1a1a1a]'
+                            : 'bg-[#262626] text-[#8a8a8a] hover:bg-[#333333] border border-[#333333]'
                         }`}
                       >
                         {f.label}
@@ -253,26 +253,26 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Users Table */}
-                <div className="overflow-x-auto rounded-xl border border-[#1a1a1a]">
+                <div className="overflow-x-auto rounded-xl border border-[#333333]">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-[#111] text-left">
-                        <th className="px-4 py-3 font-medium text-[#666]">Nombre</th>
-                        <th className="px-4 py-3 font-medium text-[#666] hidden sm:table-cell">Email</th>
-                        <th className="px-4 py-3 font-medium text-[#666]">Rol</th>
-                        <th className="px-4 py-3 font-medium text-[#666]">Estado</th>
-                        <th className="px-4 py-3 font-medium text-[#666] hidden md:table-cell">Registro</th>
-                        <th className="px-4 py-3 font-medium text-[#666] text-right">Acciones</th>
+                      <tr className="bg-[#262626] text-left">
+                        <th className="px-4 py-3 font-medium text-[#888888]">Nombre</th>
+                        <th className="px-4 py-3 font-medium text-[#888888] hidden sm:table-cell">Email</th>
+                        <th className="px-4 py-3 font-medium text-[#888888]">Rol</th>
+                        <th className="px-4 py-3 font-medium text-[#888888]">Estado</th>
+                        <th className="px-4 py-3 font-medium text-[#888888] hidden md:table-cell">Registro</th>
+                        <th className="px-4 py-3 font-medium text-[#888888] text-right">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#1a1a1a]">
+                    <tbody className="divide-y divide-[#333333]">
                       {filteredUsers.map((user, i) => (
                         <motion.tr
                           key={user.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: i * 0.03 }}
-                          className="hover:bg-[#111]/50"
+                          className="hover:bg-[#262626]/50"
                         >
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
@@ -287,7 +287,7 @@ export default function AdminDashboard() {
                               </div>
                               <div>
                                 <p className="font-medium text-white text-sm">{user.name}</p>
-                                <p className="text-xs text-[#666] sm:hidden">{user.email}</p>
+                                <p className="text-xs text-[#888888] sm:hidden">{user.email}</p>
                               </div>
                             </div>
                           </td>
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
                               {user.isActive ? 'Activo' : 'Inactivo'}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-[#666] text-xs hidden md:table-cell">
+                          <td className="px-4 py-3 text-[#888888] text-xs hidden md:table-cell">
                             {formatDate(user.createdAt)}
                           </td>
                           <td className="px-4 py-3 text-right">
@@ -343,7 +343,7 @@ export default function AdminDashboard() {
                 {filteredUsers.length === 0 && (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-[#333] mx-auto mb-3" />
-                    <p className="text-[#666]">No se encontraron usuarios</p>
+                    <p className="text-[#888888]">No se encontraron usuarios</p>
                   </div>
                 )}
               </CardContent>

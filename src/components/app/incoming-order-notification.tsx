@@ -245,7 +245,7 @@ export default function IncomingOrderNotification() {
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             className="relative z-10 w-[90vw] max-w-md mx-auto"
           >
-            <div className="bg-gradient-to-b from-[#111] to-[#0a0a0a] rounded-3xl border border-[#1a1a1a] overflow-hidden">
+            <div className="bg-gradient-to-b from-[#262626] to-[#1e1e1e] rounded-3xl border border-[#333333] overflow-hidden">
               {/* Pulsing ring indicator */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="w-32 h-32 rounded-full bg-[#1DB954]/20 animate-ring-pulse flex items-center justify-center">

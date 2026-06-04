@@ -89,7 +89,7 @@ export default function DriverAvailableOrdersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => setCurrentView('driver-dashboard')} className="text-[#666] hover:text-white">
+        <button onClick={() => setCurrentView('driver-dashboard')} className="text-[#888888] hover:text-white">
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div>
@@ -105,8 +105,8 @@ export default function DriverAvailableOrdersPage() {
       ) : availableOrders.length === 0 ? (
         <div className="text-center py-16">
           <Package className="h-16 w-16 text-[#333] mx-auto mb-4" />
-          <p className="text-[#666] text-lg">No hay pedidos disponibles</p>
-          <p className="text-sm text-[#666] mt-1">Vuelve más tarde para ver nuevos pedidos</p>
+          <p className="text-[#888888] text-lg">No hay pedidos disponibles</p>
+          <p className="text-sm text-[#888888] mt-1">Vuelve más tarde para ver nuevos pedidos</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -119,27 +119,27 @@ export default function DriverAvailableOrdersPage() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none overflow-hidden">
+                <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none overflow-hidden">
                   {/* Price accent bar */}
                   <div className="h-1 bg-[#1DB954]" />
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-mono text-[#666] bg-[#111] px-2 py-0.5 rounded">
+                          <span className="text-xs font-mono text-[#888888] bg-[#262626] px-2 py-0.5 rounded">
                             #{order.orderNumber}
                           </span>
                           {order.store && (
-                            <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">
+                            <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">
                               <Store className="h-3 w-3 mr-1" />
                               {order.store.storeName}
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-[#666]">{formatDate(order.createdAt)}</p>
+                        <p className="text-xs text-[#888888]">{formatDate(order.createdAt)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-[#666]">Precio</p>
+                        <p className="text-xs text-[#888888]">Precio</p>
                         <p className="text-xl font-bold text-[#1DB954]">{formatPrice(order.proposedPrice)}</p>
                       </div>
                     </div>
@@ -150,7 +150,7 @@ export default function DriverAvailableOrdersPage() {
                         <MapPin className="h-4 w-4 text-[#1DB954] mt-0.5 shrink-0" />
                         <span className="text-[#ccc]">{order.originAddress}</span>
                       </div>
-                      <div className="ml-2 border-l-2 border-dashed border-[#222] h-2" />
+                      <div className="ml-2 border-l-2 border-dashed border-[#2e2e2e] h-2" />
                       <div className="flex items-start gap-2 text-sm">
                         <MapPin className="h-4 w-4 text-[#FFC145] mt-0.5 shrink-0" />
                         <span className="text-[#ccc]">{order.destAddress}</span>
@@ -160,15 +160,15 @@ export default function DriverAvailableOrdersPage() {
                     {/* Cargo info */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       {order.cargoType && (
-                        <Badge variant="secondary" className="text-xs bg-[#111] text-[#8a8a8a]">
+                        <Badge variant="secondary" className="text-xs bg-[#262626] text-[#8a8a8a]">
                           <Package className="h-3 w-3 mr-1" /> {order.cargoType}
                         </Badge>
                       )}
                       {order.cargoWeight && (
-                        <Badge variant="secondary" className="text-xs bg-[#111] text-[#8a8a8a]">{order.cargoWeight} kg</Badge>
+                        <Badge variant="secondary" className="text-xs bg-[#262626] text-[#8a8a8a]">{order.cargoWeight} kg</Badge>
                       )}
                       {order.cargoQuantity && (
-                        <Badge variant="secondary" className="text-xs bg-[#111] text-[#8a8a8a]">{order.cargoQuantity} uds</Badge>
+                        <Badge variant="secondary" className="text-xs bg-[#262626] text-[#8a8a8a]">{order.cargoQuantity} uds</Badge>
                       )}
                     </div>
 
@@ -195,13 +195,13 @@ export default function DriverAvailableOrdersPage() {
 
       {/* Accept Dialog with Slider + Input */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => { if (!open) { setSelectedOrder(null); setCounterPrice('') } }}>
-        <DialogContent className="max-w-md bg-[#0a0a0a] border-[#1a1a1a]">
+        <DialogContent className="max-w-md bg-[#1e1e1e] border-[#333333]">
           <DialogHeader>
             <DialogTitle className="text-white">Aceptar Pedido #{selectedOrder?.orderNumber}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4 py-2">
-              <div className="bg-[#111] rounded-lg p-3 space-y-2">
+              <div className="bg-[#262626] rounded-lg p-3 space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <MapPin className="h-4 w-4 text-[#1DB954]" />
                   <span className="text-[#ccc]">{selectedOrder.originAddress}</span>
@@ -217,14 +217,14 @@ export default function DriverAvailableOrdersPage() {
                 <span className="text-lg font-bold text-[#1DB954]">{formatPrice(selectedOrder.proposedPrice)}</span>
               </div>
 
-              <Separator className="bg-[#1a1a1a]" />
+              <Separator className="bg-[#333333]" />
 
               <div className="space-y-3">
                 <p className="text-sm font-medium text-white">¿Quieres contraofertar? (opcional)</p>
 
                 {/* Slider */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#666]">
+                  <div className="flex items-center justify-between text-xs text-[#888888]">
                     <span>$0.00</span>
                     <span className="text-[#1DB954] font-medium">
                       Propuesto: {formatPrice(selectedOrder.proposedPrice)}
@@ -238,19 +238,19 @@ export default function DriverAvailableOrdersPage() {
                     step={0.50}
                     value={numericCounterPrice}
                     onChange={(e) => handleSliderChange(parseFloat(e.target.value))}
-                    className="w-full h-2 bg-[#222] rounded-lg appearance-none cursor-pointer accent-[#1DB954]"
+                    className="w-full h-2 bg-[#2e2e2e] rounded-lg appearance-none cursor-pointer accent-[#1DB954]"
                   />
                 </div>
 
                 {/* Exact Value Input */}
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
                   <Input
                     type="number"
                     placeholder="Tu precio exacto"
                     value={counterPrice}
                     onChange={(e) => handleInputChange(e.target.value)}
-                    className="pl-10 bg-[#111] border-[#222] text-white"
+                    className="pl-10 bg-[#262626] border-[#2e2e2e] text-white"
                     min={minPrice}
                     max={maxPrice}
                     step={0.50}
@@ -260,9 +260,9 @@ export default function DriverAvailableOrdersPage() {
                 {/* Show comparison */}
                 {counterPrice && parseFloat(counterPrice) > 0 && parseFloat(counterPrice) !== selectedOrder.proposedPrice && (
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[#666]">Propuesto:</span>
+                    <span className="text-[#888888]">Propuesto:</span>
                     <span className="text-[#1DB954] font-medium">{formatPrice(selectedOrder.proposedPrice)}</span>
-                    <span className="text-[#666]">→ Tu oferta:</span>
+                    <span className="text-[#888888]">→ Tu oferta:</span>
                     <span className={`font-bold ${parseFloat(counterPrice) > selectedOrder.proposedPrice ? 'text-[#FFC145]' : 'text-[#00C9A7]'}`}>
                       {formatPrice(parseFloat(counterPrice))}
                     </span>
@@ -272,7 +272,7 @@ export default function DriverAvailableOrdersPage() {
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => { setSelectedOrder(null); setCounterPrice('') }} className="border-[#1a1a1a] text-[#8a8a8a]">
+            <Button variant="outline" onClick={() => { setSelectedOrder(null); setCounterPrice('') }} className="border-[#333333] text-[#8a8a8a]">
               Cancelar
             </Button>
             {counterPrice && parseFloat(counterPrice) > 0 && parseFloat(counterPrice) !== selectedOrder?.proposedPrice && (

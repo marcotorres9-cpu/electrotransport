@@ -89,7 +89,7 @@ export default function StoreDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
-          { label: 'Total Pedidos', value: stats.total, icon: ClipboardList, color: 'bg-[#111] text-[#8a8a8a]', iconColor: 'text-[#666]' },
+          { label: 'Total Pedidos', value: stats.total, icon: ClipboardList, color: 'bg-[#262626] text-[#8a8a8a]', iconColor: 'text-[#888888]' },
           { label: 'Pendientes', value: stats.pending, icon: Truck, color: 'bg-[#FFC145]/10 text-[#FFC145]', iconColor: 'text-[#FFC145]' },
           { label: 'Ofertas Pendientes', value: stats.offers, icon: Handshake, color: 'bg-[#FFC145]/10 text-[#FFC145]', iconColor: 'text-[#FFC145]' },
           { label: 'En Progreso', value: stats.inProgress, icon: TrendingUp, color: 'bg-[#1DB954]/10 text-[#1DB954]', iconColor: 'text-[#1DB954]' },
@@ -101,11 +101,11 @@ export default function StoreDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <Card className={`bg-[#0a0a0a] border border-[#1a1a1a] shadow-none ${stat.label === 'Ofertas Pendientes' && stats.offers > 0 ? 'ring-2 ring-[#FFC145]/40' : ''}`}>
+            <Card className={`bg-[#1e1e1e] border border-[#333333] shadow-none ${stat.label === 'Ofertas Pendientes' && stats.offers > 0 ? 'ring-2 ring-[#FFC145]/40' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-[#666] mb-1">{stat.label}</p>
+                    <p className="text-xs text-[#888888] mb-1">{stat.label}</p>
                     <p className="text-2xl font-bold text-white">{stat.value}</p>
                   </div>
                   <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
@@ -125,7 +125,7 @@ export default function StoreDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
         >
-          <Card className="border-2 border-[#FFC145]/40 bg-[#0a0a0a]">
+          <Card className="border-2 border-[#FFC145]/40 bg-[#1e1e1e]">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#FFC145]">
                 <Handshake className="h-5 w-5" />
@@ -134,10 +134,10 @@ export default function StoreDashboard() {
             </CardHeader>
             <CardContent className="p-4 pt-0 space-y-3">
               {offerOrders.map((order: OrderItem) => (
-                <div key={order.id} className="bg-[#111] rounded-xl p-4 border border-[#FFC145]/20">
+                <div key={order.id} className="bg-[#262626] rounded-xl p-4 border border-[#FFC145]/20">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#666] bg-[#0a0a0a] px-2 py-0.5 rounded">
+                      <span className="text-xs font-mono text-[#888888] bg-[#1e1e1e] px-2 py-0.5 rounded">
                         #{order.orderNumber}
                       </span>
                       <Badge className="bg-[#FFC145]/15 text-[#FFC145] border-[#FFC145]/30 text-xs">
@@ -202,7 +202,7 @@ export default function StoreDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
+        <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-lg font-semibold text-white">Pedidos Recientes</CardTitle>
             <Button
@@ -218,8 +218,8 @@ export default function StoreDashboard() {
             {recentOrders.length === 0 ? (
               <div className="text-center py-10">
                 <Truck className="h-12 w-12 text-[#333] mx-auto mb-3" />
-                <p className="text-[#666] text-sm">No hay pedidos aún</p>
-                <p className="text-xs text-[#666] mt-1">Crea tu primer pedido de transporte</p>
+                <p className="text-[#888888] text-sm">No hay pedidos aún</p>
+                <p className="text-xs text-[#888888] mt-1">Crea tu primer pedido de transporte</p>
                 <Button
                   className="mt-4 bg-[#1DB954] hover:bg-[#17a34a] text-black text-sm"
                   onClick={() => setCurrentView('store-create-order')}
@@ -236,21 +236,21 @@ export default function StoreDashboard() {
                       useAppStore.getState().setSelectedOrderId(order.id)
                       setCurrentView('store-order-detail')
                     }}
-                    className="w-full text-left p-3 rounded-xl border border-[#1a1a1a] hover:border-[#1DB954]/30 hover:bg-[#1DB954]/5 transition-all"
+                    className="w-full text-left p-3 rounded-xl border border-[#333333] hover:border-[#1DB954]/30 hover:bg-[#1DB954]/5 transition-all"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-mono text-[#666]">#{order.orderNumber}</span>
+                      <span className="text-xs font-mono text-[#888888]">#{order.orderNumber}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
                         {getStatusLabel(order.status)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-[#8a8a8a]">
                       <span className="truncate max-w-[140px]">{order.originAddress}</span>
-                      <span className="text-[#666]">→</span>
+                      <span className="text-[#888888]">→</span>
                       <span className="truncate max-w-[140px]">{order.destAddress}</span>
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-[#666]">{formatDate(order.createdAt)}</span>
+                      <span className="text-xs text-[#888888]">{formatDate(order.createdAt)}</span>
                       <span className="font-semibold text-[#1DB954] text-sm">{formatPrice(order.proposedPrice)}</span>
                     </div>
                   </button>
@@ -269,7 +269,7 @@ export default function StoreDashboard() {
       >
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-white">Mapa de Actividad</h2>
-          <span className="text-xs text-[#666]">Centrado en Quito, Ecuador</span>
+          <span className="text-xs text-[#888888]">Centrado en Quito, Ecuador</span>
         </div>
         <MapView
           height="300px"

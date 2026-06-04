@@ -116,12 +116,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] py-6 px-4">
+    <div className="min-h-screen bg-[#181818] py-6 px-4">
       <div className="max-w-md mx-auto">
         {/* Back button */}
         <button
           onClick={() => setCurrentView('landing')}
-          className="inline-flex items-center text-sm text-[#888] hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center text-sm text-[#aaaaaa] hover:text-white mb-6 transition-colors"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
           Volver
@@ -136,12 +136,12 @@ export default function RegisterPage() {
           <motion.div
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#111] border border-[#1e1e1e] mb-4"
+            className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#262626] border border-[#333333] mb-4"
           >
             <Truck className="h-7 w-7 text-[#1DB954]" />
           </motion.div>
           <h1 className="text-2xl font-bold text-white">Crear Cuenta</h1>
-          <p className="text-[#666] text-sm mt-1">Únete a ElectroTransport</p>
+          <p className="text-[#888888] text-sm mt-1">Únete a ElectroTransport</p>
         </motion.div>
 
         <motion.div
@@ -149,10 +149,10 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-[#0a0a0a] border-[#1a1a1a]">
+          <Card className="bg-[#1e1e1e] border-[#333333]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg text-white">Tipo de Cuenta</CardTitle>
-              <CardDescription className="text-[#666] text-xs">Selecciona tu rol</CardDescription>
+              <CardDescription className="text-[#888888] text-xs">Selecciona tu rol</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Role Toggle - 3 columns with proper spacing */}
@@ -166,11 +166,11 @@ export default function RegisterPage() {
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'store'
                         ? 'border-[#1DB954] bg-[#1DB954]/10'
-                        : 'border-[#1a1a1a] hover:border-[#333]'
+                        : 'border-[#333333] hover:border-[#444444]'
                     }`}
                   >
                     <RadioGroupItem value="store" className="sr-only" />
-                    <Store className={`h-5 w-5 ${role === 'store' ? 'text-[#1DB954]' : 'text-[#666]'}`} />
+                    <Store className={`h-5 w-5 ${role === 'store' ? 'text-[#1DB954]' : 'text-[#888888]'}`} />
                     <p className={`font-medium text-xs ${role === 'store' ? 'text-[#1DB954]' : 'text-[#999]'} text-center leading-tight`}>
                       Local
                     </p>
@@ -181,11 +181,11 @@ export default function RegisterPage() {
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'driver'
                         ? 'border-[#1DB954] bg-[#1DB954]/10'
-                        : 'border-[#1a1a1a] hover:border-[#333]'
+                        : 'border-[#333333] hover:border-[#444444]'
                     }`}
                   >
                     <RadioGroupItem value="driver" className="sr-only" />
-                    <Car className={`h-5 w-5 ${role === 'driver' ? 'text-[#1DB954]' : 'text-[#666]'}`} />
+                    <Car className={`h-5 w-5 ${role === 'driver' ? 'text-[#1DB954]' : 'text-[#888888]'}`} />
                     <p className={`font-medium text-xs ${role === 'driver' ? 'text-[#1DB954]' : 'text-[#999]'} text-center leading-tight`}>
                       Transporte
                     </p>
@@ -196,11 +196,11 @@ export default function RegisterPage() {
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'admin'
                         ? 'border-[#845EF7] bg-[#845EF7]/10'
-                        : 'border-[#1a1a1a] hover:border-[#333]'
+                        : 'border-[#333333] hover:border-[#444444]'
                     }`}
                   >
                     <RadioGroupItem value="admin" className="sr-only" />
-                    <Shield className={`h-5 w-5 ${role === 'admin' ? 'text-[#845EF7]' : 'text-[#666]'}`} />
+                    <Shield className={`h-5 w-5 ${role === 'admin' ? 'text-[#845EF7]' : 'text-[#888888]'}`} />
                     <p className={`font-medium text-xs ${role === 'admin' ? 'text-[#845EF7]' : 'text-[#999]'} text-center leading-tight`}>
                       Admin
                     </p>
@@ -213,40 +213,40 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <Label htmlFor="name" className="text-[#999] text-xs">Nombre completo</Label>
                   <div className="relative">
-                    <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                    <Input id="name" placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                    <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                    <Input id="name" placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-[#999] text-xs">Correo electrónico</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                    <Input id="email" type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                    <Input id="email" type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label htmlFor="phone" className="text-[#999] text-xs">Teléfono</Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                    <Input id="phone" placeholder="+593 990000000" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                    <Input id="phone" placeholder="+593 990000000" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label htmlFor="password" className="text-[#999] text-xs">Contraseña</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Mínimo 6 caracteres"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]"
+                      className="pl-10 pr-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#777777] hover:text-white transition-colors">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
@@ -289,32 +289,32 @@ export default function RegisterPage() {
                       <div className="space-y-1.5">
                         <Label htmlFor="storeName" className="text-[#999] text-xs">Nombre del local</Label>
                         <div className="relative">
-                          <Store className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                          <Input id="storeName" placeholder="ElectroHogar" value={storeName} onChange={(e) => setStoreName(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <Store className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                          <Input id="storeName" placeholder="ElectroHogar" value={storeName} onChange={(e) => setStoreName(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
                         <Label htmlFor="storeType" className="text-[#999] text-xs">Tipo de electrodomésticos</Label>
                         <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                          <Input id="storeType" placeholder="Línea blanca, electrónica..." value={storeType} onChange={(e) => setStoreType(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                          <Input id="storeType" placeholder="Línea blanca, electrónica..." value={storeType} onChange={(e) => setStoreType(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
                         <Label htmlFor="address" className="text-[#999] text-xs">Dirección</Label>
                         <div className="relative">
-                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-[#555]" />
-                          <Textarea id="address" placeholder="Dirección del local" value={address} onChange={(e) => setAddress(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954] min-h-[70px]" />
+                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-[#777777]" />
+                          <Textarea id="address" placeholder="Dirección del local" value={address} onChange={(e) => setAddress(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954] min-h-[70px]" />
                         </div>
                       </div>
 
                       <div className="space-y-1.5">
                         <Label htmlFor="rut" className="text-[#999] text-xs">RUC</Label>
                         <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                          <Input id="rut" placeholder="1234567890001" value={rutNumber} onChange={(e) => setRutNumber(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                          <Input id="rut" placeholder="1234567890001" value={rutNumber} onChange={(e) => setRutNumber(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                       </div>
                     </motion.div>
@@ -344,7 +344,7 @@ export default function RegisterPage() {
                               className={`flex flex-col items-center gap-1 p-2.5 rounded-lg border-2 transition-all text-xs ${
                                 vehicleType === vt.value
                                   ? 'border-[#1DB954] bg-[#1DB954]/10'
-                                  : 'border-[#1a1a1a] hover:border-[#333]'
+                                  : 'border-[#333333] hover:border-[#444444]'
                               }`}
                             >
                               <span className="text-lg">{vt.icon}</span>
@@ -359,24 +359,24 @@ export default function RegisterPage() {
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
                           <Label htmlFor="brand" className="text-[#999] text-xs">Marca</Label>
-                          <Input id="brand" placeholder="Toyota" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <Input id="brand" placeholder="Toyota" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} className="bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="model" className="text-[#999] text-xs">Modelo</Label>
-                          <Input id="model" placeholder="Hilux" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <Input id="model" placeholder="Hilux" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} className="bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
                           <Label htmlFor="year" className="text-[#999] text-xs">Año</Label>
-                          <Input id="year" placeholder="2024" value={vehicleYear} onChange={(e) => setVehicleYear(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <Input id="year" placeholder="2024" value={vehicleYear} onChange={(e) => setVehicleYear(e.target.value)} className="bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                         <div className="space-y-1.5">
                           <Label htmlFor="plate" className="text-[#999] text-xs">Placa</Label>
                           <div className="relative">
-                            <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                            <Input id="plate" placeholder="ABC-123" value={vehiclePlate} onChange={(e) => setVehiclePlate(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                            <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                            <Input id="plate" placeholder="ABC-123" value={vehiclePlate} onChange={(e) => setVehiclePlate(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                           </div>
                         </div>
                       </div>
@@ -384,8 +384,8 @@ export default function RegisterPage() {
                       <div className="space-y-1.5">
                         <Label htmlFor="license" className="text-[#999] text-xs">Licencia</Label>
                         <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
-                          <Input id="license" placeholder="Número de licencia" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#777777]" />
+                          <Input id="license" placeholder="Número de licencia" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} className="pl-10 bg-[#262626] border-[#2e2e2e] text-white placeholder:text-[#666666] focus:border-[#1DB954]" />
                         </div>
                       </div>
                     </motion.div>
@@ -400,7 +400,7 @@ export default function RegisterPage() {
                     onCheckedChange={(v) => setAgreeTerms(v === true)}
                     className="mt-0.5 border-[#333] data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954]"
                   />
-                  <label htmlFor="terms" className="text-xs text-[#666] leading-relaxed cursor-pointer">
+                  <label htmlFor="terms" className="text-xs text-[#888888] leading-relaxed cursor-pointer">
                     Acepto los{' '}
                     <span className="text-[#1DB954]">Términos de Servicio</span> y la{' '}
                     <span className="text-[#1DB954]">Política de Privacidad</span>
@@ -417,7 +417,7 @@ export default function RegisterPage() {
               </form>
 
               <div className="mt-5 text-center">
-                <p className="text-xs text-[#666]">
+                <p className="text-xs text-[#888888]">
                   ¿Ya tienes cuenta?{' '}
                   <button
                     onClick={() => setCurrentView('login')}

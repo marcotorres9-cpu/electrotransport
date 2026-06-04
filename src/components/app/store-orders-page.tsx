@@ -57,7 +57,7 @@ export default function StoreOrdersPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setCurrentView('store-dashboard')}
-          className="text-[#666] hover:text-white"
+          className="text-[#888888] hover:text-white"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -69,12 +69,12 @@ export default function StoreOrdersPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
         <Input
           placeholder="Buscar por número, origen o destino..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 bg-[#111] border-[#222] text-white"
+          className="pl-10 bg-[#262626] border-[#2e2e2e] text-white"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function StoreOrdersPage() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               orderFilter === f.value
                 ? 'bg-[#1DB954] text-black'
-                : 'bg-[#111] text-[#8a8a8a] hover:bg-[#1a1a1a] border border-[#1a1a1a]'
+                : 'bg-[#262626] text-[#8a8a8a] hover:bg-[#333333] border border-[#333333]'
             }`}
           >
             {f.label}
@@ -100,7 +100,7 @@ export default function StoreOrdersPage() {
         {filteredOrders.length === 0 ? (
           <div className="text-center py-16">
             <Package className="h-16 w-16 text-[#333] mx-auto mb-4" />
-            <p className="text-[#666]">
+            <p className="text-[#888888]">
               {search ? 'No se encontraron resultados' : 'No hay pedidos con este filtro'}
             </p>
           </div>
@@ -117,15 +117,15 @@ export default function StoreOrdersPage() {
                   useAppStore.getState().setSelectedOrderId(order.id)
                   setCurrentView('store-order-detail')
                 }}
-                className={`w-full text-left bg-[#0a0a0a] rounded-xl border p-4 hover:border-[#1DB954]/30 transition-all ${
+                className={`w-full text-left bg-[#1e1e1e] rounded-xl border p-4 hover:border-[#1DB954]/30 transition-all ${
                   order.status === 'offer_received'
                     ? 'border-2 border-[#FFC145]/40 animate-pulse-offer'
-                    : 'border border-[#1a1a1a]'
+                    : 'border border-[#333333]'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-[#666] bg-[#111] px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono text-[#888888] bg-[#262626] px-2 py-0.5 rounded">
                       #{order.orderNumber}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
@@ -164,13 +164,13 @@ export default function StoreOrdersPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#1a1a1a]">
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#333333]">
                   <div className="flex items-center gap-2">
                     {order.cargoType && (
-                      <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">{order.cargoType}</Badge>
+                      <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">{order.cargoType}</Badge>
                     )}
                   </div>
-                  <span className="text-xs text-[#666]">{formatDate(order.createdAt)}</span>
+                  <span className="text-xs text-[#888888]">{formatDate(order.createdAt)}</span>
                 </div>
               </button>
             </motion.div>
