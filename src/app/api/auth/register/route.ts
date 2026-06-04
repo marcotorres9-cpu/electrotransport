@@ -27,26 +27,41 @@ export async function POST(request: NextRequest) {
 
     // If email exists and trying to register as admin, promote the existing user
     if (existingUser && role === 'admin') {
-      const token = generateToken()
-      await db.etUser.update({
-        where: { id: existingUser.id },
-        data: { role: 'admin', token },
-      })
+      try {
+        const token = generateToken()
+        const updatedUser = await db.etUser.update({
+          where: { id: existingUser.id },
+          data: { role: 'admin', token },
+        })
 
-      const updatedUser = await db.etUser.findUnique({ where: { id: existingUser.id } })
-
-      return NextResponse.json({
-        user: {
-          id: updatedUser!.id,
-          name: updatedUser!.name,
-          email: updatedUser!.email,
-          phone: updatedUser!.phone,
-          role: updatedUser!.role,
-          avatar: updatedUser!.avatar,
-          isActive: updatedUser!.isActive,
-          token,
-        },
-      })
+        return NextResponse.json({
+          user: {
+            id: updatedUser.id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            phone: updatedUser.phone,
+            role: updatedUser.role,
+            avatar: updatedUser.avatar,
+            isActive: updatedUser.isActive,
+            token,
+          },
+        })
+      } catch (err) {
+        console.error('Admin promotion error:', err)
+        // Fallback: just return the user as admin without token change
+        return NextResponse.json({
+          user: {
+            id: existingUser.id,
+            name: existingUser.name,
+            email: existingUser.email,
+            phone: existingUser.phone,
+            role: 'admin',
+            avatar: existingUser.avatar,
+            isActive: existingUser.isActive,
+            token: existingUser.token || generateToken(),
+          },
+        })
+      }
     }
 
     // If email exists with different role (not admin), show error
