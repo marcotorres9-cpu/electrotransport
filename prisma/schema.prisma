@@ -15,7 +15,7 @@ model EtUser {
   email         String    @unique
   password      String
   phone         String?
-  role          String    @default("store") // "store" | "driver"
+  role          String    @default("store")
   avatar        String?
   isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
@@ -25,6 +25,8 @@ model EtUser {
   driver        EtDriver?
   ordersCreated EtOrder[]   @relation("CreatedBy")
   acceptedOrders EtOrder[]  @relation("AcceptedBy")
+
+  @@map("EtUser")
 }
 
 /// Tabla de locales comerciales
@@ -46,13 +48,15 @@ model EtStore {
 
   user   EtUser    @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders EtOrder[]
+
+  @@map("EtStore")
 }
 
 /// Tabla de transportistas
 model EtDriver {
   id            String   @id @default(cuid())
   userId        String   @unique
-  vehicleType   String   // "camioneta" | "doble_cabina" | "camion"
+  vehicleType   String
   vehicleBrand  String?
   vehicleModel  String?
   vehicleYear   Int?
@@ -69,6 +73,8 @@ model EtDriver {
   updatedAt     DateTime @updatedAt
 
   user EtUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("EtDriver")
 }
 
 /// Tabla de pedidos de transporte
@@ -79,44 +85,46 @@ model EtOrder {
   acceptedBy      String?
   storeId         String?
   status          String    @default("pending")
-  
+
   originAddress   String
   originLat       Float
   originLng       Float
   destAddress     String
   destLat         Float
   destLng         Float
-  
+
   cargoType       String?
   cargoWeight     Float?
   cargoQuantity   Int?
   cargoVolume     String?
   cargoImage      String?
   specialNotes    String?
-  
+
   proposedPrice   Float
   acceptedPrice   Float?
   counterPrice    Float?
   distanceKm      Float?
   estimatedTime   Int?
-  
+
   pickupDate      DateTime?
   deliveryDate    DateTime?
   completedAt     DateTime?
   cancelledAt     DateTime?
   cancelReason    String?
-  
+
   ratingByStore   Float?
   ratingByDriver  Float?
   reviewByStore   String?
   reviewByDriver  String?
-  
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   creator EtUser    @relation("CreatedBy", fields: [createdBy], references: [id])
   driver  EtUser?   @relation("AcceptedBy", fields: [acceptedBy], references: [id])
   store   EtStore?  @relation(fields: [storeId], references: [id])
+
+  @@map("EtOrder")
 }
 
 /// Tabla de notificaciones
@@ -129,4 +137,6 @@ model EtNotification {
   isRead    Boolean  @default(false)
   orderId   String?
   createdAt DateTime @default(now())
+
+  @@map("EtNotification")
 }
