@@ -157,9 +157,9 @@ export default function OrderDetailPage() {
                     )}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center z-10 ${
                       isCurrent
-                        ? 'bg-[#1DB954] text-white ring-4 ring-[#1DB954]/20'
+                        ? 'bg-[#1DB954] text-gray-900 ring-4 ring-[#1DB954]/20'
                         : isActive
-                        ? 'bg-[#1DB954] text-white'
+                        ? 'bg-[#1DB954] text-gray-900'
                         : 'bg-[#E5E7EB] text-gray-400'
                     }`}>
                       <Icon className="h-4 w-4" />

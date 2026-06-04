@@ -109,7 +109,7 @@ export default function DriverDashboard() {
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-[#1DB954] flex items-center justify-center">
-                <Truck className="h-5 w-5 text-white" />
+                <Truck className="h-5 w-5 text-gray-900" />
               </div>
               <div>
                 <h2 className="font-bold text-gray-900 text-sm">ElectroTransport</h2>

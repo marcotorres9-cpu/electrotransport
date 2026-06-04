@@ -75,7 +75,7 @@ export default function LandingPage() {
           <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#00C9A7] rounded-full blur-[180px] opacity-[0.03]" />
         </div>
         {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
+        <div className="absolute inset-0 opacity-[0.06]" style={{
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
           backgroundSize: '60px 60px'
         }} />

@@ -51,7 +51,7 @@ export default function ProfilePage() {
         <Card className="bg-white border border-gray-200 shadow-none">
           <CardContent className="p-6 flex flex-col items-center">
             <div className="w-20 h-20 rounded-full bg-[#1DB954] flex items-center justify-center mb-4">
-              <span className="text-white text-2xl font-bold">{currentUser?.name?.charAt(0)}</span>
+              <span className="text-gray-900 text-2xl font-bold">{currentUser?.name?.charAt(0)}</span>
             </div>
             <h2 className="text-lg font-bold text-gray-900">{currentUser?.name}</h2>
             <p className="text-sm text-gray-500">{currentUser?.email}</p>

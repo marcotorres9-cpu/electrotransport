@@ -417,7 +417,7 @@ export default function IncomingOrderNotification() {
                 <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                   <Button
                     onClick={dismissNotification}
-                    className="w-full bg-[#FF6B6B] hover:bg-[#e55c5c] text-white font-semibold py-6 rounded-2xl text-base"
+                    className="w-full bg-[#FF6B6B] hover:bg-[#e55c5c] text-gray-900 font-semibold py-6 rounded-2xl text-base"
                     disabled={accepting}
                   >
                     <PhoneOff className="h-5 w-5 mr-2" />
