@@ -245,7 +245,7 @@ export default function IncomingOrderNotification() {
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             className="relative z-10 w-[90vw] max-w-md mx-auto"
           >
-            <div className="bg-gradient-to-b from-[#262626] to-[#1e1e1e] rounded-3xl border border-[#333333] overflow-hidden">
+            <div className="bg-gradient-to-b from-[#F9FAFB] to-white rounded-3xl border border-gray-200 overflow-hidden">
               {/* Pulsing ring indicator */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="w-32 h-32 rounded-full bg-[#1DB954]/20 animate-ring-pulse flex items-center justify-center">
@@ -263,7 +263,7 @@ export default function IncomingOrderNotification() {
                   animate={{ opacity: [1, 0.5, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <h2 className="text-xl font-bold text-white mb-1">¡NUEVO PEDIDO!</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">¡NUEVO PEDIDO!</h2>
                 </motion.div>
                 <p className="text-[#1DB954] text-sm font-medium">Pedido #{incomingOrder.orderNumber}</p>
 
@@ -273,15 +273,15 @@ export default function IncomingOrderNotification() {
                   <div className="flex gap-1">
                     {[0, 1].map((d) => (
                       <span key={d} className={`text-lg font-mono font-bold ${
-                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-white'
+                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-gray-900'
                       }`}>
                         {String(Math.floor(countdown / 10)).charAt(d)}
                       </span>
                     ))}
-                    <span className="text-white/30">:</span>
+                    <span className="text-gray-300">:</span>
                     {[0, 1].map((d) => (
                       <span key={d} className={`text-lg font-mono font-bold ${
-                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-white'
+                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-gray-900'
                       }`}>
                         {String(countdown % 10).charAt(d)}
                       </span>
@@ -292,18 +292,18 @@ export default function IncomingOrderNotification() {
 
               {/* Order details */}
               <div className="px-6 pb-4">
-                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 space-y-3 border border-white/5">
+                <div className="bg-gray-50 backdrop-blur-sm rounded-2xl p-4 space-y-3 border border-gray-200">
                   {/* Price */}
                   <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-sm">Precio propuesto</span>
+                    <span className="text-gray-500 text-sm">Precio propuesto</span>
                     <span className="text-2xl font-bold text-[#1DB954]">{formatPrice(incomingOrder.proposedPrice)}</span>
                   </div>
 
                   {/* Distance */}
                   {incomingOrder.distanceKm && (
                     <div className="flex items-center gap-2">
-                      <Navigation className="h-3.5 w-3.5 text-white/40" />
-                      <span className="text-white/50 text-xs">
+                      <Navigation className="h-3.5 w-3.5 text-gray-400" />
+                      <span className="text-gray-400 text-xs">
                         {incomingOrder.distanceKm.toFixed(1)} km
                         {incomingOrder.estimatedTime && ` · ~${incomingOrder.estimatedTime} min`}
                       </span>
@@ -314,30 +314,30 @@ export default function IncomingOrderNotification() {
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <div className="w-2.5 h-2.5 rounded-full bg-[#1DB954] mt-1.5 shrink-0" />
-                      <span className="text-white/80 text-sm">{incomingOrder.originAddress}</span>
+                      <span className="text-gray-700 text-sm">{incomingOrder.originAddress}</span>
                     </div>
-                    <div className="ml-1 border-l border-dashed border-white/20 h-2" />
+                    <div className="ml-1 border-l border-dashed border-gray-200 h-2" />
                     <div className="flex items-start gap-2">
                       <div className="w-2.5 h-2.5 rounded-full bg-[#FFC145] mt-1.5 shrink-0" />
-                      <span className="text-white/80 text-sm">{incomingOrder.destAddress}</span>
+                      <span className="text-gray-700 text-sm">{incomingOrder.destAddress}</span>
                     </div>
                   </div>
 
                   {/* Cargo */}
                   <div className="flex flex-wrap gap-2">
                     {incomingOrder.cargoType && (
-                      <span className="inline-flex items-center gap-1 bg-white/10 text-[#1DB954] text-xs px-2.5 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1 bg-gray-100 text-[#1DB954] text-xs px-2.5 py-1 rounded-full">
                         <Package className="h-3 w-3" />
                         {incomingOrder.cargoType}
                       </span>
                     )}
                     {incomingOrder.cargoWeight && (
-                      <span className="text-white/50 text-xs px-2.5 py-1 bg-white/10 rounded-full">
+                      <span className="text-gray-400 text-xs px-2.5 py-1 bg-gray-100 rounded-full">
                         {incomingOrder.cargoWeight} kg
                       </span>
                     )}
                     {incomingOrder.cargoQuantity && (
-                      <span className="text-white/50 text-xs px-2.5 py-1 bg-white/10 rounded-full">
+                      <span className="text-gray-400 text-xs px-2.5 py-1 bg-gray-100 rounded-full">
                         {incomingOrder.cargoQuantity} uds
                       </span>
                     )}
@@ -345,7 +345,7 @@ export default function IncomingOrderNotification() {
 
                   {/* Store */}
                   {incomingOrder.store && (
-                    <div className="flex items-center gap-2 text-white/40 text-xs">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs">
                       <Truck className="h-3 w-3" />
                       <span>{incomingOrder.store.storeName}</span>
                     </div>
@@ -355,9 +355,9 @@ export default function IncomingOrderNotification() {
 
               {/* Counter-offer input + slider */}
               <div className="px-6 pb-3">
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/5">
+                <div className="bg-gray-50 backdrop-blur-sm rounded-xl p-3 border border-gray-200">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/50 text-xs">Tu contraoferta</span>
+                    <span className="text-gray-500 text-xs">Tu contraoferta</span>
                     <div className="relative">
                       <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1DB954]" />
                       <input
@@ -372,7 +372,7 @@ export default function IncomingOrderNotification() {
                           val = Math.max(minPrice, Math.min(maxPrice, val))
                           setCounterPrice(val)
                         }}
-                        className="w-28 bg-white/10 border border-white/20 rounded-lg pl-7 pr-2 py-1.5 text-[#1DB954] font-bold text-sm text-right focus:outline-none focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954]/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-28 bg-white border border-gray-200 rounded-lg pl-7 pr-2 py-1.5 text-[#1DB954] font-bold text-sm text-right focus:outline-none focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954]/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -389,16 +389,16 @@ export default function IncomingOrderNotification() {
                     className="w-full"
                   />
                   <div className="flex justify-between mt-1">
-                    <span className="text-white/30 text-xs">{formatPrice(minPrice)}</span>
-                    <span className="text-white/30 text-xs">{formatPrice(maxPrice)}</span>
+                    <span className="text-gray-300 text-xs">{formatPrice(minPrice)}</span>
+                    <span className="text-gray-300 text-xs">{formatPrice(maxPrice)}</span>
                   </div>
 
                   {/* Comparison */}
                   {counterPrice !== incomingOrder.proposedPrice && (
-                    <div className="mt-2 pt-2 border-t border-white/10 space-y-1">
+                    <div className="mt-2 pt-2 border-t border-gray-200 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-white/40 text-xs">Local propuso:</span>
-                        <span className="text-white/60 text-xs">{formatPrice(incomingOrder.proposedPrice)}</span>
+                        <span className="text-gray-400 text-xs">Local propuso:</span>
+                        <span className="text-gray-500 text-xs">{formatPrice(incomingOrder.proposedPrice)}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-[#1DB954]/80 text-xs">Tu oferta:</span>

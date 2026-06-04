@@ -59,7 +59,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#181818] flex">
+    <div className="min-h-screen bg-[#F5F5F5] flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -70,7 +70,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#1e1e1e] border-r border-[#333333] z-50 transform transition-transform duration-300 lg:transform-none ${
+        className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 lg:transform-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -81,16 +81,16 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                 <Truck className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">ElectroTransport</h2>
-                <p className="text-xs text-[#888888]">Panel de Local</p>
+                <h2 className="font-bold text-gray-900 text-sm">ElectroTransport</h2>
+                <p className="text-xs text-gray-500">Panel de Local</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#888888] hover:text-[#8a8a8a] transition-colors">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500 hover:text-gray-500 transition-colors">
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
 
           <div className="p-4">
             <div className="flex items-center gap-3">
@@ -100,13 +100,13 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-white truncate">{currentUser?.store?.storeName || currentUser?.name}</p>
-                <p className="text-xs text-[#888888] truncate">{currentUser?.email}</p>
+                <p className="font-medium text-sm text-gray-900 truncate">{currentUser?.store?.storeName || currentUser?.name}</p>
+                <p className="text-xs text-gray-500 truncate">{currentUser?.email}</p>
               </div>
             </div>
           </div>
 
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
 
           <nav className="flex-1 p-3 space-y-1">
             {navItems.map((item) => {
@@ -119,10 +119,10 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-[#1DB954]/10 text-[#1DB954]'
-                      : 'text-[#8a8a8a] hover:bg-[#262626]'
+                      : 'text-gray-500 hover:bg-[#F9FAFB]'
                   }`}
                 >
-                  <Icon className={`h-5 w-5 transition-colors ${isActive ? 'text-[#1DB954]' : 'text-[#888888]'}`} />
+                  <Icon className={`h-5 w-5 transition-colors ${isActive ? 'text-[#1DB954]' : 'text-gray-500'}`} />
                   {item.label}
                   {item.id === 'store-notifications' && unreadCount > 0 && (
                     <Badge className="ml-auto bg-[#FFC145] text-black text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
@@ -136,17 +136,17 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
 
           {currentUser?.store && (
             <div className="p-4">
-              <div className="bg-[#262626] border border-[#333333] rounded-xl p-3 flex items-center gap-3">
+              <div className="bg-[#F9FAFB] border border-gray-200 rounded-xl p-3 flex items-center gap-3">
                 <Star className="h-5 w-5 text-[#FFC145] fill-[#FFC145]" />
                 <div>
-                  <p className="text-sm font-semibold text-white">{currentUser.store.rating.toFixed(1)}</p>
-                  <p className="text-xs text-[#888888]">Calificación</p>
+                  <p className="text-sm font-semibold text-gray-900">{currentUser.store.rating.toFixed(1)}</p>
+                  <p className="text-xs text-gray-500">Calificación</p>
                 </div>
               </div>
             </div>
           )}
 
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
 
           <div className="p-3">
             <button
@@ -161,12 +161,12 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
       </aside>
 
       <main className="flex-1 min-w-0">
-        <header className="lg:hidden sticky top-0 z-30 bg-[#1e1e1e] border-b border-[#333333] px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="text-[#8a8a8a] hover:text-white transition-colors">
+        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-500 hover:text-gray-900 transition-colors">
             <Menu className="h-6 w-6" />
           </button>
           <Truck className="h-5 w-5 text-[#1DB954]" />
-          <h1 className="font-semibold text-white">ElectroTransport</h1>
+          <h1 className="font-semibold text-gray-900">ElectroTransport</h1>
         </header>
 
         <div className="p-4 sm:p-6 lg:p-8">

@@ -22,7 +22,7 @@ const typeIcons: Record<string, typeof Bell> = {
 const typeColors: Record<string, string> = {
   order: 'bg-[#1DB954]/15 text-[#1DB954]',
   payment: 'bg-[#FFC145]/15 text-[#FFC145]',
-  system: 'bg-[#262626] text-[#8a8a8a]',
+  system: 'bg-[#F9FAFB] text-gray-500',
   info: 'bg-[#00C9A7]/15 text-[#00C9A7]',
   offer: 'bg-[#FFC145]/15 text-[#FFC145]',
 }
@@ -70,8 +70,8 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
-          <p className="text-sm text-[#8a8a8a]">
+          <h1 className="text-2xl font-bold text-gray-900">Notificaciones</h1>
+          <p className="text-sm text-gray-500">
             {notifications.filter((n) => !n.isRead).length} sin leer
           </p>
         </div>
@@ -88,8 +88,8 @@ export default function NotificationsPage() {
 
       {notifications.length === 0 ? (
         <div className="text-center py-16">
-          <Bell className="h-16 w-16 text-[#333] mx-auto mb-4" />
-          <p className="text-[#888888]">No hay notificaciones</p>
+          <Bell className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500">No hay notificaciones</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -104,7 +104,7 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
               >
-                <Card className={`bg-[#1e1e1e] border border-[#333333] shadow-none ${
+                <Card className={`bg-white border border-gray-200 shadow-none ${
                   !notif.isRead
                     ? isOffer
                       ? 'border-l-4 border-l-[#FFC145] bg-[#FFC145]/5'
@@ -118,7 +118,7 @@ export default function NotificationsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className={`text-sm font-medium ${!notif.isRead ? 'text-white' : 'text-[#8a8a8a]'}`}>
+                          <p className={`text-sm font-medium ${!notif.isRead ? 'text-gray-900' : 'text-gray-500'}`}>
                             {notif.title}
                           </p>
                           {!notif.isRead && (
@@ -130,9 +130,9 @@ export default function NotificationsPage() {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-[#8a8a8a]">{notif.message}</p>
+                        <p className="text-sm text-gray-500">{notif.message}</p>
                         <div className="flex items-center justify-between mt-2">
-                          <p className="text-xs text-[#888888]">{formatDate(notif.createdAt)}</p>
+                          <p className="text-xs text-gray-500">{formatDate(notif.createdAt)}</p>
                           {/* Action button for unread offer notifications with orderId */}
                           {!notif.isRead && isOffer && notif.orderId && (
                             <Button

@@ -95,14 +95,14 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#181818]">
+    <div className="min-h-screen bg-[#F5F5F5]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Admin Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#1e1e1e] border-r border-[#333333] z-50 transform transition-transform duration-300 lg:transform-none ${
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 lg:transform-none ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex flex-col h-full">
@@ -112,27 +112,27 @@ export default function AdminDashboard() {
                 <Shield className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">ElectroTransport</h2>
-                <p className="text-xs text-[#888888]">Panel de Administración</p>
+                <h2 className="font-bold text-gray-900 text-sm">ElectroTransport</h2>
+                <p className="text-xs text-gray-500">Panel de Administración</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#888888]">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
               <X className="h-5 w-5" />
             </button>
           </div>
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#845EF7]/15 flex items-center justify-center">
                 <span className="text-[#845EF7] font-semibold text-sm">{currentUser?.name?.charAt(0) || 'A'}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-white truncate">{currentUser?.name}</p>
-                <p className="text-xs text-[#888888] truncate">{currentUser?.email}</p>
+                <p className="font-medium text-sm text-gray-900 truncate">{currentUser?.name}</p>
+                <p className="text-xs text-gray-500 truncate">{currentUser?.email}</p>
               </div>
             </div>
           </div>
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <nav className="flex-1 p-3 space-y-1">
             {adminNavItems.map((item) => {
               const isActive = useAppStore.getState().currentView === item.id
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
-                    isActive ? 'bg-[#845EF7]/10 text-[#845EF7]' : 'text-[#8a8a8a] hover:bg-[#262626]'
+                    isActive ? 'bg-[#845EF7]/10 text-[#845EF7]' : 'text-gray-500 hover:bg-[#F9FAFB]'
                   }`}
                 >
                   <Shield className="h-4 w-4" />
@@ -151,15 +151,15 @@ export default function AdminDashboard() {
             })}
           </nav>
           <div className="p-4">
-            <div className="bg-[#262626] border border-[#333333] rounded-xl p-3 flex items-center gap-3">
+            <div className="bg-[#F9FAFB] border border-gray-200 rounded-xl p-3 flex items-center gap-3">
               <Shield className="h-5 w-5 text-[#845EF7]" />
               <div>
-                <p className="text-sm font-semibold text-white">Administrador</p>
-                <p className="text-xs text-[#888888]">Acceso total</p>
+                <p className="text-sm font-semibold text-gray-900">Administrador</p>
+                <p className="text-xs text-gray-500">Acceso total</p>
               </div>
             </div>
           </div>
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <div className="p-3">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors">
               Cerrar Sesión
@@ -171,38 +171,38 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-[#1e1e1e] border-b border-[#333333] px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="text-[#8a8a8a]">
+        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-500">
             <Menu className="h-6 w-6" />
           </button>
           <Shield className="h-5 w-5 text-[#845EF7]" />
-          <h1 className="font-semibold text-white flex-1">Admin</h1>
+          <h1 className="font-semibold text-gray-900 flex-1">Admin</h1>
         </header>
 
         <div className="p-4 sm:p-6 lg:p-8 space-y-6">
           {/* Header */}
           <div>
-            <h1 className="text-2xl font-bold text-white">Panel de Administración</h1>
-            <p className="text-sm text-[#8a8a8a]">Gestiona usuarios y monitorea la plataforma</p>
+            <h1 className="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+            <p className="text-sm text-gray-500">Gestiona usuarios y monitorea la plataforma</p>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Usuarios', value: stats.totalUsers, icon: Users, color: 'bg-[#262626] text-[#8a8a8a]' },
+              { label: 'Total Usuarios', value: stats.totalUsers, icon: Users, color: 'bg-[#F9FAFB] text-gray-500' },
               { label: 'Locales Activos', value: stats.activeStores, icon: Store, color: 'bg-[#1DB954]/10 text-[#1DB954]' },
               { label: 'Transportistas Activos', value: stats.activeDrivers, icon: Truck, color: 'bg-[#00C9A7]/10 text-[#00C9A7]' },
               { label: 'Pedidos Pendientes', value: stats.pendingOrders, icon: Package, color: 'bg-[#FFC145]/10 text-[#FFC145]' },
             ].map((stat, i) => (
               <motion.div key={stat.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+                <Card className="bg-white border border-gray-200 shadow-none">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
                       <stat.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-[#888888]">{stat.label}</p>
-                      <p className="text-lg font-bold text-white">{stat.value}</p>
+                      <p className="text-xs text-gray-500">{stat.label}</p>
+                      <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -212,9 +212,9 @@ export default function AdminDashboard() {
 
           {/* User Management */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+            <Card className="bg-white border border-gray-200 shadow-none">
               <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
-                <CardTitle className="text-lg font-semibold flex items-center gap-2 text-white">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
                   <Users className="h-5 w-5" />
                   Gestión de Usuarios
                 </CardTitle>
@@ -223,12 +223,12 @@ export default function AdminDashboard() {
                 {/* Search & Filter */}
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                     <Input
                       placeholder="Buscar por nombre o email..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="pl-10 bg-[#262626] border-[#2e2e2e] text-white"
+                      className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
                     />
                   </div>
                   <div className="flex gap-2">
@@ -242,8 +242,8 @@ export default function AdminDashboard() {
                         onClick={() => setRoleFilter(f.value)}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                           roleFilter === f.value
-                            ? 'bg-[#845EF7] text-white'
-                            : 'bg-[#262626] text-[#8a8a8a] hover:bg-[#333333] border border-[#333333]'
+                            ? 'bg-[#845EF7] text-gray-900'
+                            : 'bg-[#F9FAFB] text-gray-500 hover:bg-gray-200 border border-gray-200'
                         }`}
                       >
                         {f.label}
@@ -253,26 +253,26 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Users Table */}
-                <div className="overflow-x-auto rounded-xl border border-[#333333]">
+                <div className="overflow-x-auto rounded-xl border border-gray-200">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-[#262626] text-left">
-                        <th className="px-4 py-3 font-medium text-[#888888]">Nombre</th>
-                        <th className="px-4 py-3 font-medium text-[#888888] hidden sm:table-cell">Email</th>
-                        <th className="px-4 py-3 font-medium text-[#888888]">Rol</th>
-                        <th className="px-4 py-3 font-medium text-[#888888]">Estado</th>
-                        <th className="px-4 py-3 font-medium text-[#888888] hidden md:table-cell">Registro</th>
-                        <th className="px-4 py-3 font-medium text-[#888888] text-right">Acciones</th>
+                      <tr className="bg-[#F9FAFB] text-left">
+                        <th className="px-4 py-3 font-medium text-gray-500">Nombre</th>
+                        <th className="px-4 py-3 font-medium text-gray-500 hidden sm:table-cell">Email</th>
+                        <th className="px-4 py-3 font-medium text-gray-500">Rol</th>
+                        <th className="px-4 py-3 font-medium text-gray-500">Estado</th>
+                        <th className="px-4 py-3 font-medium text-gray-500 hidden md:table-cell">Registro</th>
+                        <th className="px-4 py-3 font-medium text-gray-500 text-right">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#333333]">
+                    <tbody className="divide-y divide-gray-200">
                       {filteredUsers.map((user, i) => (
                         <motion.tr
                           key={user.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: i * 0.03 }}
-                          className="hover:bg-[#262626]/50"
+                          className="hover:bg-[#F9FAFB]/50"
                         >
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
@@ -286,12 +286,12 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <div>
-                                <p className="font-medium text-white text-sm">{user.name}</p>
-                                <p className="text-xs text-[#888888] sm:hidden">{user.email}</p>
+                                <p className="font-medium text-gray-900 text-sm">{user.name}</p>
+                                <p className="text-xs text-gray-500 sm:hidden">{user.email}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[#8a8a8a] hidden sm:table-cell">{user.email}</td>
+                          <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{user.email}</td>
                           <td className="px-4 py-3">
                             <Badge variant="outline" className={`text-xs ${
                               user.role === 'store'
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
                               {user.isActive ? 'Activo' : 'Inactivo'}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-[#888888] text-xs hidden md:table-cell">
+                          <td className="px-4 py-3 text-gray-500 text-xs hidden md:table-cell">
                             {formatDate(user.createdAt)}
                           </td>
                           <td className="px-4 py-3 text-right">
@@ -342,8 +342,8 @@ export default function AdminDashboard() {
 
                 {filteredUsers.length === 0 && (
                   <div className="text-center py-8">
-                    <Users className="h-12 w-12 text-[#333] mx-auto mb-3" />
-                    <p className="text-[#888888]">No se encontraron usuarios</p>
+                    <Users className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">No se encontraron usuarios</p>
                   </div>
                 )}
               </CardContent>

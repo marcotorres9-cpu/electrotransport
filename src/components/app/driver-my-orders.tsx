@@ -66,7 +66,7 @@ export default function DriverMyOrdersPage() {
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-              filter === f.value ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              filter === f.value ? 'bg-emerald-600 text-gray-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             {f.label}
@@ -120,7 +120,7 @@ export default function DriverMyOrdersPage() {
                     {(order.status === 'accepted' || order.status === 'in_progress') && (
                       <Button
                         size="sm"
-                        className="gradient-primary text-white text-xs"
+                        className="gradient-primary text-gray-900 text-xs"
                         onClick={async () => {
                           try {
                             await apiFetch(`/api/orders/${order.id}/complete`, { method: 'POST' })

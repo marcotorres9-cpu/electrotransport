@@ -22,9 +22,9 @@ interface MapViewProps {
 const DEFAULT_CENTER: [number, number] = [-0.1807, -78.4678]
 const DEFAULT_ZOOM = 13
 
-// CartoDB Dark Matter tiles - matches dark theme
-const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-const DARK_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+// CartoDB Voyager tiles - light theme
+const LIGHT_TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+const LIGHT_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
 
 export default function MapView({ className = '', height = '400px', showDriverLocations = true, orders = [] }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -71,9 +71,9 @@ export default function MapView({ className = '', height = '400px', showDriverLo
           zoomControl: false,
         }).setView(userLocation, DEFAULT_ZOOM)
 
-        // Dark map tiles
-        L.tileLayer(DARK_TILES, {
-          attribution: DARK_ATTRIBUTION,
+        // Light map tiles
+        L.tileLayer(LIGHT_TILES, {
+          attribution: LIGHT_ATTRIBUTION,
           maxZoom: 19,
         }).addTo(map)
 
@@ -206,17 +206,17 @@ export default function MapView({ className = '', height = '400px', showDriverLo
       />
       {/* Loading overlay */}
       {!mapReady && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#1e1e1e] rounded-xl z-10" style={{ height, width: '100%' }}>
+        <div className="absolute inset-0 flex items-center justify-center bg-white rounded-xl z-10" style={{ height, width: '100%' }}>
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1DB954] mx-auto mb-2" />
-            <p className="text-xs text-[#888]">Cargando mapa...</p>
+            <p className="text-xs text-gray-500">Cargando mapa...</p>
           </div>
         </div>
       )}
       {/* Locating indicator */}
       {mapReady && locating && (
         <div className="absolute top-3 right-3 z-[1000]">
-          <div className="bg-[#262626] border border-[#333] rounded-lg px-3 py-1.5 text-xs text-[#aaa] flex items-center gap-2">
+          <div className="bg-[#F9FAFB] border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-500 flex items-center gap-2">
             <div className="animate-spin rounded-full h-3 w-3 border-b border-[#1DB954]" />
             Detectando ubicación...
           </div>

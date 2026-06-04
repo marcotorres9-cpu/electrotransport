@@ -95,14 +95,14 @@ export default function DriverDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-[#181818]">
+    <div className="min-h-screen bg-[#F5F5F5]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Driver Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#1e1e1e] border-r border-[#333333] z-50 transform transition-transform duration-300 lg:transform-none ${
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 lg:transform-none ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex flex-col h-full">
@@ -112,27 +112,27 @@ export default function DriverDashboard() {
                 <Truck className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">ElectroTransport</h2>
-                <p className="text-xs text-[#888888]">Panel de Transportista</p>
+                <h2 className="font-bold text-gray-900 text-sm">ElectroTransport</h2>
+                <p className="text-xs text-gray-500">Panel de Transportista</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#888888]">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
               <X className="h-5 w-5" />
             </button>
           </div>
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <div className="p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#1DB954]/15 flex items-center justify-center">
                 <span className="text-[#1DB954] font-semibold text-sm">{currentUser?.name?.charAt(0) || 'T'}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-white truncate">{currentUser?.name}</p>
-                <p className="text-xs text-[#888888] truncate">{currentUser?.email}</p>
+                <p className="font-medium text-sm text-gray-900 truncate">{currentUser?.name}</p>
+                <p className="text-xs text-gray-500 truncate">{currentUser?.email}</p>
               </div>
             </div>
           </div>
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <nav className="flex-1 p-3 space-y-1">
             {driverNavItems.map((item) => {
               const isActive = useAppStore.getState().currentView === item.id
@@ -141,7 +141,7 @@ export default function DriverDashboard() {
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
-                    isActive ? 'bg-[#1DB954]/10 text-[#1DB954]' : 'text-[#8a8a8a] hover:bg-[#262626]'
+                    isActive ? 'bg-[#1DB954]/10 text-[#1DB954]' : 'text-gray-500 hover:bg-[#F9FAFB]'
                   }`}
                 >
                   {item.id === 'driver-notifications' && unreadCount > 0 && (
@@ -156,16 +156,16 @@ export default function DriverDashboard() {
           </nav>
           {currentUser?.driver && (
             <div className="p-4">
-              <div className="bg-[#262626] border border-[#333333] rounded-xl p-3 flex items-center gap-3">
+              <div className="bg-[#F9FAFB] border border-gray-200 rounded-xl p-3 flex items-center gap-3">
                 <Star className="h-5 w-5 text-[#FFC145] fill-[#FFC145]" />
                 <div>
-                  <p className="text-sm font-semibold text-white">{currentUser.driver.rating.toFixed(1)}</p>
-                  <p className="text-xs text-[#888888]">{currentUser.driver.totalTrips} viajes</p>
+                  <p className="text-sm font-semibold text-gray-900">{currentUser.driver.rating.toFixed(1)}</p>
+                  <p className="text-xs text-gray-500">{currentUser.driver.totalTrips} viajes</p>
                 </div>
               </div>
             </div>
           )}
-          <Separator className="bg-[#333333]" />
+          <Separator className="bg-gray-200" />
           <div className="p-3">
             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors">
               Cerrar Sesión
@@ -177,16 +177,16 @@ export default function DriverDashboard() {
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-[#1e1e1e] border-b border-[#333333] px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="text-[#8a8a8a]">
+        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-500">
             <Menu className="h-6 w-6" />
           </button>
           <Truck className="h-5 w-5 text-[#1DB954]" />
-          <h1 className="font-semibold text-white flex-1">Panel</h1>
+          <h1 className="font-semibold text-gray-900 flex-1">Panel</h1>
           <Button
             size="sm"
             variant={isDriverOnline ? 'default' : 'outline'}
-            className={isDriverOnline ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black' : 'border-[#333333] text-[#8a8a8a]'}
+            className={isDriverOnline ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black' : 'border-gray-200 text-gray-500'}
             onClick={toggleOnlineStatus}
           >
             {isDriverOnline ? 'En línea' : 'Offline'}
@@ -197,8 +197,8 @@ export default function DriverDashboard() {
           {/* Online Toggle + Stats */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white">Panel de Transportista</h1>
-              <p className="text-sm text-[#8a8a8a]">Gestiona tus entregas y gana dinero</p>
+              <h1 className="text-2xl font-bold text-gray-900">Panel de Transportista</h1>
+              <p className="text-sm text-gray-500">Gestiona tus entregas y gana dinero</p>
             </div>
             <motion.div whileTap={{ scale: 0.95 }}>
               <Button
@@ -206,7 +206,7 @@ export default function DriverDashboard() {
                 className={`font-semibold py-5 px-6 transition-all ${
                   isDriverOnline
                     ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black animate-pulse-emerald'
-                    : 'bg-[#333] hover:bg-[#666666] text-white'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
               >
                 {isDriverOnline ? (
@@ -233,14 +233,14 @@ export default function DriverDashboard() {
               { label: 'Calificación', value: currentUser?.driver?.rating.toFixed(1) || '0.0', icon: Star, color: 'bg-[#845EF7]/10 text-[#845EF7]' },
             ].map((stat, i) => (
               <motion.div key={stat.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+                <Card className="bg-white border border-gray-200 shadow-none">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
                       <stat.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-[#888888]">{stat.label}</p>
-                      <p className="text-lg font-bold text-white">{stat.value}</p>
+                      <p className="text-xs text-gray-500">{stat.label}</p>
+                      <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -252,11 +252,11 @@ export default function DriverDashboard() {
           {isDriverOnline && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <Map className="h-5 w-5 text-[#1DB954]" />
                   Radar de Vehículos
                 </h2>
-                <span className="text-xs text-[#888888]">Quito, Ecuador</span>
+                <span className="text-xs text-gray-500">Quito, Ecuador</span>
               </div>
               <MapView
                 height="300px"
@@ -278,22 +278,22 @@ export default function DriverDashboard() {
           {isDriverOnline && availableOrders.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-white">Pedidos Disponibles</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Pedidos Disponibles</h2>
                 <button onClick={() => setCurrentView('driver-available-orders')} className="text-sm text-[#1DB954] font-medium hover:underline">
                   Ver todos ({availableOrders.length})
                 </button>
               </div>
               <div className="space-y-3">
                 {availableOrders.slice(0, 3).map((order) => (
-                  <div key={order.id} className="bg-[#1e1e1e] rounded-xl border border-[#333333] p-4 hover:border-[#1DB954]/30 transition-shadow">
+                  <div key={order.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:border-[#1DB954]/30 transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-[#888888]">#{order.orderNumber}</span>
-                        {order.store && <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">{order.store.storeName}</Badge>}
+                        <span className="text-xs font-mono text-gray-500">#{order.orderNumber}</span>
+                        {order.store && <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">{order.store.storeName}</Badge>}
                       </div>
                       <span className="font-bold text-[#1DB954]">{formatPrice(order.proposedPrice)}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-[#8a8a8a]">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
                       <MapPin className="h-3.5 w-3.5 text-[#1DB954] shrink-0" />
                       <span className="truncate">{order.originAddress} → {order.destAddress}</span>
                     </div>
@@ -305,11 +305,11 @@ export default function DriverDashboard() {
 
           {!isDriverOnline && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+              <Card className="bg-white border border-gray-200 shadow-none">
                 <CardContent className="p-8 text-center">
-                  <PowerOff className="h-12 w-12 text-[#666666] mx-auto mb-3" />
-                  <h3 className="font-semibold text-[#8a8a8a] mb-1">Estás Offline</h3>
-                  <p className="text-sm text-[#888888]">Conéctate para ver pedidos disponibles</p>
+                  <PowerOff className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <h3 className="font-semibold text-gray-500 mb-1">Estás Offline</h3>
+                  <p className="text-sm text-gray-500">Conéctate para ver pedidos disponibles</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -318,16 +318,16 @@ export default function DriverDashboard() {
           {/* Active orders */}
           {activeOrders.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <h2 className="text-lg font-semibold text-white mb-3">Pedidos Activos</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Pedidos Activos</h2>
               <div className="space-y-3">
                 {activeOrders.map((order) => (
-                  <div key={order.id} className={`bg-[#1e1e1e] rounded-xl p-4 ${
+                  <div key={order.id} className={`bg-white rounded-xl p-4 ${
                     order.status === 'offer_received'
                       ? 'border-2 border-[#FFC145]/40 animate-pulse-offer'
                       : 'border border-[#1DB954]/30'
                   }`}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-mono text-[#888888]">#{order.orderNumber}</span>
+                      <span className="text-xs font-mono text-gray-500">#{order.orderNumber}</span>
                       <Badge className={`text-xs ${
                         order.status === 'offer_received'
                           ? 'bg-[#FFC145]/15 text-[#FFC145]'
@@ -336,7 +336,7 @@ export default function DriverDashboard() {
                         {order.status === 'offer_received' ? 'Oferta Enviada' : order.status === 'accepted' ? 'Aceptado' : 'En Progreso'}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-[#8a8a8a] mb-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                       <MapPin className="h-3.5 w-3.5 text-[#1DB954] shrink-0" />
                       <span className="truncate">{order.originAddress} → {order.destAddress}</span>
                     </div>

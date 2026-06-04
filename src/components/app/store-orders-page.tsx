@@ -57,24 +57,24 @@ export default function StoreOrdersPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setCurrentView('store-dashboard')}
-          className="text-[#888888] hover:text-white"
+          className="text-gray-500 hover:text-gray-900"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white">Mis Pedidos</h1>
-          <p className="text-sm text-[#8a8a8a]">{orders.length} pedidos en total</p>
+          <h1 className="text-2xl font-bold text-gray-900">Mis Pedidos</h1>
+          <p className="text-sm text-gray-500">{orders.length} pedidos en total</p>
         </div>
       </div>
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
         <Input
           placeholder="Buscar por número, origen o destino..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 bg-[#262626] border-[#2e2e2e] text-white"
+          className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function StoreOrdersPage() {
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               orderFilter === f.value
                 ? 'bg-[#1DB954] text-black'
-                : 'bg-[#262626] text-[#8a8a8a] hover:bg-[#333333] border border-[#333333]'
+                : 'bg-[#F9FAFB] text-gray-500 hover:bg-gray-200 border border-gray-200'
             }`}
           >
             {f.label}
@@ -99,8 +99,8 @@ export default function StoreOrdersPage() {
       <div className="space-y-3">
         {filteredOrders.length === 0 ? (
           <div className="text-center py-16">
-            <Package className="h-16 w-16 text-[#333] mx-auto mb-4" />
-            <p className="text-[#888888]">
+            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">
               {search ? 'No se encontraron resultados' : 'No hay pedidos con este filtro'}
             </p>
           </div>
@@ -117,15 +117,15 @@ export default function StoreOrdersPage() {
                   useAppStore.getState().setSelectedOrderId(order.id)
                   setCurrentView('store-order-detail')
                 }}
-                className={`w-full text-left bg-[#1e1e1e] rounded-xl border p-4 hover:border-[#1DB954]/30 transition-all ${
+                className={`w-full text-left bg-white rounded-xl border p-4 hover:border-[#1DB954]/30 transition-all ${
                   order.status === 'offer_received'
                     ? 'border-2 border-[#FFC145]/40 animate-pulse-offer'
-                    : 'border border-[#333333]'
+                    : 'border border-gray-200'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-[#888888] bg-[#262626] px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono text-gray-500 bg-[#F9FAFB] px-2 py-0.5 rounded">
                       #{order.orderNumber}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
@@ -156,21 +156,21 @@ export default function StoreOrdersPage() {
                 <div className="space-y-2">
                   <div className="flex items-start gap-2 text-sm">
                     <MapPin className="h-4 w-4 text-[#1DB954] mt-0.5 shrink-0" />
-                    <span className="text-[#ccc] truncate">{order.originAddress}</span>
+                    <span className="text-gray-600 truncate">{order.originAddress}</span>
                   </div>
                   <div className="flex items-start gap-2 text-sm">
                     <MapPin className="h-4 w-4 text-[#FFC145] mt-0.5 shrink-0" />
-                    <span className="text-[#ccc] truncate">{order.destAddress}</span>
+                    <span className="text-gray-600 truncate">{order.destAddress}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#333333]">
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
                   <div className="flex items-center gap-2">
                     {order.cargoType && (
-                      <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">{order.cargoType}</Badge>
+                      <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">{order.cargoType}</Badge>
                     )}
                   </div>
-                  <span className="text-xs text-[#888888]">{formatDate(order.createdAt)}</span>
+                  <span className="text-xs text-gray-500">{formatDate(order.createdAt)}</span>
                 </div>
               </button>
             </motion.div>

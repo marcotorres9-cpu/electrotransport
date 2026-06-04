@@ -47,37 +47,37 @@
 
 :root {
   --radius: 0.75rem;
-  /* Uber-inspired dark theme - soft dark grays */
-  --background: #181818;
-  --foreground: #f5f5f5;
-  --card: #212121;
-  --card-foreground: #f5f5f5;
-  --popover: #262626;
-  --popover-foreground: #f5f5f5;
+  /* Clean light theme - Uber-inspired */
+  --background: #F5F5F5;
+  --foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
   --primary: #1DB954;
-  --primary-foreground: #000000;
-  --secondary: #262626;
-  --secondary-foreground: #e0e0e0;
-  --muted: #262626;
-  --muted-foreground: #9a9a9a;
-  --accent: #2a2a2a;
-  --accent-foreground: #e0e0e0;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #374151;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #E8F5E9;
+  --accent-foreground: #1a1a1a;
   --destructive: #e74c3c;
-  --border: #2e2e2e;
-  --input: #262626;
+  --border: #E5E7EB;
+  --input: #F9FAFB;
   --ring: #1DB954;
   --chart-1: #1DB954;
   --chart-2: #00C9A7;
   --chart-3: #845EF7;
   --chart-4: #FF6B6B;
   --chart-5: #FFC145;
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #f5f5f5;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #111827;
   --sidebar-primary: #1DB954;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #222222;
-  --sidebar-accent-foreground: #e0e0e0;
-  --sidebar-border: #2e2e2e;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #374151;
+  --sidebar-border: #E5E7EB;
   --sidebar-ring: #1DB954;
 }
 
@@ -90,7 +90,7 @@
   }
 }
 
-/* Custom scrollbar - dark minimal */
+/* Custom scrollbar - light minimal */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -101,12 +101,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #D1D5DB;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #9CA3AF;
 }
 
 /* Uber-style gradient utilities */
@@ -115,30 +115,30 @@
 }
 
 .gradient-hero {
-  background: linear-gradient(160deg, #181818 0%, #12261a 30%, #153025 60%, #182218 100%);
+  background: linear-gradient(160deg, #F5F5F5 0%, #E8F5E9 30%, #F0FFF4 60%, #F5F5F5 100%);
 }
 
 .gradient-card {
-  background: linear-gradient(135deg, #1a2a20 0%, #1c2228 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
 }
 
 .gradient-surface {
-  background: linear-gradient(180deg, #212121 0%, #181818 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%);
 }
 
 /* Glass effect */
 .glass-card {
-  background: rgba(33, 33, 33, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .glass-dark {
-  background: rgba(24, 24, 24, 0.9);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* Animation for floating elements */
@@ -184,6 +184,6 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .surface-hover:hover {
-  background: #262626;
+  background: #F9FAFB;
   border-color: rgba(29, 185, 84, 0.25);
 }

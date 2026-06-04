@@ -66,7 +66,7 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#181818]">
+    <div className="min-h-screen bg-[#F5F5F5]">
       {/* Hero Section */}
       <section className="relative overflow-hidden min-h-screen flex items-center pb-8">
         {/* Subtle ambient background */}
@@ -76,7 +76,7 @@ export default function LandingPage() {
         </div>
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
           backgroundSize: '60px 60px'
         }} />
 
@@ -91,7 +91,7 @@ export default function LandingPage() {
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#262626] border border-[#333333] mb-8 glow-primary"
+              className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#F9FAFB] border border-gray-200 mb-8 glow-primary"
             >
               <Image
                 src="/icon-192.png"
@@ -107,13 +107,13 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.8 }}
             >
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-5 text-white">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-5 text-gray-900">
                 Electro<span className="text-[#1DB954]">Transport</span>
               </h1>
-              <p className="text-lg sm:text-xl text-[#8a8a8a] mb-4 max-w-xl mx-auto font-light leading-relaxed">
+              <p className="text-lg sm:text-xl text-gray-500 mb-4 max-w-xl mx-auto font-light leading-relaxed">
                 Transporte de electrodomésticos a tu medida
               </p>
-              <p className="text-sm text-[#777777] mb-8 max-w-md mx-auto leading-relaxed">
+              <p className="text-sm text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
                 Conectamos locales comerciales con transportistas confiables. Propón tu precio y elige al mejor conductor.
               </p>
             </motion.div>
@@ -138,7 +138,7 @@ export default function LandingPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-[#333333] text-[#ccc] hover:bg-[#2a2a2a] hover:text-white font-medium text-base px-8 sm:px-10 py-4 sm:py-6 rounded-xl transition-all duration-300"
+                  className="border-gray-200 text-gray-600 hover:bg-[#F3F4F6] hover:text-gray-900 font-medium text-base px-8 sm:px-10 py-4 sm:py-6 rounded-xl transition-all duration-300"
                   onClick={() => setCurrentView('login')}
                 >
                   Iniciar Sesión
@@ -150,7 +150,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 sm:py-28 bg-[#181818]">
+      <section className="py-20 sm:py-28 bg-[#F5F5F5]">
         <div className="max-w-5xl mx-auto px-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -159,10 +159,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Cómo funciona</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
               Tres simples pasos
             </h2>
-            <p className="text-[#888888] max-w-md mx-auto">
+            <p className="text-gray-500 max-w-md mx-auto">
               Transportar tus electrodomésticos nunca fue tan fácil
             </p>
           </motion.div>
@@ -179,7 +179,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.6 }}
               >
-                <Card className="bg-[#1e1e1e] border-[#333333] hover:border-[#1DB954]/20 transition-all duration-300 p-6 h-full group">
+                <Card className="bg-white border-gray-200 hover:border-[#1DB954]/20 transition-all duration-300 p-6 h-full group">
                   <CardContent className="p-0 pt-0 flex flex-col items-center">
                     <div className="w-12 h-12 rounded-full bg-[#1DB954]/10 text-[#1DB954] flex items-center justify-center mb-5 group-hover:bg-[#1DB954]/20 transition-colors">
                       {step.icon}
@@ -187,8 +187,8 @@ export default function LandingPage() {
                     <div className="w-6 h-6 rounded-full bg-[#1DB954] text-black flex items-center justify-center font-bold text-xs mb-4">
                       {step.step}
                     </div>
-                    <h3 className="font-semibold text-base text-white mb-2">{step.title}</h3>
-                    <p className="text-[#777] text-sm leading-relaxed text-center">{step.desc}</p>
+                    <h3 className="font-semibold text-base text-gray-900 mb-2">{step.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed text-center">{step.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -198,7 +198,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="py-20 sm:py-28 bg-[#1c1c1c]">
+      <section className="py-20 sm:py-28 bg-[#EEEEEE]">
         <div className="max-w-5xl mx-auto px-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -207,7 +207,7 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Ventajas</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
               ¿Por qué ElectroTransport?
             </h2>
           </motion.div>
@@ -226,8 +226,8 @@ export default function LandingPage() {
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#1DB954]/10 text-[#1DB954] mb-4 group-hover:bg-[#1DB954]/20 transition-colors">
                       {f.icon}
                     </div>
-                    <h3 className="font-semibold text-base text-white mb-2">{f.title}</h3>
-                    <p className="text-[#777] text-sm leading-relaxed">{f.desc}</p>
+                    <h3 className="font-semibold text-base text-gray-900 mb-2">{f.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -237,7 +237,7 @@ export default function LandingPage() {
       </section>
 
       {/* Vehicle Types */}
-      <section className="py-20 sm:py-24 bg-[#181818]">
+      <section className="py-20 sm:py-24 bg-[#F5F5F5]">
         <div className="max-w-4xl mx-auto px-5 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -246,10 +246,10 @@ export default function LandingPage() {
             className="mb-12"
           >
             <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Flota</p>
-            <h2 className="text-3xl font-bold text-white mb-3">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">
               Tipos de Vehículos
             </h2>
-            <p className="text-[#888888] max-w-md mx-auto">
+            <p className="text-gray-500 max-w-md mx-auto">
               Diversas opciones para cada necesidad de transporte
             </p>
           </motion.div>
@@ -263,11 +263,11 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.12 }}
               >
-                <Card className="bg-[#1e1e1e] border-[#333333] hover:border-[#1DB954]/20 transition-all duration-300 p-5 h-full group cursor-default">
+                <Card className="bg-white border-gray-200 hover:border-[#1DB954]/20 transition-all duration-300 p-5 h-full group cursor-default">
                   <CardContent className="p-0 flex flex-col items-center">
                     <div className="text-4xl mb-3">{v.icon}</div>
-                    <h3 className="font-semibold text-white mb-1 text-sm">{v.name}</h3>
-                    <p className="text-xs text-[#777]">{v.desc}</p>
+                    <h3 className="font-semibold text-gray-900 mb-1 text-sm">{v.name}</h3>
+                    <p className="text-xs text-gray-500">{v.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -278,7 +278,7 @@ export default function LandingPage() {
 
       {/* Driver CTA */}
       <section className="py-20 sm:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#181818] via-[#071a0f] to-[#181818]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F5F5] via-[#E8F5E9] to-[#F5F5F5]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#1DB954] rounded-full blur-[250px] opacity-[0.04]" />
 
         <div className="relative max-w-3xl mx-auto px-5 text-center">
@@ -288,10 +288,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-4">Conductores</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               ¿Eres transportista?
             </h2>
-            <p className="text-[#8a8a8a] mb-10 max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-500 mb-10 max-w-lg mx-auto leading-relaxed">
               Únete a nuestra red de conductores y comienza a ganar dinero transportando electrodomésticos. Recibe pedidos en tiempo real.
             </p>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -309,18 +309,18 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#141414] border-t border-[#262626]">
+      <footer className="bg-[#FAFAFA] border-t border-gray-200">
         <div className="max-w-5xl mx-auto px-5 py-12">
           <div className="grid sm:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <Image src="/icon-192.png" alt="ElectroTransport" width={32} height={32} className="rounded-lg" />
                 <div>
-                  <h3 className="font-bold text-white text-base">ElectroTransport</h3>
-                  <p className="text-xs text-[#888888]">Transporte inteligente</p>
+                  <h3 className="font-bold text-gray-900 text-base">ElectroTransport</h3>
+                  <p className="text-xs text-gray-500">Transporte inteligente</p>
                 </div>
               </div>
-              <p className="text-[#777777] text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 La plataforma líder en transporte de electrodomésticos.
               </p>
             </div>
@@ -328,33 +328,33 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold text-xs uppercase tracking-widest text-[#1DB954] mb-4">Plataforma</h4>
               <ul className="space-y-2.5">
-                <li><button onClick={() => setCurrentView('register')} className="text-[#aaaaaa] hover:text-white text-sm transition-colors">Registrarse</button></li>
-                <li><button onClick={() => setCurrentView('login')} className="text-[#aaaaaa] hover:text-white text-sm transition-colors">Iniciar Sesión</button></li>
+                <li><button onClick={() => setCurrentView('register')} className="text-gray-500 hover:text-gray-900 text-sm transition-colors">Registrarse</button></li>
+                <li><button onClick={() => setCurrentView('login')} className="text-gray-500 hover:text-gray-900 text-sm transition-colors">Iniciar Sesión</button></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-xs uppercase tracking-widest text-[#1DB954] mb-4">Contacto</h4>
               <div className="flex gap-3 mb-4">
-                <a href="#" className="w-9 h-9 rounded-lg bg-[#262626] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#aaaaaa]">
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#F9FAFB] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-gray-500">
                   <Share2 className="h-4 w-4" />
                 </a>
-                <a href="#" className="w-9 h-9 rounded-lg bg-[#262626] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#aaaaaa]">
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#F9FAFB] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-gray-500">
                   <Globe className="h-4 w-4" />
                 </a>
-                <a href="#" className="w-9 h-9 rounded-lg bg-[#262626] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#aaaaaa]">
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#F9FAFB] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-gray-500">
                   <Mail className="h-4 w-4" />
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-[#777777] text-xs">
+              <div className="flex items-center gap-2 text-gray-400 text-xs">
                 <MapPin className="h-3.5 w-3.5" />
                 <span>Quito, Ecuador</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-[#262626] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-[#666666] text-xs">
+          <div className="border-t border-gray-200 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-gray-400 text-xs">
               © {new Date().getFullYear()} ElectroTransport. Todos los derechos reservados.
             </p>
           </div>

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// CartoDB Dark Matter tiles
-const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+// CartoDB Voyager tiles - light theme
+const LIGHT_TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
 
 interface OrderMapProps {
   originLat?: number
@@ -106,8 +106,8 @@ export default function OrderMap({
       attributionControl: false,
     })
 
-    // Dark map tiles
-    L.tileLayer(DARK_TILES, {
+    // Light map tiles
+    L.tileLayer(LIGHT_TILES, {
       maxZoom: 19,
     }).addTo(map)
 
@@ -257,7 +257,7 @@ export default function OrderMap({
   }, [mapReady, originLat, originLng, destLat, destLng, orders, drivers, userLocation])
 
   return (
-    <div className="relative rounded-xl overflow-hidden border border-[#333]">
+    <div className="relative rounded-xl overflow-hidden border border-gray-300">
       <div
         ref={mapRef}
         style={{ height, width: '100%' }}
@@ -265,7 +265,7 @@ export default function OrderMap({
       />
       {(selectingOrigin || selectingDest) && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000]">
-          <div className="bg-[#262626] border border-[#333] rounded-lg px-3 py-2 text-xs font-medium text-[#1DB954] shadow-lg">
+          <div className="bg-[#F9FAFB] border border-gray-300 rounded-lg px-3 py-2 text-xs font-medium text-[#1DB954] shadow-lg">
             📍 Toca el mapa para marcar {selectingOrigin ? 'el origen' : 'el destino'}
           </div>
         </div>

@@ -112,8 +112,8 @@ export default function OrderDetailPage() {
   if (!order) {
     return (
       <div className="text-center py-20">
-        <AlertCircle className="h-12 w-12 text-[#666666] mx-auto mb-3" />
-        <p className="text-[#888888]">Pedido no encontrado</p>
+        <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-500">Pedido no encontrado</p>
         <Button className="mt-4 bg-[#1DB954] hover:bg-[#17a34a] text-black" onClick={() => setCurrentView('store-orders')}>Volver</Button>
       </div>
     )
@@ -127,12 +127,12 @@ export default function OrderDetailPage() {
     <div className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => setCurrentView('store-orders')} className="text-[#888888] hover:text-white">
+        <button onClick={() => setCurrentView('store-orders')} className="text-gray-500 hover:text-gray-900">
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-white">Pedido #{order.orderNumber}</h1>
-          <p className="text-sm text-[#8a8a8a]">{formatDate(order.createdAt)}</p>
+          <h1 className="text-xl font-bold text-gray-900">Pedido #{order.orderNumber}</h1>
+          <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
         </div>
         <Badge className={`${getStatusColor(order.status)} text-xs px-3 py-1`}>
           {getStatusLabel(order.status)}
@@ -141,7 +141,7 @@ export default function OrderDetailPage() {
 
       {/* Status Timeline */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+        <Card className="bg-white border border-gray-200 shadow-none">
           <CardContent className="p-4">
             <div className="flex items-center justify-between overflow-x-auto">
               {statusSteps.map((step, i) => {
@@ -152,7 +152,7 @@ export default function OrderDetailPage() {
                   <div key={step.key} className="flex flex-col items-center flex-1 relative min-w-[60px]">
                     {i > 0 && (
                       <div className={`absolute top-4 right-1/2 left-[-50%] h-0.5 ${
-                        i <= currentStepIndex ? 'bg-[#1DB954]' : 'bg-[#2e2e2e]'
+                        i <= currentStepIndex ? 'bg-[#1DB954]' : 'bg-[#E5E7EB]'
                       }`} />
                     )}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center z-10 ${
@@ -160,11 +160,11 @@ export default function OrderDetailPage() {
                         ? 'bg-[#1DB954] text-white ring-4 ring-[#1DB954]/20'
                         : isActive
                         ? 'bg-[#1DB954] text-white'
-                        : 'bg-[#2e2e2e] text-[#777777]'
+                        : 'bg-[#E5E7EB] text-gray-400'
                     }`}>
                       <Icon className="h-4 w-4" />
                     </div>
-                    <span className={`text-xs mt-1.5 text-center ${isActive ? 'text-[#1DB954] font-medium' : 'text-[#777777]'}`}>
+                    <span className={`text-xs mt-1.5 text-center ${isActive ? 'text-[#1DB954] font-medium' : 'text-gray-400'}`}>
                       {step.label}
                     </span>
                   </div>
@@ -182,7 +182,7 @@ export default function OrderDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
         >
-          <Card className="border-2 border-[#FFC145]/40 bg-[#1e1e1e]">
+          <Card className="border-2 border-[#FFC145]/40 bg-white">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-10 h-10 rounded-full bg-[#FFC145]/15 flex items-center justify-center">
@@ -196,14 +196,14 @@ export default function OrderDetailPage() {
 
               {/* Driver Info */}
               {order.driver && (
-                <div className="flex items-center gap-3 mb-4 bg-[#262626] rounded-xl p-3 border border-[#333333]">
+                <div className="flex items-center gap-3 mb-4 bg-[#F9FAFB] rounded-xl p-3 border border-gray-200">
                   <div className="w-10 h-10 rounded-full bg-[#1DB954]/15 flex items-center justify-center">
                     <span className="text-[#1DB954] font-bold">{order.driver.name?.charAt(0)}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-white">{order.driver.name}</p>
+                    <p className="font-medium text-gray-900">{order.driver.name}</p>
                     {order.driver.driver && (
-                      <p className="text-xs text-[#8a8a8a] flex items-center gap-1">
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
                         <Car className="h-3 w-3" />
                         {order.driver.driver.vehicleType}
                         {order.driver.driver.vehiclePlate && ` · ${order.driver.driver.vehiclePlate}`}
@@ -211,7 +211,7 @@ export default function OrderDetailPage() {
                     )}
                   </div>
                   {order.driver.phone && (
-                    <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">
+                    <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">
                       <Phone className="h-3 w-3 mr-1" />
                       {order.driver.phone}
                     </Badge>
@@ -220,10 +220,10 @@ export default function OrderDetailPage() {
               )}
 
               {/* Offer Price */}
-              <div className="bg-[#262626] rounded-xl p-3 mb-4 border border-[#333333]">
+              <div className="bg-[#F9FAFB] rounded-xl p-3 mb-4 border border-gray-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#8a8a8a]">Precio propuesto por ti:</span>
-                  <span className="font-medium text-[#ccc]">{formatPrice(order.proposedPrice)}</span>
+                  <span className="text-sm text-gray-500">Precio propuesto por ti:</span>
+                  <span className="font-medium text-gray-600">{formatPrice(order.proposedPrice)}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#FFC145]/20">
                   <span className="text-sm font-semibold text-[#FFC145]">Oferta del transportista:</span>
@@ -269,9 +269,9 @@ export default function OrderDetailPage() {
 
       {/* Route */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+        <Card className="bg-white border border-gray-200 shadow-none">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
               <MapPin className="h-5 w-5 text-[#1DB954]" />
               Ruta
             </CardTitle>
@@ -280,16 +280,16 @@ export default function OrderDetailPage() {
             <div className="flex items-start gap-3">
               <div className="w-3 h-3 rounded-full bg-[#1DB954] mt-1.5 shrink-0" />
               <div>
-                <p className="text-xs text-[#888888]">Origen</p>
-                <p className="text-sm text-[#ccc]">{order.originAddress}</p>
+                <p className="text-xs text-gray-500">Origen</p>
+                <p className="text-sm text-gray-600">{order.originAddress}</p>
               </div>
             </div>
-            <div className="ml-1.5 border-l-2 border-dashed border-[#333] h-4" />
+            <div className="ml-1.5 border-l-2 border-dashed border-gray-300 h-4" />
             <div className="flex items-start gap-3">
               <div className="w-3 h-3 rounded-full bg-[#FFC145] mt-1.5 shrink-0" />
               <div>
-                <p className="text-xs text-[#888888]">Destino</p>
-                <p className="text-sm text-[#ccc]">{order.destAddress}</p>
+                <p className="text-xs text-gray-500">Destino</p>
+                <p className="text-sm text-gray-600">{order.destAddress}</p>
               </div>
             </div>
           </CardContent>
@@ -298,9 +298,9 @@ export default function OrderDetailPage() {
 
       {/* Cargo Details */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-        <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+        <Card className="bg-white border border-gray-200 shadow-none">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
               <Package className="h-5 w-5 text-[#1DB954]" />
               Detalles de la Carga
             </CardTitle>
@@ -309,27 +309,27 @@ export default function OrderDetailPage() {
             <div className="grid grid-cols-2 gap-3">
               {order.cargoType && (
                 <div>
-                  <p className="text-xs text-[#888888]">Tipo</p>
-                  <p className="text-sm font-medium text-white">{order.cargoType}</p>
+                  <p className="text-xs text-gray-500">Tipo</p>
+                  <p className="text-sm font-medium text-gray-900">{order.cargoType}</p>
                 </div>
               )}
               {order.cargoWeight && (
                 <div>
-                  <p className="text-xs text-[#888888]">Peso</p>
-                  <p className="text-sm font-medium text-white">{order.cargoWeight} kg</p>
+                  <p className="text-xs text-gray-500">Peso</p>
+                  <p className="text-sm font-medium text-gray-900">{order.cargoWeight} kg</p>
                 </div>
               )}
               {order.cargoQuantity && (
                 <div>
-                  <p className="text-xs text-[#888888]">Cantidad</p>
-                  <p className="text-sm font-medium text-white">{order.cargoQuantity} unidades</p>
+                  <p className="text-xs text-gray-500">Cantidad</p>
+                  <p className="text-sm font-medium text-gray-900">{order.cargoQuantity} unidades</p>
                 </div>
               )}
             </div>
             {order.specialNotes && (
-              <div className="mt-3 pt-3 border-t border-[#333333]">
-                <p className="text-xs text-[#888888] mb-1">Notas especiales</p>
-                <p className="text-sm text-[#8a8a8a]">{order.specialNotes}</p>
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <p className="text-xs text-gray-500 mb-1">Notas especiales</p>
+                <p className="text-sm text-gray-500">{order.specialNotes}</p>
               </div>
             )}
           </CardContent>
@@ -338,7 +338,7 @@ export default function OrderDetailPage() {
 
       {/* Price */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <Card className="border-2 border-[#1DB954]/30 bg-[#1e1e1e]">
+        <Card className="border-2 border-[#1DB954]/30 bg-white">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold flex items-center gap-2 text-[#1DB954]">
               <DollarSign className="h-5 w-5 text-[#1DB954]" />
@@ -369,10 +369,10 @@ export default function OrderDetailPage() {
       {/* Driver Info (for non-offer statuses) */}
       {order.driver && !isOfferReceived && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <Card className="bg-[#1e1e1e] border border-[#333333] shadow-none">
+          <Card className="bg-white border border-gray-200 shadow-none">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
-                <User className="h-5 w-5 text-[#8a8a8a]" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
+                <User className="h-5 w-5 text-gray-500" />
                 Transportista
               </CardTitle>
             </CardHeader>
@@ -382,9 +382,9 @@ export default function OrderDetailPage() {
                   <span className="text-[#1DB954] font-bold">{order.driver.name?.charAt(0)}</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{order.driver.name}</p>
+                  <p className="font-semibold text-gray-900">{order.driver.name}</p>
                   {order.driver.phone && (
-                    <p className="text-sm text-[#8a8a8a] flex items-center gap-1">
+                    <p className="text-sm text-gray-500 flex items-center gap-1">
                       <Phone className="h-3 w-3" /> {order.driver.phone}
                     </p>
                   )}
@@ -392,12 +392,12 @@ export default function OrderDetailPage() {
               </div>
               {order.driver.driver && (
                 <div className="flex gap-2">
-                  <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">
+                  <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">
                     <Car className="h-3 w-3 mr-1" />
                     {order.driver.driver.vehicleType}
                   </Badge>
                   {order.driver.driver.vehiclePlate && (
-                    <Badge variant="outline" className="text-xs border-[#333333] text-[#8a8a8a]">{order.driver.driver.vehiclePlate}</Badge>
+                    <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">{order.driver.driver.vehiclePlate}</Badge>
                   )}
                 </div>
               )}
@@ -424,23 +424,23 @@ export default function OrderDetailPage() {
 
       {/* Cancel Dialog */}
       <Dialog open={cancelDialog} onOpenChange={setCancelDialog}>
-        <DialogContent className="bg-[#1e1e1e] border-[#333333]">
+        <DialogContent className="bg-white border-gray-200">
           <DialogHeader>
-            <DialogTitle className="text-white">¿Cancelar pedido #{order.orderNumber}?</DialogTitle>
+            <DialogTitle className="text-gray-900">¿Cancelar pedido #{order.orderNumber}?</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-[#8a8a8a]">Esta acción no se puede deshacer.</p>
+            <p className="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
             <Textarea
               placeholder="Razón de cancelación (opcional)"
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               rows={3}
-              className="bg-[#262626] border-[#2e2e2e] text-white"
+              className="bg-[#F9FAFB] border-gray-200 text-gray-900"
             />
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setCancelDialog(false)} className="border-[#333333] text-[#8a8a8a]">No, volver</Button>
-            <Button className="bg-[#FF6B6B] hover:bg-[#e55c5c] text-white" onClick={handleCancel}>
+            <Button variant="outline" onClick={() => setCancelDialog(false)} className="border-gray-200 text-gray-500">No, volver</Button>
+            <Button className="bg-[#FF6B6B] hover:bg-[#e55c5c] text-gray-900" onClick={handleCancel}>
               Sí, cancelar
             </Button>
           </DialogFooter>
