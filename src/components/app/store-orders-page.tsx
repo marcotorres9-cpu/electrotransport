@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import {
-  Search, ChevronLeft, Package, MapPin, Navigation
+  Search, ChevronLeft, Package, MapPin, User, DollarSign
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +14,7 @@ import type { OrderItem } from '@/store/use-app-store'
 
 const filters = [
   { value: 'all', label: 'Todos' },
+  { value: 'offer_received', label: 'Ofertas Recibidas' },
   { value: 'pending', label: 'Pendientes' },
   { value: 'accepted', label: 'Aceptados' },
   { value: 'in_progress', label: 'En Progreso' },
@@ -56,7 +57,7 @@ export default function StoreOrdersPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setCurrentView('store-dashboard')}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -73,20 +74,20 @@ export default function StoreOrdersPage() {
           placeholder="Buscar por número, origen o destino..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 glass-card border-slate-200/60"
+          className="pl-10"
         />
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1">
         {filters.map((f) => (
           <button
             key={f.value}
             onClick={() => setOrderFilter(f.value)}
-            className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all shadow-sm ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               orderFilter === f.value
-                ? 'gradient-primary text-white shadow-md'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/60'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             {f.label}
@@ -116,11 +117,15 @@ export default function StoreOrdersPage() {
                   useAppStore.getState().setSelectedOrderId(order.id)
                   setCurrentView('store-order-detail')
                 }}
-                className="w-full text-left glass-card border border-slate-200/60 rounded-xl p-4 hover:border-emerald-300 hover:shadow-lg transition-all"
+                className={`w-full text-left bg-white rounded-xl border p-4 hover:shadow-md transition-all ${
+                  order.status === 'offer_received'
+                    ? 'border-2 border-orange-300 animate-pulse-offer'
+                    : 'border border-slate-100 hover:border-emerald-200'
+                }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-muted-foreground bg-slate-50 px-2 py-0.5 rounded-lg">
+                    <span className="text-xs font-mono text-muted-foreground bg-slate-50 px-2 py-0.5 rounded">
                       #{order.orderNumber}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(order.status)}`}>
@@ -130,27 +135,39 @@ export default function StoreOrdersPage() {
                   <span className="font-bold text-emerald-600">{formatPrice(order.proposedPrice)}</span>
                 </div>
 
+                {/* Offer received - Show driver info and offered price */}
+                {order.status === 'offer_received' && (
+                  <div className="bg-orange-50 rounded-lg p-2 mb-3 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                      <User className="h-3.5 w-3.5 text-orange-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-orange-800 truncate">
+                        {order.driver?.name || 'Transportista'}
+                      </p>
+                      <p className="text-xs text-orange-600">
+                        Ofrece: <span className="font-bold">{formatPrice(order.acceptedPrice || 0)}</span>
+                      </p>
+                    </div>
+                    <DollarSign className="h-4 w-4 text-orange-500 shrink-0" />
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <div className="flex items-start gap-2 text-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                    <MapPin className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
                     <span className="text-slate-700 truncate">{order.originAddress}</span>
                   </div>
                   <div className="flex items-start gap-2 text-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                    <MapPin className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
                     <span className="text-slate-700 truncate">{order.destAddress}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-50">
                   <div className="flex items-center gap-2">
                     {order.cargoType && (
                       <Badge variant="outline" className="text-xs">{order.cargoType}</Badge>
-                    )}
-                    {order.distanceKm && (
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Navigation className="h-3 w-3" />
-                        {order.distanceKm.toFixed(1)} km
-                      </span>
                     )}
                   </div>
                   <span className="text-xs text-muted-foreground">{formatDate(order.createdAt)}</span>

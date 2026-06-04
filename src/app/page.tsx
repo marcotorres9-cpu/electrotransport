@@ -15,7 +15,7 @@ import DriverAvailableOrders from '@/components/app/driver-available-orders'
 import DriverMyOrders from '@/components/app/driver-my-orders'
 import NotificationsPage from '@/components/app/notifications-page'
 import ProfilePage from '@/components/app/profile-page'
-import IncomingOrderNotification from '@/components/app/incoming-order-notification'
+import AdminDashboard from '@/components/app/admin-dashboard'
 
 const pageVariants = {
   initial: { opacity: 0, y: 8 },
@@ -41,96 +41,98 @@ export default function Home() {
   const { currentView } = useAppStore()
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {/* Public pages */}
-        {currentView === 'landing' && (
-          <PageTransition key="landing">
-            <LandingPage />
-          </PageTransition>
-        )}
+    <AnimatePresence mode="wait">
+      {/* Public pages */}
+      {currentView === 'landing' && (
+        <PageTransition key="landing">
+          <LandingPage />
+        </PageTransition>
+      )}
 
-        {currentView === 'login' && (
-          <PageTransition key="login">
-            <LoginPage />
-          </PageTransition>
-        )}
+      {currentView === 'login' && (
+        <PageTransition key="login">
+          <LoginPage />
+        </PageTransition>
+      )}
 
-        {currentView === 'register' && (
-          <PageTransition key="register">
-            <RegisterPage />
-          </PageTransition>
-        )}
+      {currentView === 'register' && (
+        <PageTransition key="register">
+          <RegisterPage />
+        </PageTransition>
+      )}
 
-        {/* Store pages */}
-        {(currentView === 'store-dashboard' ||
-          currentView === 'store-create-order' ||
-          currentView === 'store-orders' ||
-          currentView === 'store-order-detail' ||
-          currentView === 'store-notifications' ||
-          currentView === 'store-profile') && (
-          <PageTransition key={currentView}>
-            <StoreLayout>
-              {currentView === 'store-dashboard' && <StoreDashboard />}
-              {currentView === 'store-create-order' && <CreateOrderPage />}
-              {currentView === 'store-orders' && <StoreOrdersPage />}
-              {currentView === 'store-order-detail' && <OrderDetailPage />}
-              {currentView === 'store-notifications' && <NotificationsPage />}
-              {currentView === 'store-profile' && <ProfilePage />}
-            </StoreLayout>
-          </PageTransition>
-        )}
+      {/* Store pages */}
+      {(currentView === 'store-dashboard' ||
+        currentView === 'store-create-order' ||
+        currentView === 'store-orders' ||
+        currentView === 'store-order-detail' ||
+        currentView === 'store-notifications' ||
+        currentView === 'store-profile') && (
+        <PageTransition key={currentView}>
+          <StoreLayout>
+            {currentView === 'store-dashboard' && <StoreDashboard />}
+            {currentView === 'store-create-order' && <CreateOrderPage />}
+            {currentView === 'store-orders' && <StoreOrdersPage />}
+            {currentView === 'store-order-detail' && <OrderDetailPage />}
+            {currentView === 'store-notifications' && <NotificationsPage />}
+            {currentView === 'store-profile' && <ProfilePage />}
+          </StoreLayout>
+        </PageTransition>
+      )}
 
-        {/* Driver pages */}
-        {currentView === 'driver-dashboard' && (
-          <PageTransition key="driver-dashboard">
-            <DriverDashboard />
-          </PageTransition>
-        )}
+      {/* Driver pages */}
+      {currentView === 'driver-dashboard' && (
+        <PageTransition key="driver-dashboard">
+          <DriverDashboard />
+        </PageTransition>
+      )}
 
-        {currentView === 'driver-available-orders' && (
-          <PageTransition key="driver-available-orders">
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/30">
-              <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-                <DriverAvailableOrders />
-              </div>
+      {currentView === 'driver-available-orders' && (
+        <PageTransition key="driver-available-orders">
+          <div className="min-h-screen bg-slate-50">
+            <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+              <DriverAvailableOrders />
             </div>
-          </PageTransition>
-        )}
+          </div>
+        </PageTransition>
+      )}
 
-        {currentView === 'driver-my-orders' && (
-          <PageTransition key="driver-my-orders">
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/30">
-              <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-                <DriverMyOrders />
-              </div>
+      {currentView === 'driver-my-orders' && (
+        <PageTransition key="driver-my-orders">
+          <div className="min-h-screen bg-slate-50">
+            <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+              <DriverMyOrders />
             </div>
-          </PageTransition>
-        )}
+          </div>
+        </PageTransition>
+      )}
 
-        {currentView === 'driver-notifications' && (
-          <PageTransition key="driver-notifications">
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/30">
-              <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-                <NotificationsPage />
-              </div>
+      {currentView === 'driver-notifications' && (
+        <PageTransition key="driver-notifications">
+          <div className="min-h-screen bg-slate-50">
+            <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+              <NotificationsPage />
             </div>
-          </PageTransition>
-        )}
+          </div>
+        </PageTransition>
+      )}
 
-        {currentView === 'driver-profile' && (
-          <PageTransition key="driver-profile">
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/30">
-              <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-                <ProfilePage />
-              </div>
+      {currentView === 'driver-profile' && (
+        <PageTransition key="driver-profile">
+          <div className="min-h-screen bg-slate-50">
+            <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+              <ProfilePage />
             </div>
-          </PageTransition>
-        )}
-      </AnimatePresence>
+          </div>
+        </PageTransition>
+      )}
 
-      {/* Global Incoming Order Notification (always rendered for drivers) */}
-      <IncomingOrderNotification />
-    </>
+      {/* Admin page - standalone with own sidebar layout */}
+      {currentView === 'admin-dashboard' && (
+        <PageTransition key="admin-dashboard">
+          <AdminDashboard />
+        </PageTransition>
+      )}
+    </AnimatePresence>
   )
 }

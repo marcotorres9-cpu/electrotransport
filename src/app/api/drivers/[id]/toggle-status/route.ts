@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
+// Default Quito center coordinates
+const DEFAULT_LAT = -0.1807
+const DEFAULT_LNG = -78.4678
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,9 +24,19 @@ export async function POST(
       return NextResponse.json({ error: 'Driver not found' }, { status: 404 })
     }
 
+    // When going online, set location to Quito center if no location
+    const updateData: Record<string, unknown> = {
+      isOnline: !driver.isOnline,
+    }
+
+    if (!driver.isOnline) {
+      updateData.lat = driver.lat || DEFAULT_LAT + (Math.random() - 0.5) * 0.04
+      updateData.lng = driver.lng || DEFAULT_LNG + (Math.random() - 0.5) * 0.04
+    }
+
     const updated = await db.etDriver.update({
       where: { id },
-      data: { isOnline: !driver.isOnline },
+      data: updateData,
       include: { user: { select: { id: true, name: true } } },
     })
 

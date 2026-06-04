@@ -15,13 +15,14 @@ export type ViewName =
   | 'driver-my-orders'
   | 'driver-profile'
   | 'driver-notifications'
+  | 'admin-dashboard'
 
 export interface UserWithProfile {
   id: string
   name: string
   email: string
   phone: string | null
-  role: 'store' | 'driver'
+  role: 'store' | 'driver' | 'admin'
   avatar: string | null
   isActive: boolean
   token: string

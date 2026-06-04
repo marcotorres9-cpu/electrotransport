@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ orders: ordersWithDistance })
     }
 
-    // Store: see own orders
+    // Store: see own orders - include driver info for offer_received
     const orders = await db.etOrder.findMany({
       where: {
         createdBy: userId,
@@ -102,6 +102,7 @@ export async function GET(request: NextRequest) {
             driver: { select: { vehicleType: true, vehiclePlate: true } },
           },
         },
+        store: { select: { id: true, storeName: true } },
       },
       orderBy: { createdAt: 'desc' },
     })

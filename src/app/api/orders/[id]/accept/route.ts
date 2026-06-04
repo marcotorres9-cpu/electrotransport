@@ -17,7 +17,14 @@ export async function POST(
     const body = await request.json()
     const { acceptedPrice } = body
 
-    const order = await db.etOrder.findUnique({ where: { id } })
+    const order = await db.etOrder.findUnique({
+      where: { id },
+      include: {
+        creator: { select: { id: true, name: true } },
+        driver: { select: { id: true, name: true } },
+        store: { select: { id: true, storeName: true } },
+      },
+    })
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
@@ -31,13 +38,16 @@ export async function POST(
     }
 
     const finalPrice = acceptedPrice !== undefined ? parseFloat(String(acceptedPrice)) : order.proposedPrice
+    const isCounterOffer = finalPrice !== order.proposedPrice
 
+    // New flow: always set to offer_received so store must confirm
     const updatedOrder = await db.etOrder.update({
       where: { id },
       data: {
-        status: 'accepted',
+        status: 'offer_received',
         acceptedBy: userId,
         acceptedPrice: finalPrice,
+        counterPrice: isCounterOffer ? finalPrice : null,
       },
       include: {
         creator: { select: { id: true, name: true } },
@@ -46,22 +56,27 @@ export async function POST(
       },
     })
 
+    // Notification for store owner
+    const driver = await db.etUser.findUnique({ where: { id: userId } })
+    const driverName = driver?.name || 'Transportista'
+
     await db.etNotification.create({
       data: {
         userId: order.createdBy,
-        title: 'Transportista asignado',
-        message: `Tu pedido ${order.orderNumber} ha sido aceptado. Precio: $${finalPrice.toFixed(2)}`,
-        type: 'order',
+        title: '¡Oferta recibida!',
+        message: `${driverName} ha ofrecido ${isCounterOffer ? 'una contraoferta de' : 'aceptar por'} $${finalPrice.toFixed(2)} para el pedido ${order.orderNumber}. Revisa y acepta o declina la oferta.`,
+        type: 'offer',
         orderId: order.id,
       },
     })
 
+    // Notification for driver
     await db.etNotification.create({
       data: {
         userId,
-        title: 'Pedido aceptado',
-        message: `Has aceptado el pedido ${order.orderNumber} por $${finalPrice.toFixed(2)}`,
-        type: 'order',
+        title: 'Oferta enviada',
+        message: `Oferta enviada, esperando confirmación del local para el pedido ${order.orderNumber}.`,
+        type: 'offer',
         orderId: order.id,
       },
     })

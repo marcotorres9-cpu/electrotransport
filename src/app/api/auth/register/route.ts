@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name, email, password and role are required' }, { status: 400 })
     }
 
-    if (!['store', 'driver'].includes(role)) {
+    if (!['store', 'driver', 'admin'].includes(role)) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
     }
 
@@ -41,6 +41,22 @@ export async function POST(request: NextRequest) {
         isActive: true,
       },
     })
+
+    // Admin role - just create the user, no profile needed
+    if (role === 'admin') {
+      return NextResponse.json({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          avatar: user.avatar,
+          isActive: user.isActive,
+          token,
+        },
+      })
+    }
 
     if (role === 'store') {
       const { storeName, storeType, address, city, rutNumber } = body

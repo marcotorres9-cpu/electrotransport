@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
-export async function GET(request: NextRequest) {
+// Default Quito center coordinates
+const DEFAULT_LAT = -0.1807
+const DEFAULT_LNG = -78.4678
+
+export async function GET() {
   try {
     const drivers = await db.etDriver.findMany({
       where: { isOnline: true },

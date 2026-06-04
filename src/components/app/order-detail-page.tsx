@@ -5,7 +5,8 @@ import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import {
   MapPin, Clock, Package, DollarSign, User, Phone, Car,
-  ChevronLeft, CheckCircle2, XCircle, AlertCircle
+  ChevronLeft, CheckCircle2, XCircle, AlertCircle, Handshake,
+  Search
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,6 +19,7 @@ import { apiFetch, formatDate, getStatusColor, getStatusLabel, formatPrice } fro
 
 const statusSteps = [
   { key: 'pending', label: 'Pendiente', icon: Clock },
+  { key: 'offer_received', label: 'Oferta', icon: Handshake },
   { key: 'accepted', label: 'Aceptado', icon: CheckCircle2 },
   { key: 'in_progress', label: 'En Progreso', icon: Car },
   { key: 'delivered', label: 'Entregado', icon: CheckCircle2 },
@@ -29,6 +31,7 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true)
   const [cancelDialog, setCancelDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState('')
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   useEffect(() => {
     if (selectedOrderId) {
@@ -59,11 +62,42 @@ export default function OrderDetailPage() {
       toast.success('Pedido cancelado')
       setCancelDialog(false)
       loadOrder()
-      // Refresh orders list
       const ordersData = await apiFetch('/api/orders')
       setOrders(ordersData.orders)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error al cancelar')
+    }
+  }
+
+  async function handleApproveOffer() {
+    if (!selectedOrderId) return
+    setActionLoading('approve')
+    try {
+      await apiFetch(`/api/orders/${selectedOrderId}/approve-offer`, { method: 'POST' })
+      toast.success('¡Oferta aceptada!')
+      loadOrder()
+      const ordersData = await apiFetch('/api/orders')
+      setOrders(ordersData.orders)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error al aceptar oferta')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  async function handleRejectOffer() {
+    if (!selectedOrderId) return
+    setActionLoading('reject')
+    try {
+      await apiFetch(`/api/orders/${selectedOrderId}/reject-offer`, { method: 'POST' })
+      toast.success('Oferta declinada, buscando otro transportista')
+      loadOrder()
+      const ordersData = await apiFetch('/api/orders')
+      setOrders(ordersData.orders)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error al declinar oferta')
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -87,6 +121,7 @@ export default function OrderDetailPage() {
 
   const currentStepIndex = statusSteps.findIndex((s) => s.key === order.status)
   const isCreator = currentUser?.id === order.createdBy
+  const isOfferReceived = order.status === 'offer_received'
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -108,13 +143,13 @@ export default function OrderDetailPage() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <Card className="border-none shadow-sm">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between overflow-x-auto">
               {statusSteps.map((step, i) => {
                 const Icon = step.icon
                 const isActive = i <= currentStepIndex
                 const isCurrent = i === currentStepIndex
                 return (
-                  <div key={step.key} className="flex flex-col items-center flex-1 relative">
+                  <div key={step.key} className="flex flex-col items-center flex-1 relative min-w-[60px]">
                     {i > 0 && (
                       <div className={`absolute top-4 right-1/2 left-[-50%] h-0.5 ${
                         i <= currentStepIndex ? 'bg-emerald-400' : 'bg-slate-200'
@@ -139,6 +174,98 @@ export default function OrderDetailPage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Offer Received - Special Section for Store */}
+      {isOfferReceived && isCreator && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <Card className="border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 shadow-md">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Handshake className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-orange-800">¡Oferta del Transportista!</p>
+                  <p className="text-sm text-orange-600">Revisa la oferta y decide</p>
+                </div>
+              </div>
+
+              {/* Driver Info */}
+              {order.driver && (
+                <div className="flex items-center gap-3 mb-4 bg-white/60 rounded-xl p-3">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <span className="text-emerald-700 font-bold">{order.driver.name?.charAt(0)}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-slate-800">{order.driver.name}</p>
+                    {order.driver.driver && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Car className="h-3 w-3" />
+                        {order.driver.driver.vehicleType}
+                        {order.driver.driver.vehiclePlate && ` · ${order.driver.driver.vehiclePlate}`}
+                      </p>
+                    )}
+                  </div>
+                  {order.driver.phone && (
+                    <Badge variant="outline" className="text-xs">
+                      <Phone className="h-3 w-3 mr-1" />
+                      {order.driver.phone}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Offer Price */}
+              <div className="bg-white/80 rounded-xl p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Precio propuesto por ti:</span>
+                  <span className="font-medium text-slate-600">{formatPrice(order.proposedPrice)}</span>
+                </div>
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-orange-100">
+                  <span className="text-sm font-semibold text-orange-800">Oferta del transportista:</span>
+                  <span className="text-xl font-bold text-orange-700">{formatPrice(order.acceptedPrice || 0)}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <Button
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                  onClick={handleApproveOffer}
+                  disabled={actionLoading === 'approve'}
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  {actionLoading === 'approve' ? 'Aceptando...' : `Aceptar Oferta ${formatPrice(order.acceptedPrice || 0)}`}
+                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                    onClick={handleRejectOffer}
+                    disabled={actionLoading === 'reject'}
+                  >
+                    <XCircle className="h-4 w-4 mr-2" />
+                    {actionLoading === 'reject' ? 'Declinando...' : 'Declinar Oferta'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50"
+                    onClick={handleRejectOffer}
+                    disabled={actionLoading === 'reject'}
+                  >
+                    <Search className="h-4 w-4 mr-2" />
+                    {actionLoading === 'reject' ? 'Buscando...' : 'Buscar Otro'}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Route */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -239,8 +366,8 @@ export default function OrderDetailPage() {
         </Card>
       </motion.div>
 
-      {/* Driver Info */}
-      {order.driver && (
+      {/* Driver Info (for non-offer statuses) */}
+      {order.driver && !isOfferReceived && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <Card className="border-none shadow-sm">
             <CardHeader className="pb-3">
@@ -279,7 +406,7 @@ export default function OrderDetailPage() {
         </motion.div>
       )}
 
-      {/* Actions */}
+      {/* Actions (Cancel for pending/accepted) */}
       {isCreator && (order.status === 'pending' || order.status === 'accepted') && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <div className="flex gap-3">

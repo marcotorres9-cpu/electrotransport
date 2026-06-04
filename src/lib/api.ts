@@ -40,6 +40,7 @@ export function formatDate(dateStr: string) {
 export function getStatusColor(status: string) {
   switch (status) {
     case 'pending': return 'bg-amber-100 text-amber-800 border-amber-200'
+    case 'offer_received': return 'bg-orange-100 text-orange-800 border-orange-200'
     case 'accepted': return 'bg-sky-100 text-sky-800 border-sky-200'
     case 'in_progress': return 'bg-purple-100 text-purple-800 border-purple-200'
     case 'delivered': return 'bg-emerald-100 text-emerald-800 border-emerald-200'
@@ -51,6 +52,7 @@ export function getStatusColor(status: string) {
 export function getStatusLabel(status: string) {
   switch (status) {
     case 'pending': return 'Pendiente'
+    case 'offer_received': return 'Oferta Recibida'
     case 'accepted': return 'Aceptado'
     case 'in_progress': return 'En Progreso'
     case 'delivered': return 'Entregado'

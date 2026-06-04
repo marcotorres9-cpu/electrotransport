@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import {
-  Bell, Package, DollarSign, Info, CheckCircle2
+  Bell, Package, DollarSign, Info, CheckCircle2, Eye
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -16,6 +16,7 @@ const typeIcons: Record<string, typeof Bell> = {
   payment: DollarSign,
   system: Info,
   info: Info,
+  offer: DollarSign,
 }
 
 const typeColors: Record<string, string> = {
@@ -23,10 +24,11 @@ const typeColors: Record<string, string> = {
   payment: 'bg-amber-100 text-amber-600',
   system: 'bg-slate-100 text-slate-600',
   info: 'bg-sky-100 text-sky-600',
+  offer: 'bg-orange-100 text-orange-600',
 }
 
 export default function NotificationsPage() {
-  const { notifications, setNotifications, setUnreadCount } = useAppStore()
+  const { notifications, setNotifications, setUnreadCount, setCurrentView, setSelectedOrderId, currentUser } = useAppStore()
 
   async function loadNotifications() {
     try {
@@ -52,6 +54,16 @@ export default function NotificationsPage() {
     } catch {
       // silently fail
     }
+  }
+
+  function handleViewOrder(orderId: string) {
+    setSelectedOrderId(orderId)
+    if (currentUser?.role === 'store') {
+      setCurrentView('store-order-detail')
+    } else {
+      setCurrentView('driver-my-orders')
+    }
+    loadNotifications()
   }
 
   return (
@@ -84,6 +96,7 @@ export default function NotificationsPage() {
           {notifications.map((notif, i) => {
             const Icon = typeIcons[notif.type] || Info
             const colorClass = typeColors[notif.type] || typeColors.info
+            const isOffer = notif.type === 'offer'
             return (
               <motion.div
                 key={notif.id}
@@ -91,7 +104,13 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
               >
-                <Card className={`border-none shadow-sm ${!notif.isRead ? 'border-l-4 border-l-emerald-500 bg-emerald-50/30' : ''}`}>
+                <Card className={`border-none shadow-sm ${
+                  !notif.isRead
+                    ? isOffer
+                      ? 'border-l-4 border-l-orange-500 bg-orange-50/50'
+                      : 'border-l-4 border-l-emerald-500 bg-emerald-50/30'
+                    : ''
+                }`}>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
                       <div className={`w-9 h-9 rounded-lg ${colorClass} flex items-center justify-center shrink-0 mt-0.5`}>
@@ -103,11 +122,30 @@ export default function NotificationsPage() {
                             {notif.title}
                           </p>
                           {!notif.isRead && (
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${isOffer ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                          )}
+                          {isOffer && (
+                            <Badge className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0">
+                              OFERTA
+                            </Badge>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">{notif.message}</p>
-                        <p className="text-xs text-muted-foreground mt-2">{formatDate(notif.createdAt)}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-xs text-muted-foreground">{formatDate(notif.createdAt)}</p>
+                          {/* Action button for unread offer notifications with orderId */}
+                          {!notif.isRead && isOffer && notif.orderId && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                              onClick={() => handleViewOrder(notif.orderId!)}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              Ver Pedido
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>

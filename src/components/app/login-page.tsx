@@ -43,6 +43,8 @@ export default function LoginPage() {
 
       if (data.user.role === 'store') {
         setCurrentView('store-dashboard')
+      } else if (data.user.role === 'admin') {
+        setCurrentView('admin-dashboard')
       } else {
         setCurrentView('driver-dashboard')
       }
