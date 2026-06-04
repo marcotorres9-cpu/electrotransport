@@ -32,6 +32,7 @@ interface OrderMapProps {
   onMapClick?: (lat: number, lng: number) => void
   selectingOrigin?: boolean
   selectingDest?: boolean
+  userLocation?: { lat: number; lng: number } | null
 }
 
 export default function OrderMap({
@@ -48,6 +49,7 @@ export default function OrderMap({
   onMapClick,
   selectingOrigin = false,
   selectingDest = false,
+  userLocation,
 }: OrderMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
@@ -65,9 +67,16 @@ export default function OrderMap({
     // Determine center
     const hasOrigin = originLat && originLng
     const hasDest = destLat && destLng
-    let centerLat = -17.784
-    let centerLng = -63.182
+    let centerLat = -0.1807  // Quito, Ecuador default
+    let centerLng = -78.4678
     let zoom = 12
+
+    // Use user's detected location if available
+    if (userLocation?.lat && userLocation?.lng) {
+      centerLat = userLocation.lat
+      centerLng = userLocation.lng
+      zoom = 13
+    }
 
     if (hasOrigin && hasDest) {
       centerLat = (originLat + destLat) / 2
@@ -216,9 +225,7 @@ export default function OrderMap({
         if (driver.lat && driver.lng) {
           const driverIcon = L.divIcon({
             className: '',
-            html: `<div class="driver-marker">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            </div>`,
+            html: `<div class="driver-radar-marker"><div class="radar-ping"></div><div class="radar-core"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div></div>`,
             iconSize: [36, 36],
             iconAnchor: [18, 18],
           })

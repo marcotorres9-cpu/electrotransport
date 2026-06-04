@@ -27,8 +27,32 @@ export default function DriverDashboard() {
     onlineDrivers, setOnlineDrivers,
     lastPolledOrderIds, setLastPolledOrderIds,
     setIncomingOrder, setShowIncomingNotification,
+    userLocation, setUserLocation,
   } = useAppStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Auto-detect user location
+  useEffect(() => {
+    if (navigator.geolocation && !userLocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords
+          setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(r => r.json())
+            .then(data => {
+              const city = data.address?.city || data.address?.town || data.address?.state || ''
+              const country = data.address?.country || ''
+              setUserLocation({ lat: latitude, lng: longitude, city, country })
+            })
+            .catch(() => {})
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 10000 }
+      )
+    }
+  }, [])
+
   const pollingRef = useRef<NodeJS.Timeout | null>(null)
 
   async function loadData() {
@@ -128,6 +152,19 @@ export default function DriverDashboard() {
       }
       setCurrentUser(updatedUser)
       toast.success(data.driver.isOnline ? '¡Estás en línea!' : 'Modo offline activado')
+      // Save driver GPS location when going online
+      if (!isDriverOnline && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            apiFetch(`/api/drivers/${currentUser.driver!.id}/location`, {
+              method: 'PUT',
+              body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            }).catch(() => {})
+          },
+          () => {},
+          { enableHighAccuracy: true, timeout: 10000 }
+        )
+      }
 
       if (!isDriverOnline) {
         loadData()
@@ -331,6 +368,7 @@ export default function DriverDashboard() {
                 </CardHeader>
                 <CardContent className="p-0">
                   <OrderMap
+                    userLocation={userLocation}
                     orders={availableOrders.map((o) => ({
                       id: o.id,
                       originLat: o.originLat,

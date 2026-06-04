@@ -103,11 +103,21 @@ export interface DriverLocation {
   name: string
 }
 
+export interface UserLocation {
+  lat: number
+  lng: number
+  city: string
+  country: string
+}
+
 interface AppState {
   // Auth
   currentUser: UserWithProfile | null
   currentView: ViewName
   isLoading: boolean
+
+  // User location (auto-detected)
+  userLocation: UserLocation | null
 
   // Order management
   orders: OrderItem[]
@@ -147,6 +157,7 @@ interface AppState {
   setIncomingOrder: (order: OrderItem | null) => void
   setShowIncomingNotification: (show: boolean) => void
   setOnlineDrivers: (drivers: DriverLocation[]) => void
+  setUserLocation: (loc: UserLocation | null) => void
   logout: () => void
 }
 
@@ -155,6 +166,7 @@ export const useAppStore = create<AppState>((set) => ({
   currentUser: null,
   currentView: 'landing',
   isLoading: false,
+  userLocation: null,
   orders: [],
   selectedOrderId: null,
   orderFilter: 'all',
@@ -188,6 +200,7 @@ export const useAppStore = create<AppState>((set) => ({
   setIncomingOrder: (order) => set({ incomingOrder: order }),
   setShowIncomingNotification: (show) => set({ showIncomingNotification: show }),
   setOnlineDrivers: (drivers) => set({ onlineDrivers: drivers }),
+  setUserLocation: (loc) => set({ userLocation: loc }),
   logout: () =>
     set({
       currentUser: null,

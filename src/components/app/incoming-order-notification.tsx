@@ -353,12 +353,28 @@ export default function IncomingOrderNotification() {
                 </div>
               </div>
 
-              {/* Counter-offer slider */}
+              {/* Counter-offer input + slider */}
               <div className="px-6 pb-3">
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-white/50 text-xs">Tu contraoferta</span>
-                    <span className="text-emerald-400 font-bold text-sm">{formatPrice(counterPrice)}</span>
+                    <div className="relative">
+                      <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-emerald-400" />
+                      <input
+                        type="number"
+                        min={minPrice}
+                        max={maxPrice}
+                        step="0.50"
+                        value={counterPrice.toFixed(2)}
+                        onChange={(e) => {
+                          let val = parseFloat(e.target.value)
+                          if (isNaN(val)) val = minPrice
+                          val = Math.max(minPrice, Math.min(maxPrice, val))
+                          setCounterPrice(val)
+                        }}
+                        className="w-28 bg-white/10 border border-white/20 rounded-lg pl-7 pr-2 py-1.5 text-emerald-400 font-bold text-sm text-right focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
                   </div>
                   <Slider
                     value={[sliderValue]}
@@ -379,18 +395,18 @@ export default function IncomingOrderNotification() {
 
                   {/* Comparison */}
                   {counterPrice !== incomingOrder.proposedPrice && (
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
-                      <span className="text-white/40 text-xs">Local propuso:</span>
-                      <span className="text-white/60 text-xs">{formatPrice(incomingOrder.proposedPrice)}</span>
-                    </div>
-                  )}
-                  {counterPrice !== incomingOrder.proposedPrice && (
-                    <div className="flex items-center justify-between mt-0.5">
-                      <span className="text-emerald-400/80 text-xs">Tu oferta:</span>
-                      <span className={`text-xs font-semibold ${counterPrice < incomingOrder.proposedPrice ? 'text-amber-400' : 'text-emerald-400'}`}>
-                        {formatPrice(counterPrice)}
-                        {counterPrice < incomingOrder.proposedPrice && ` (-${formatPrice(incomingOrder.proposedPrice - counterPrice)})`}
-                      </span>
+                    <div className="mt-2 pt-2 border-t border-white/10 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/40 text-xs">Local propuso:</span>
+                        <span className="text-white/60 text-xs">{formatPrice(incomingOrder.proposedPrice)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-emerald-400/80 text-xs">Tu oferta:</span>
+                        <span className={`text-xs font-semibold ${counterPrice < incomingOrder.proposedPrice ? 'text-amber-400' : 'text-emerald-400'}`}>
+                          {formatPrice(counterPrice)}
+                          {counterPrice < incomingOrder.proposedPrice && ` (-${formatPrice(incomingOrder.proposedPrice - counterPrice)})`}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -38,7 +38,7 @@ const cargoTypes = [
 ]
 
 export default function CreateOrderPage() {
-  const { setCurrentView, setOrders } = useAppStore()
+  const { setCurrentView, setOrders, userLocation } = useAppStore()
 
   const [originAddress, setOriginAddress] = useState('')
   const [originLat, setOriginLat] = useState('')
@@ -57,13 +57,36 @@ export default function CreateOrderPage() {
   const [geocodingLoading, setGeocodingLoading] = useState(false)
   const [distanceInfo, setDistanceInfo] = useState<{ km: number; time: number } | null>(null)
 
+  // Auto-detect user location
+  useEffect(() => {
+    if (navigator.geolocation && !userLocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords
+          useAppStore.getState().setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+          // Reverse geocode to get city
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(r => r.json())
+            .then(data => {
+              const city = data.address?.city || data.address?.town || data.address?.state || ''
+              const country = data.address?.country || ''
+              useAppStore.getState().setUserLocation({ lat: latitude, lng: longitude, city, country })
+            })
+            .catch(() => {})
+        },
+        () => {}, // silently fail
+        { enableHighAccuracy: false, timeout: 10000 }
+      )
+    }
+  }, [])
+
   // Geocode address using Nominatim
   async function geocodeAddress(address: string) {
     if (!address || address.length < 5) return null
     setGeocodingLoading(true)
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=bo`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
       )
       const data = await res.json()
       if (data.length > 0) {
@@ -237,6 +260,7 @@ export default function CreateOrderPage() {
           </CardHeader>
           <CardContent className="p-0">
             <OrderMap
+              userLocation={userLocation}
               originLat={originLat ? parseFloat(originLat) : undefined}
               originLng={originLng ? parseFloat(originLng) : undefined}
               destLat={destLat ? parseFloat(destLat) : undefined}
@@ -312,7 +336,7 @@ export default function CreateOrderPage() {
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="originAddress"
-                      placeholder="Av. Monseñor Rivero #123, Santa Cruz"
+                      placeholder="Av. Amazonas #123, Quito"
                       value={originAddress}
                       onChange={(e) => setOriginAddress(e.target.value)}
                       className="pl-10"
@@ -326,11 +350,11 @@ export default function CreateOrderPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="originLat">Latitud</Label>
-                  <Input id="originLat" placeholder="-17.784" value={originLat} onChange={(e) => setOriginLat(e.target.value)} />
+                  <Input id="originLat" placeholder="-0.1807" value={originLat} onChange={(e) => setOriginLat(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="originLng">Longitud</Label>
-                  <Input id="originLng" placeholder="-63.182" value={originLng} onChange={(e) => setOriginLng(e.target.value)} />
+                  <Input id="originLng" placeholder="-78.4678" value={originLng} onChange={(e) => setOriginLng(e.target.value)} />
                 </div>
               </div>
             </CardContent>
@@ -358,7 +382,7 @@ export default function CreateOrderPage() {
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="destAddress"
-                      placeholder="Calle Sucre #456, El Alto"
+                      placeholder="Av. Eloy Alfaro #456, Guayaquil"
                       value={destAddress}
                       onChange={(e) => setDestAddress(e.target.value)}
                       className="pl-10"
@@ -372,11 +396,11 @@ export default function CreateOrderPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="destLat">Latitud</Label>
-                  <Input id="destLat" placeholder="-16.503" value={destLat} onChange={(e) => setDestLat(e.target.value)} />
+                  <Input id="destLat" placeholder="-2.1701" value={destLat} onChange={(e) => setDestLat(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="destLng">Longitud</Label>
-                  <Input id="destLng" placeholder="-68.174" value={destLng} onChange={(e) => setDestLng(e.target.value)} />
+                  <Input id="destLng" placeholder="-79.9250" value={destLng} onChange={(e) => setDestLng(e.target.value)} />
                 </div>
               </div>
             </CardContent>

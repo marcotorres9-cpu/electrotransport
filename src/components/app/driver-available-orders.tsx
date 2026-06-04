@@ -309,7 +309,26 @@ export default function DriverAvailableOrdersPage() {
 
                 <Separator className="mb-3" />
 
-                <p className="text-sm font-medium text-slate-700 mb-2">Tu contraoferta:</p>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-slate-700">Tu contraoferta:</span>
+                  <div className="relative">
+                    <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-600" />
+                    <input
+                      type="number"
+                      min={minPrice}
+                      max={maxPrice}
+                      step="0.50"
+                      value={counterPrice.toFixed(2)}
+                      onChange={(e) => {
+                        let val = parseFloat(e.target.value)
+                        if (isNaN(val)) val = minPrice
+                        val = Math.max(minPrice, Math.min(maxPrice, val))
+                        setCounterPrice(val)
+                      }}
+                      className="w-32 bg-white border border-emerald-300 rounded-lg pl-8 pr-2 py-2 text-emerald-700 font-bold text-base text-right focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                </div>
                 <Slider
                   value={[sliderValue]}
                   min={0}
@@ -324,7 +343,6 @@ export default function DriverAvailableOrdersPage() {
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>{formatPrice(minPrice)} (mín)</span>
-                  <span className="text-lg font-bold text-emerald-600">{formatPrice(counterPrice)}</span>
                   <span>{formatPrice(maxPrice)} (máx)</span>
                 </div>
 
