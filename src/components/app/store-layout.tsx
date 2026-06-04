@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAppStore, type ViewName } from '@/store/use-app-store'
+import Image from 'next/image'
 import {
   LayoutDashboard, PackagePlus, ClipboardList, User, Bell,
   Truck, LogOut, Menu, X, Star
@@ -58,25 +59,25 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/20 flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 lg:transform-none ${
+        className={`fixed lg:sticky top-0 left-0 h-screen w-72 glass-sidebar z-50 transform transition-transform duration-300 lg:transform-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-emerald-600/20">
                 <Truck className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -84,7 +85,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                 <p className="text-xs text-muted-foreground">Panel de Local</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-muted-foreground">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-muted-foreground hover:text-slate-700 transition-colors">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -93,7 +94,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
 
           <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
                 <span className="text-emerald-700 font-semibold text-sm">
                   {currentUser?.name?.charAt(0) || 'L'}
                 </span>
@@ -115,13 +116,13 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
+                      ? 'bg-emerald-50 text-emerald-700 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-50/80'
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <Icon className={`h-5 w-5 transition-colors ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
                   {item.label}
                   {item.id === 'store-notifications' && unreadCount > 0 && (
                     <Badge className="ml-auto bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
@@ -135,7 +136,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
 
           {currentUser?.store && (
             <div className="p-4">
-              <div className="bg-emerald-50 rounded-xl p-3 flex items-center gap-3">
+              <div className="glass-card rounded-xl p-3 flex items-center gap-3 shadow-sm">
                 <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
                 <div>
                   <p className="text-sm font-semibold text-slate-800">{currentUser.store.rating.toFixed(1)}</p>
@@ -150,7 +151,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
           <div className="p-3">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="h-5 w-5" />
               Cerrar Sesión
@@ -160,8 +161,8 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
       </aside>
 
       <main className="flex-1 min-w-0">
-        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="text-slate-600">
+        <header className="lg:hidden sticky top-0 z-30 glass-sidebar border-b border-slate-200/50 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setSidebarOpen(true)} className="text-slate-600 hover:text-slate-800 transition-colors">
             <Menu className="h-6 w-6" />
           </button>
           <Truck className="h-5 w-5 text-emerald-600" />

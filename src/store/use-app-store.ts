@@ -71,6 +71,7 @@ export interface OrderItem {
   acceptedPrice: number | null
   counterPrice: number | null
   distanceKm: number | null
+  estimatedTime: number | null
   createdAt: string
   completedAt: string | null
   cancelledAt: string | null
@@ -88,6 +89,18 @@ export interface NotificationItem {
   isRead: boolean
   orderId: string | null
   createdAt: string
+}
+
+export interface DriverLocation {
+  id: string
+  userId: string
+  vehicleType: string
+  vehiclePlate: string | null
+  lat: number
+  lng: number
+  isOnline: boolean
+  rating: number
+  name: string
 }
 
 interface AppState {
@@ -109,6 +122,14 @@ interface AppState {
   driverOrders: OrderItem[]
   availableOrders: OrderItem[]
   isDriverOnline: boolean
+  lastPolledOrderIds: string[]
+
+  // Incoming order notification (call-style)
+  incomingOrder: OrderItem | null
+  showIncomingNotification: boolean
+
+  // Driver locations for map
+  onlineDrivers: DriverLocation[]
 
   // Actions
   setCurrentUser: (user: UserWithProfile | null) => void
@@ -122,6 +143,10 @@ interface AppState {
   setDriverOrders: (orders: OrderItem[]) => void
   setAvailableOrders: (orders: OrderItem[]) => void
   setDriverOnline: (online: boolean) => void
+  setLastPolledOrderIds: (ids: string[]) => void
+  setIncomingOrder: (order: OrderItem | null) => void
+  setShowIncomingNotification: (show: boolean) => void
+  setOnlineDrivers: (drivers: DriverLocation[]) => void
   logout: () => void
 }
 
@@ -138,6 +163,10 @@ export const useAppStore = create<AppState>((set) => ({
   driverOrders: [],
   availableOrders: [],
   isDriverOnline: false,
+  lastPolledOrderIds: [],
+  incomingOrder: null,
+  showIncomingNotification: false,
+  onlineDrivers: [],
 
   // Actions
   setCurrentUser: (user) => set({ currentUser: user }),
@@ -155,6 +184,10 @@ export const useAppStore = create<AppState>((set) => ({
   setDriverOrders: (orders) => set({ driverOrders: orders }),
   setAvailableOrders: (orders) => set({ availableOrders: orders }),
   setDriverOnline: (online) => set({ isDriverOnline: online }),
+  setLastPolledOrderIds: (ids) => set({ lastPolledOrderIds: ids }),
+  setIncomingOrder: (order) => set({ incomingOrder: order }),
+  setShowIncomingNotification: (show) => set({ showIncomingNotification: show }),
+  setOnlineDrivers: (drivers) => set({ onlineDrivers: drivers }),
   logout: () =>
     set({
       currentUser: null,
@@ -166,5 +199,9 @@ export const useAppStore = create<AppState>((set) => ({
       driverOrders: [],
       availableOrders: [],
       isDriverOnline: false,
+      lastPolledOrderIds: [],
+      incomingOrder: null,
+      showIncomingNotification: false,
+      onlineDrivers: [],
     }),
 }))

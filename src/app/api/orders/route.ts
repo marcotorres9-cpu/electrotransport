@@ -10,6 +10,17 @@ function generateOrderNumber(): string {
   return `ET${y}${m}${d}${rand}`
 }
 
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLon = (lon2 - lon1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return R * c
+}
+
 export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get('x-user-id')
@@ -35,7 +46,19 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: 'desc' },
         take: 50,
       })
-      return NextResponse.json({ orders })
+
+      // Calculate distance and estimated time for each order
+      const ordersWithDistance = orders.map((order) => {
+        const distanceKm = calculateDistance(order.originLat, order.originLng, order.destLat, order.destLng)
+        const estimatedTime = Math.round((distanceKm / 30) * 60) // ~30 km/h average
+        return {
+          ...order,
+          distanceKm: Math.round(distanceKm * 10) / 10,
+          estimatedTime,
+        }
+      })
+
+      return NextResponse.json({ orders: ordersWithDistance })
     }
 
     if (role === 'driver') {
@@ -50,7 +73,18 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: 'desc' },
       })
-      return NextResponse.json({ orders })
+
+      const ordersWithDistance = orders.map((order) => {
+        const distanceKm = calculateDistance(order.originLat, order.originLng, order.destLat, order.destLng)
+        const estimatedTime = Math.round((distanceKm / 30) * 60)
+        return {
+          ...order,
+          distanceKm: Math.round(distanceKm * 10) / 10,
+          estimatedTime,
+        }
+      })
+
+      return NextResponse.json({ orders: ordersWithDistance })
     }
 
     // Store: see own orders
@@ -71,7 +105,18 @@ export async function GET(request: NextRequest) {
       },
       orderBy: { createdAt: 'desc' },
     })
-    return NextResponse.json({ orders })
+
+    const ordersWithDistance = orders.map((order) => {
+      const distanceKm = calculateDistance(order.originLat, order.originLng, order.destLat, order.destLng)
+      const estimatedTime = Math.round((distanceKm / 30) * 60)
+      return {
+        ...order,
+        distanceKm: Math.round(distanceKm * 10) / 10,
+        estimatedTime,
+      }
+    })
+
+    return NextResponse.json({ orders: ordersWithDistance })
   } catch (error) {
     console.error('Get orders error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -106,6 +151,14 @@ export async function POST(request: NextRequest) {
 
     const orderNumber = generateOrderNumber()
 
+    // Calculate distance
+    const oLat = originLat || 0
+    const oLng = originLng || 0
+    const dLat = destLat || 0
+    const dLng = destLng || 0
+    const distanceKm = calculateDistance(oLat, oLng, dLat, dLng)
+    const estimatedTime = Math.round((distanceKm / 30) * 60)
+
     const order = await db.etOrder.create({
       data: {
         orderNumber,
@@ -113,16 +166,18 @@ export async function POST(request: NextRequest) {
         storeId: store.id,
         status: 'pending',
         originAddress,
-        originLat: originLat || 0,
-        originLng: originLng || 0,
+        originLat: oLat,
+        originLng: oLng,
         destAddress,
-        destLat: destLat || 0,
-        destLng: destLng || 0,
+        destLat: dLat,
+        destLng: dLng,
         cargoType: cargoType || null,
         cargoWeight: cargoWeight ? parseFloat(String(cargoWeight)) : null,
         cargoQuantity: cargoQuantity ? parseInt(String(cargoQuantity)) : null,
         specialNotes: specialNotes || null,
         proposedPrice: parseFloat(String(proposedPrice)),
+        distanceKm: Math.round(distanceKm * 10) / 10,
+        estimatedTime,
       },
       include: {
         creator: { select: { id: true, name: true } },
@@ -144,6 +199,24 @@ export async function POST(request: NextRequest) {
         orderId: order.id,
       },
     })
+
+    // Notify all online drivers
+    const onlineDrivers = await db.etDriver.findMany({
+      where: { isOnline: true },
+      select: { userId: true },
+    })
+
+    for (const driver of onlineDrivers) {
+      await db.etNotification.create({
+        data: {
+          userId: driver.userId,
+          title: '¡Nuevo pedido disponible!',
+          message: `Nuevo pedido de ${order.originAddress} a ${order.destAddress} por $${proposedPrice}.`,
+          type: 'new_order',
+          orderId: order.id,
+        },
+      })
+    }
 
     return NextResponse.json({ order }, { status: 201 })
   } catch (error) {
