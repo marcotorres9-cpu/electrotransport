@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import {
-  Truck, Shield, Zap, TrendingUp, ArrowRight, Package,
-  Users, Trophy, Star, MapPin, Share2, Globe, Mail
+  Truck, Zap, TrendingUp, ArrowRight, Package,
+  Users, Trophy, MapPin, Share2, Globe, Mail, Shield
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,182 +22,173 @@ export default function LandingPage() {
 
   const features = [
     {
-      icon: <Shield className="h-8 w-8 text-emerald-600" />,
+      icon: <Shield className="h-7 w-7" />,
       title: 'Transporte Seguro',
-      desc: 'Tus electrodomésticos protegidos en cada viaje. Conductores verificados y calificados.',
+      desc: 'Tus electrodomésticos protegidos en cada viaje. Conductores verificados y calificados para tu tranquilidad.',
     },
     {
-      icon: <Zap className="h-8 w-8 text-amber-500" />,
+      icon: <Zap className="h-7 w-7" />,
       title: 'Precio Justo',
-      desc: 'Tú propones el precio. Los transportistas compiten por darte la mejor oferta.',
+      desc: 'Tú propones el precio. Los transportistas compiten por darte la mejor oferta del mercado.',
     },
     {
-      icon: <TrendingUp className="h-8 w-8 text-teal-600" />,
+      icon: <TrendingUp className="h-7 w-7" />,
       title: 'En Tiempo Real',
-      desc: 'Sigue el estado de tus pedidos al instante. Notificaciones en tiempo real.',
+      desc: 'Sigue el estado de tus pedidos al instante con notificaciones y seguimiento en vivo.',
     },
   ]
 
   const howItWorks = [
     {
       step: 1,
-      icon: <Package className="h-8 w-8 text-white" />,
+      icon: <Package className="h-6 w-6" />,
       title: 'Publica tu Pedido',
-      desc: 'Ingresa el origen, destino, tipo de carga y el precio que quieres pagar.',
-      color: 'from-emerald-500 to-emerald-600',
+      desc: 'Ingresa origen, destino, tipo de carga y el precio que quieres pagar.',
     },
     {
       step: 2,
-      icon: <Users className="h-8 w-8 text-white" />,
-      title: 'Conductores Compiten',
-      desc: 'Transportistas cercanos reciben tu pedido y pueden aceptar o contraofertar.',
-      color: 'from-amber-500 to-amber-600',
+      icon: <Users className="h-6 w-6" />,
+      title: 'Recibe Ofertas',
+      desc: 'Transportistas cercanos reciben tu pedido y hacen sus mejores ofertas.',
     },
     {
       step: 3,
-      icon: <Trophy className="h-8 w-8 text-white" />,
-      title: 'Mejor Precio Gana',
-      desc: 'Elige la mejor oferta. Tu pedido se asigna y el transporte comienza.',
-      color: 'from-teal-500 to-teal-600',
+      icon: <Trophy className="h-6 w-6" />,
+      title: 'Elige al Mejor',
+      desc: 'Compara y elige la mejor oferta. El transporte comienza de inmediato.',
     },
   ]
 
   const vehicleTypes = [
-    { name: 'Camioneta', desc: 'Ideal para cargas medianas', icon: '🚗' },
-    { name: 'Doble Cabina', desc: 'Mayor capacidad de carga', icon: '🛻' },
-    { name: 'Camión', desc: 'Para electrodomésticos grandes', icon: '🚛' },
+    { name: 'Camioneta', desc: 'Cargas medianas', icon: '🚗' },
+    { name: 'Doble Cabina', desc: 'Mayor capacidad', icon: '🛻' },
+    { name: 'Camión', desc: 'Grandes volúmenes', icon: '🚛' },
   ]
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#050505]">
       {/* Hero Section */}
-      <section className="relative gradient-hero text-white overflow-hidden">
-        {/* Animated background blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-20 left-10 w-72 h-72 bg-emerald-300/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{ x: [0, -25, 0], y: [0, 15, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-10 right-20 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{ x: [0, 15, 0], y: [0, -30, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-1/2 left-1/3 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl"
-          />
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+        {/* Subtle ambient background */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#1DB954] rounded-full blur-[200px] opacity-[0.03]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#00C9A7] rounded-full blur-[180px] opacity-[0.03]" />
         </div>
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+          backgroundSize: '60px 60px'
+        }} />
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+        <div className="relative max-w-5xl mx-auto px-5 py-20 sm:py-28">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="text-center"
           >
             {/* App Icon */}
             <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white/15 backdrop-blur-sm mb-8 shadow-xl border border-white/20"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-[#111] border border-[#1e1e1e] mb-8 glow-primary"
             >
               <Image
                 src="/icon-192.png"
                 alt="ElectroTransport"
-                width={64}
-                height={64}
-                className="rounded-xl"
+                width={48}
+                height={48}
+                className="rounded-lg"
               />
             </motion.div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-              Electro<span className="text-emerald-300">Transport</span>
-            </h1>
-            <p className="text-lg sm:text-xl text-emerald-100 mb-3 max-w-2xl mx-auto">
-              Transporte de electrodomésticos a tu medida
-            </p>
-            <p className="text-sm text-emerald-200/70 mb-10 max-w-lg mx-auto">
-              Conectamos locales comerciales con transportistas confiables. Propón tu precio y elige al mejor conductor.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.8 }}
+            >
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-5 text-white">
+                Electro<span className="text-[#1DB954]">Transport</span>
+              </h1>
+              <p className="text-lg sm:text-xl text-[#8a8a8a] mb-4 max-w-xl mx-auto font-light leading-relaxed">
+                Transporte de electrodomésticos a tu medida
+              </p>
+              <p className="text-sm text-[#555] mb-12 max-w-md mx-auto leading-relaxed">
+                Conectamos locales comerciales con transportistas confiables. Propón tu precio y elige al mejor conductor.
+              </p>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   size="lg"
-                  className="bg-white text-emerald-800 hover:bg-emerald-50 font-semibold text-base px-8 py-6 shadow-xl shadow-black/10 hover:shadow-2xl transition-shadow"
+                  className="bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold text-base px-10 py-6 rounded-xl shadow-[0_0_30px_rgba(29,185,84,0.2)] hover:shadow-[0_0_40px_rgba(29,185,84,0.3)] transition-all duration-300"
                   onClick={() => setCurrentView('register')}
                 >
                   Comenzar Ahora
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 font-semibold text-base px-8 py-6 backdrop-blur-sm"
+                  className="border-[#2a2a2a] text-[#ccc] hover:bg-[#161616] hover:text-white font-medium text-base px-10 py-6 rounded-xl transition-all duration-300"
                   onClick={() => setCurrentView('login')}
                 >
                   Iniciar Sesión
                 </Button>
               </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 50L48 45C96 40 192 30 288 28C384 26 480 32 576 40C672 48 768 58 864 55C960 52 1056 36 1152 30C1248 24 1344 28 1392 30L1440 32V100H0V50Z" fill="white"/>
-          </svg>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* How It Works */}
+      <section className="py-20 sm:py-28 bg-[#050505]">
+        <div className="max-w-5xl mx-auto px-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-sm font-medium px-4 py-2 rounded-full mb-4">
-              <Star className="h-4 w-4" /> Fácil y rápido
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
-              ¿Cómo funciona?
+            <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Cómo funciona</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+              Tres simples pasos
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Tres simples pasos para transportar tus electrodomésticos
+            <p className="text-[#666] max-w-md mx-auto">
+              Transportar tus electrodomésticos nunca fue tan fácil
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-3 gap-8 relative">
+          <div className="grid sm:grid-cols-3 gap-6 relative">
             {/* Connecting line */}
-            <div className="hidden sm:block absolute top-16 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-emerald-300 via-amber-300 to-teal-300" />
+            <div className="hidden sm:block absolute top-12 left-[20%] right-[20%] h-px bg-gradient-to-r from-transparent via-[#1DB954]/30 to-transparent" />
 
             {howItWorks.map((step, i) => (
               <motion.div
                 key={step.step}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.2, duration: 0.6 }}
+                transition={{ delay: i * 0.15, duration: 0.6 }}
               >
-                <Card className="border-none shadow-lg hover:shadow-xl transition-all text-center p-6 h-full group">
-                  <CardContent className="p-4 pt-2 flex flex-col items-center">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
+                <Card className="bg-[#0a0a0a] border-[#1a1a1a] hover:border-[#1DB954]/20 transition-all duration-300 p-6 h-full group">
+                  <CardContent className="p-0 pt-0 flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-full bg-[#1DB954]/10 text-[#1DB954] flex items-center justify-center mb-5 group-hover:bg-[#1DB954]/20 transition-colors">
                       {step.icon}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm mb-3">
+                    <div className="w-6 h-6 rounded-full bg-[#1DB954] text-black flex items-center justify-center font-bold text-xs mb-4">
                       {step.step}
                     </div>
-                    <h3 className="font-semibold text-lg text-slate-800 mb-2">{step.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
+                    <h3 className="font-semibold text-base text-white mb-2">{step.title}</h3>
+                    <p className="text-[#777] text-sm leading-relaxed text-center">{step.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -206,39 +197,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 sm:py-24 gradient-card">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Features */}
+      <section className="py-20 sm:py-28 bg-[#080808]">
+        <div className="max-w-5xl mx-auto px-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
+            <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Ventajas</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
               ¿Por qué ElectroTransport?
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              La forma más eficiente de transportar tus electrodomésticos
-            </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-3 gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.12 }}
               >
-                <Card className="glass-card border border-white/50 shadow-md hover:shadow-xl transition-all text-center p-6 h-full group">
-                  <CardContent className="p-4 pt-2">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 mb-4 group-hover:scale-110 transition-transform shadow-sm">
+                <Card className="glass-card p-6 h-full group hover:border-[#1DB954]/15 transition-all duration-300">
+                  <CardContent className="p-0">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#1DB954]/10 text-[#1DB954] mb-4 group-hover:bg-[#1DB954]/20 transition-colors">
                       {f.icon}
                     </div>
-                    <h3 className="font-semibold text-lg text-slate-800 mb-2">{f.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+                    <h3 className="font-semibold text-base text-white mb-2">{f.title}</h3>
+                    <p className="text-[#777] text-sm leading-relaxed">{f.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -247,37 +236,38 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Vehicle Types Section */}
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      {/* Vehicle Types */}
+      <section className="py-20 sm:py-24 bg-[#050505]">
+        <div className="max-w-4xl mx-auto px-5 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-10"
+            className="mb-12"
           >
-            <h2 className="text-3xl font-bold text-slate-800 mb-3">
+            <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-3">Flota</p>
+            <h2 className="text-3xl font-bold text-white mb-3">
               Tipos de Vehículos
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Diversas opciones para adaptarse a tu necesidad de transporte
+            <p className="text-[#666] max-w-md mx-auto">
+              Diversas opciones para cada necesidad de transporte
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-3 gap-5">
             {vehicleTypes.map((v, i) => (
               <motion.div
                 key={v.name}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.12 }}
               >
-                <Card className="border border-slate-200 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all p-6 h-full group cursor-default">
+                <Card className="bg-[#0a0a0a] border-[#1a1a1a] hover:border-[#1DB954]/20 transition-all duration-300 p-5 h-full group cursor-default">
                   <CardContent className="p-0 flex flex-col items-center">
-                    <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{v.icon}</div>
-                    <h3 className="font-semibold text-slate-800 mb-1">{v.name}</h3>
-                    <p className="text-sm text-muted-foreground">{v.desc}</p>
+                    <div className="text-4xl mb-3">{v.icon}</div>
+                    <h3 className="font-semibold text-white mb-1 text-sm">{v.name}</h3>
+                    <p className="text-xs text-[#777]">{v.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -286,33 +276,28 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Driver CTA Section */}
-      <section className="py-16 sm:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-95" />
-        <div className="absolute inset-0">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 left-10 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl" />
-        </div>
+      {/* Driver CTA */}
+      <section className="py-20 sm:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#071a0f] to-[#050505]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#1DB954] rounded-full blur-[250px] opacity-[0.04]" />
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center text-white">
+        <div className="relative max-w-3xl mx-auto px-5 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-emerald-200 text-sm font-medium px-4 py-2 rounded-full mb-6 border border-white/20">
-              <Truck className="h-4 w-4" /> Conviértete en transportista
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            <p className="text-[#1DB954] text-sm font-semibold tracking-wider uppercase mb-4">Conductores</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
               ¿Eres transportista?
             </h2>
-            <p className="text-emerald-100/80 mb-8 max-w-lg mx-auto text-lg">
+            <p className="text-[#8a8a8a] mb-10 max-w-lg mx-auto leading-relaxed">
               Únete a nuestra red de conductores y comienza a ganar dinero transportando electrodomésticos. Recibe pedidos en tiempo real.
             </p>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 size="lg"
-                className="bg-white text-emerald-800 hover:bg-emerald-50 font-semibold text-base px-8 py-6 shadow-xl hover:shadow-2xl transition-shadow"
+                className="bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold text-base px-10 py-6 rounded-xl shadow-[0_0_30px_rgba(29,185,84,0.2)] hover:shadow-[0_0_40px_rgba(29,185,84,0.3)] transition-all duration-300"
                 onClick={() => setCurrentView('register')}
               >
                 Registrarse como Transportista
@@ -324,82 +309,54 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-          <div className="grid sm:grid-cols-3 gap-8 mb-8">
-            {/* Brand */}
+      <footer className="bg-[#030303] border-t border-[#111]">
+        <div className="max-w-5xl mx-auto px-5 py-12">
+          <div className="grid sm:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <Image
-                  src="/icon-192.png"
-                  alt="ElectroTransport"
-                  width={40}
-                  height={40}
-                  className="rounded-xl"
-                />
+                <Image src="/icon-192.png" alt="ElectroTransport" width={32} height={32} className="rounded-lg" />
                 <div>
-                  <h3 className="font-bold text-lg">ElectroTransport</h3>
-                  <p className="text-sm text-slate-400">Transporte inteligente</p>
+                  <h3 className="font-bold text-white text-base">ElectroTransport</h3>
+                  <p className="text-xs text-[#666]">Transporte inteligente</p>
                 </div>
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                La plataforma líder en transporte de electrodomésticos. Conectamos comercios con transportistas de confianza.
+              <p className="text-[#555] text-sm leading-relaxed">
+                La plataforma líder en transporte de electrodomésticos.
               </p>
             </div>
 
-            {/* Links */}
             <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-emerald-400 mb-4">Plataforma</h4>
-              <ul className="space-y-2">
-                <li>
-                  <button onClick={() => setCurrentView('register')} className="text-slate-400 hover:text-white text-sm transition-colors">
-                    Registrarse
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => setCurrentView('login')} className="text-slate-400 hover:text-white text-sm transition-colors">
-                    Iniciar Sesión
-                  </button>
-                </li>
-                <li>
-                  <span className="text-slate-400 text-sm">Términos de Servicio</span>
-                </li>
-                <li>
-                  <span className="text-slate-400 text-sm">Política de Privacidad</span>
-                </li>
+              <h4 className="font-semibold text-xs uppercase tracking-widest text-[#1DB954] mb-4">Plataforma</h4>
+              <ul className="space-y-2.5">
+                <li><button onClick={() => setCurrentView('register')} className="text-[#888] hover:text-white text-sm transition-colors">Registrarse</button></li>
+                <li><button onClick={() => setCurrentView('login')} className="text-[#888] hover:text-white text-sm transition-colors">Iniciar Sesión</button></li>
               </ul>
             </div>
 
-            {/* Social */}
             <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-emerald-400 mb-4">Síguenos</h4>
-              <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 rounded-xl bg-white/10 hover:bg-emerald-600 flex items-center justify-center transition-colors">
-                  <Share2 className="h-5 w-5" />
+              <h4 className="font-semibold text-xs uppercase tracking-widest text-[#1DB954] mb-4">Contacto</h4>
+              <div className="flex gap-3 mb-4">
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#111] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#888]">
+                  <Share2 className="h-4 w-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-xl bg-white/10 hover:bg-emerald-600 flex items-center justify-center transition-colors">
-                  <Globe className="h-5 w-5" />
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#111] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#888]">
+                  <Globe className="h-4 w-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-xl bg-white/10 hover:bg-emerald-600 flex items-center justify-center transition-colors">
-                  <Mail className="h-5 w-5" />
+                <a href="#" className="w-9 h-9 rounded-lg bg-[#111] hover:bg-[#1DB954] hover:text-black flex items-center justify-center transition-all text-[#888]">
+                  <Mail className="h-4 w-4" />
                 </a>
               </div>
-              <div className="mt-4 flex items-center gap-2 text-slate-400 text-sm">
-                <MapPin className="h-4 w-4" />
-                <span>Santa Cruz de la Sierra, Bolivia</span>
+              <div className="flex items-center gap-2 text-[#555] text-xs">
+                <MapPin className="h-3.5 w-3.5" />
+                <span>Quito, Ecuador</span>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-slate-500 text-sm">
+          <div className="border-t border-[#111] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-[#444] text-xs">
               © {new Date().getFullYear()} ElectroTransport. Todos los derechos reservados.
             </p>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">Hecho con</span>
-              <span className="text-emerald-500">❤️</span>
-              <span className="text-xs text-slate-500">en Bolivia</span>
-            </div>
           </div>
         </div>
       </footer>

@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-slate-50 to-emerald-50">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#050505]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -67,54 +67,54 @@ export default function LoginPage() {
       >
         <div className="text-center mb-8">
           <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary mb-4"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#111] border border-[#1e1e1e] mb-4 glow-primary"
           >
-            <Truck className="h-8 w-8 text-white" />
+            <Truck className="h-7 w-7 text-[#1DB954]" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-slate-800">ElectroTransport</h1>
-          <p className="text-muted-foreground text-sm mt-1">Inicia sesión en tu cuenta</p>
+          <h1 className="text-2xl font-bold text-white">ElectroTransport</h1>
+          <p className="text-[#666] text-sm mt-1">Inicia sesión en tu cuenta</p>
         </div>
 
-        <Card className="border-none shadow-xl">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Iniciar Sesión</CardTitle>
-            <CardDescription>Ingresa tus credenciales para acceder</CardDescription>
+        <Card className="bg-[#0a0a0a] border-[#1a1a1a]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg text-white">Iniciar Sesión</CardTitle>
+            <CardDescription className="text-[#666] text-xs">Ingresa tus credenciales</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo electrónico</Label>
+            <form onSubmit={handleLogin} className="space-y-3.5">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-[#999] text-xs">Correo electrónico</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-[#999] text-xs">Contraseña</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -123,29 +123,29 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full gradient-primary text-white font-semibold py-5"
+                className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-5 rounded-xl transition-all shadow-[0_0_20px_rgba(29,185,84,0.15)]"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Ingresando...' : 'Ingresar'}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-5 text-center">
+              <p className="text-xs text-[#666]">
                 ¿No tienes cuenta?{' '}
                 <button
                   onClick={() => setCurrentView('register')}
-                  className="text-emerald-600 font-semibold hover:underline"
+                  className="text-[#1DB954] font-semibold hover:underline"
                 >
                   Regístrate aquí
                 </button>
               </p>
             </div>
 
-            <div className="mt-3 text-center">
+            <div className="mt-2 text-center">
               <button
                 onClick={() => setCurrentView('landing')}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="text-xs text-[#555] hover:text-[#999] transition-colors"
               >
                 ← Volver al inicio
               </button>

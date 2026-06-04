@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Truck, Store, UserPlus, Mail, Lock, Phone, Eye, EyeOff,
   Building2, MapPin, Hash, Car, FileText, BadgeCheck, ChevronLeft,
-  Shield, LockKeyhole
+  Shield
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,19 +30,16 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
 
-  // Common fields
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [phone, setPhone] = useState('')
 
-  // Store fields
   const [storeName, setStoreName] = useState('')
   const [storeType, setStoreType] = useState('')
   const [address, setAddress] = useState('')
   const [rutNumber, setRutNumber] = useState('')
 
-  // Driver fields
   const [vehicleType, setVehicleType] = useState('')
   const [vehicleBrand, setVehicleBrand] = useState('')
   const [vehicleModel, setVehicleModel] = useState('')
@@ -80,7 +77,7 @@ export default function RegisterPage() {
         body.storeType = storeType
         body.address = address
         body.rutNumber = rutNumber
-      } else {
+      } else if (role === 'driver') {
         body.vehicleType = vehicleType
         body.vehicleBrand = vehicleBrand
         body.vehicleModel = vehicleModel
@@ -119,15 +116,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 py-8 px-4">
-      <div className="max-w-lg mx-auto">
+    <div className="min-h-screen bg-[#050505] py-6 px-4">
+      <div className="max-w-md mx-auto">
         {/* Back button */}
         <button
           onClick={() => setCurrentView('landing')}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
+          className="inline-flex items-center text-sm text-[#888] hover:text-white mb-6 transition-colors"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
-          Volver al inicio
+          Volver
         </button>
 
         {/* Header */}
@@ -137,14 +134,14 @@ export default function RegisterPage() {
           className="text-center mb-8"
         >
           <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary mb-4"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#111] border border-[#1e1e1e] mb-4"
           >
-            <Truck className="h-8 w-8 text-white" />
+            <Truck className="h-7 w-7 text-[#1DB954]" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-slate-800">Crear Cuenta</h1>
-          <p className="text-muted-foreground text-sm mt-1">Únete a ElectroTransport</p>
+          <h1 className="text-2xl font-bold text-white">Crear Cuenta</h1>
+          <p className="text-[#666] text-sm mt-1">Únete a ElectroTransport</p>
         </motion.div>
 
         <motion.div
@@ -152,113 +149,104 @@ export default function RegisterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="border-none shadow-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Tipo de Cuenta</CardTitle>
-              <CardDescription>Selecciona tu rol en la plataforma</CardDescription>
+          <Card className="bg-[#0a0a0a] border-[#1a1a1a]">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-white">Tipo de Cuenta</CardTitle>
+              <CardDescription className="text-[#666] text-xs">Selecciona tu rol</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Role Toggle */}
+              {/* Role Toggle - 3 columns with proper spacing */}
               <RadioGroup
                 value={role}
                 onValueChange={(v) => setRole(v as 'store' | 'driver' | 'admin')}
-                className="grid grid-cols-3 gap-3 mb-6"
+                className="grid grid-cols-3 gap-2.5 mb-6"
               >
-                <label className={`cursor-pointer`}>
+                <label className="cursor-pointer">
                   <div
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'store'
-                        ? 'border-emerald-500 bg-emerald-50 shadow-sm'
-                        : 'border-muted hover:border-emerald-200'
+                        ? 'border-[#1DB954] bg-[#1DB954]/10'
+                        : 'border-[#1a1a1a] hover:border-[#333]'
                     }`}
                   >
                     <RadioGroupItem value="store" className="sr-only" />
-                    <Store className={`h-7 w-7 ${role === 'store' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
-                    <div className="text-center">
-                      <p className={`font-semibold text-sm ${role === 'store' ? 'text-emerald-800' : ''}`}>
-                        Local
-                      </p>
-                      <p className="text-xs text-muted-foreground">Electrodomésticos</p>
-                    </div>
+                    <Store className={`h-5 w-5 ${role === 'store' ? 'text-[#1DB954]' : 'text-[#666]'}`} />
+                    <p className={`font-medium text-xs ${role === 'store' ? 'text-[#1DB954]' : 'text-[#999]'} text-center leading-tight`}>
+                      Local
+                    </p>
                   </div>
                 </label>
-                <label className={`cursor-pointer`}>
+                <label className="cursor-pointer">
                   <div
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'driver'
-                        ? 'border-emerald-500 bg-emerald-50 shadow-sm'
-                        : 'border-muted hover:border-emerald-200'
+                        ? 'border-[#1DB954] bg-[#1DB954]/10'
+                        : 'border-[#1a1a1a] hover:border-[#333]'
                     }`}
                   >
                     <RadioGroupItem value="driver" className="sr-only" />
-                    <Car className={`h-7 w-7 ${role === 'driver' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
-                    <div className="text-center">
-                      <p className={`font-semibold text-sm ${role === 'driver' ? 'text-emerald-800' : ''}`}>
-                        Transporte
-                      </p>
-                      <p className="text-xs text-muted-foreground">Servicio de carga</p>
-                    </div>
+                    <Car className={`h-5 w-5 ${role === 'driver' ? 'text-[#1DB954]' : 'text-[#666]'}`} />
+                    <p className={`font-medium text-xs ${role === 'driver' ? 'text-[#1DB954]' : 'text-[#999]'} text-center leading-tight`}>
+                      Transporte
+                    </p>
                   </div>
                 </label>
-                <label className={`cursor-pointer`}>
+                <label className="cursor-pointer">
                   <div
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200 ${
                       role === 'admin'
-                        ? 'border-purple-500 bg-purple-50 shadow-sm'
-                        : 'border-muted hover:border-purple-200'
+                        ? 'border-[#845EF7] bg-[#845EF7]/10'
+                        : 'border-[#1a1a1a] hover:border-[#333]'
                     }`}
                   >
                     <RadioGroupItem value="admin" className="sr-only" />
-                    <Shield className={`h-7 w-7 ${role === 'admin' ? 'text-purple-600' : 'text-muted-foreground'}`} />
-                    <div className="text-center">
-                      <p className={`font-semibold text-sm ${role === 'admin' ? 'text-purple-800' : ''}`}>
-                        Admin
-                      </p>
-                      <p className="text-xs text-muted-foreground">Gestión total</p>
-                    </div>
+                    <Shield className={`h-5 w-5 ${role === 'admin' ? 'text-[#845EF7]' : 'text-[#666]'}`} />
+                    <p className={`font-medium text-xs ${role === 'admin' ? 'text-[#845EF7]' : 'text-[#999]'} text-center leading-tight`}>
+                      Admin
+                    </p>
                   </div>
                 </label>
               </RadioGroup>
 
-              <form onSubmit={handleRegister} className="space-y-4">
+              <form onSubmit={handleRegister} className="space-y-3.5">
                 {/* Common Fields */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nombre completo</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="name" className="text-[#999] text-xs">Nombre completo</Label>
                   <div className="relative">
-                    <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} className="pl-10" />
+                    <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                    <Input id="name" placeholder="Tu nombre" value={name} onChange={(e) => setName(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-[#999] text-xs">Correo electrónico</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                    <Input id="email" type="email" placeholder="tu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Teléfono</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-[#999] text-xs">Teléfono</Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="phone" placeholder="+591 70000000" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-10" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                    <Input id="phone" placeholder="+593 990000000" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="password" className="text-[#999] text-xs">Contraseña</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Mínimo 6 caracteres"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10"
+                      className="pl-10 pr-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]"
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
@@ -273,15 +261,13 @@ export default function RegisterPage() {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="pt-2 pb-1">
-                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-purple-600" />
-                          Acceso de Administrador
-                        </p>
-                      </div>
-                      <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                        <p className="text-sm text-purple-800">
-                          Como administrador tendrás control total sobre la plataforma: gestión de usuarios, activación/desactivación de cuentas, y monitoreo de pedidos.
+                      <div className="bg-[#845EF7]/10 rounded-xl p-4 border border-[#845EF7]/20 mt-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Shield className="h-4 w-4 text-[#845EF7]" />
+                          <p className="text-sm font-semibold text-[#845EF7]">Acceso Administrador</p>
+                        </div>
+                        <p className="text-xs text-[#999] leading-relaxed">
+                          Control total: gestión de usuarios, activación de cuentas y monitoreo de pedidos.
                         </p>
                       </div>
                     </motion.div>
@@ -291,44 +277,44 @@ export default function RegisterPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4 overflow-hidden"
+                      className="space-y-3.5 overflow-hidden"
                     >
-                      <div className="pt-2 pb-1">
-                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-emerald-600" />
+                      <div className="pt-1">
+                        <p className="text-xs font-semibold text-[#999] flex items-center gap-1.5 mb-3">
+                          <Building2 className="h-3.5 w-3.5 text-[#1DB954]" />
                           Datos del Local
                         </p>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="storeName">Nombre del local</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="storeName" className="text-[#999] text-xs">Nombre del local</Label>
                         <div className="relative">
-                          <Store className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input id="storeName" placeholder="ElectroHogar SRL" value={storeName} onChange={(e) => setStoreName(e.target.value)} className="pl-10" />
+                          <Store className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                          <Input id="storeName" placeholder="ElectroHogar" value={storeName} onChange={(e) => setStoreName(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="storeType">Tipo de electrodomésticos</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="storeType" className="text-[#999] text-xs">Tipo de electrodomésticos</Label>
                         <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input id="storeType" placeholder="Línea blanca, electrónica..." value={storeType} onChange={(e) => setStoreType(e.target.value)} className="pl-10" />
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                          <Input id="storeType" placeholder="Línea blanca, electrónica..." value={storeType} onChange={(e) => setStoreType(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="address">Dirección</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="address" className="text-[#999] text-xs">Dirección</Label>
                         <div className="relative">
-                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Textarea id="address" placeholder="Dirección del local comercial" value={address} onChange={(e) => setAddress(e.target.value)} className="pl-10" />
+                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-[#555]" />
+                          <Textarea id="address" placeholder="Dirección del local" value={address} onChange={(e) => setAddress(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954] min-h-[70px]" />
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="rut">NIT / RUC</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="rut" className="text-[#999] text-xs">RUC</Label>
                         <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input id="rut" placeholder="123456789" value={rutNumber} onChange={(e) => setRutNumber(e.target.value)} className="pl-10" />
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                          <Input id="rut" placeholder="1234567890001" value={rutNumber} onChange={(e) => setRutNumber(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
                       </div>
                     </motion.div>
@@ -338,31 +324,31 @@ export default function RegisterPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="space-y-4 overflow-hidden"
+                      className="space-y-3.5 overflow-hidden"
                     >
-                      <div className="pt-2 pb-1">
-                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                          <Car className="h-4 w-4 text-emerald-600" />
+                      <div className="pt-1">
+                        <p className="text-xs font-semibold text-[#999] flex items-center gap-1.5 mb-3">
+                          <Car className="h-3.5 w-3.5 text-[#1DB954]" />
                           Datos del Vehículo
                         </p>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label>Tipo de vehículo</Label>
+                      <div className="space-y-1.5">
+                        <Label className="text-[#999] text-xs">Tipo de vehículo</Label>
                         <div className="grid grid-cols-3 gap-2">
                           {vehicleTypes.map((vt) => (
                             <button
                               key={vt.value}
                               type="button"
                               onClick={() => setVehicleType(vt.value)}
-                              className={`flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all text-sm ${
+                              className={`flex flex-col items-center gap-1 p-2.5 rounded-lg border-2 transition-all text-xs ${
                                 vehicleType === vt.value
-                                  ? 'border-emerald-500 bg-emerald-50'
-                                  : 'border-muted hover:border-emerald-200'
+                                  ? 'border-[#1DB954] bg-[#1DB954]/10'
+                                  : 'border-[#1a1a1a] hover:border-[#333]'
                               }`}
                             >
-                              <span className="text-xl">{vt.icon}</span>
-                              <span className={vehicleType === vt.value ? 'text-emerald-700 font-medium' : 'text-muted-foreground'}>
+                              <span className="text-lg">{vt.icon}</span>
+                              <span className={vehicleType === vt.value ? 'text-[#1DB954] font-medium' : 'text-[#777]'}>
                                 {vt.label}
                               </span>
                             </button>
@@ -370,36 +356,36 @@ export default function RegisterPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-2">
-                          <Label htmlFor="brand">Marca</Label>
-                          <Input id="brand" placeholder="Toyota" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} />
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="brand" className="text-[#999] text-xs">Marca</Label>
+                          <Input id="brand" placeholder="Toyota" value={vehicleBrand} onChange={(e) => setVehicleBrand(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="model">Modelo</Label>
-                          <Input id="model" placeholder="Hilux" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} />
+                        <div className="space-y-1.5">
+                          <Label htmlFor="model" className="text-[#999] text-xs">Modelo</Label>
+                          <Input id="model" placeholder="Hilux" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-2">
-                          <Label htmlFor="year">Año</Label>
-                          <Input id="year" placeholder="2022" value={vehicleYear} onChange={(e) => setVehicleYear(e.target.value)} />
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="year" className="text-[#999] text-xs">Año</Label>
+                          <Input id="year" placeholder="2024" value={vehicleYear} onChange={(e) => setVehicleYear(e.target.value)} className="bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="plate">Placa</Label>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="plate" className="text-[#999] text-xs">Placa</Label>
                           <div className="relative">
-                            <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input id="plate" placeholder="ABC-123" value={vehiclePlate} onChange={(e) => setVehiclePlate(e.target.value)} className="pl-10" />
+                            <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                            <Input id="plate" placeholder="ABC-123" value={vehiclePlate} onChange={(e) => setVehiclePlate(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                           </div>
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="license">Licencia de conducir</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="license" className="text-[#999] text-xs">Licencia</Label>
                         <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input id="license" placeholder="Número de licencia" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} className="pl-10" />
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555]" />
+                          <Input id="license" placeholder="Número de licencia" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white placeholder:text-[#444] focus:border-[#1DB954]" />
                         </div>
                       </div>
                     </motion.div>
@@ -407,35 +393,35 @@ export default function RegisterPage() {
                 </AnimatePresence>
 
                 {/* Terms */}
-                <div className="flex items-start gap-2 pt-2">
+                <div className="flex items-start gap-2 pt-1">
                   <Checkbox
                     id="terms"
                     checked={agreeTerms}
                     onCheckedChange={(v) => setAgreeTerms(v === true)}
-                    className="mt-0.5"
+                    className="mt-0.5 border-[#333] data-[state=checked]:bg-[#1DB954] data-[state=checked]:border-[#1DB954]"
                   />
-                  <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                  <label htmlFor="terms" className="text-xs text-[#666] leading-relaxed cursor-pointer">
                     Acepto los{' '}
-                    <span className="text-emerald-600 font-medium">Términos de Servicio</span> y la{' '}
-                    <span className="text-emerald-600 font-medium">Política de Privacidad</span> de ElectroTransport.
+                    <span className="text-[#1DB954]">Términos de Servicio</span> y la{' '}
+                    <span className="text-[#1DB954]">Política de Privacidad</span>
                   </label>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full gradient-primary text-white font-semibold py-5 mt-2"
+                  className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-5 rounded-xl mt-2 transition-all shadow-[0_0_20px_rgba(29,185,84,0.15)]"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-5 text-center">
+                <p className="text-xs text-[#666]">
                   ¿Ya tienes cuenta?{' '}
                   <button
                     onClick={() => setCurrentView('login')}
-                    className="text-emerald-600 font-semibold hover:underline"
+                    className="text-[#1DB954] font-semibold hover:underline"
                   >
                     Inicia sesión
                   </button>

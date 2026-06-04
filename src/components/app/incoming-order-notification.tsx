@@ -245,13 +245,13 @@ export default function IncomingOrderNotification() {
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             className="relative z-10 w-[90vw] max-w-md mx-auto"
           >
-            <div className="bg-gradient-to-b from-slate-900 to-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-b from-[#111] to-[#0a0a0a] rounded-3xl border border-[#1a1a1a] overflow-hidden">
               {/* Pulsing ring indicator */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="w-32 h-32 rounded-full bg-emerald-500/20 animate-ring-pulse flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-emerald-500/30 animate-ring-pulse flex items-center justify-center" style={{ animationDelay: '0.3s' }}>
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/40 flex items-center justify-center animate-call-shake">
-                      <Phone className="h-8 w-8 text-emerald-300" />
+                <div className="w-32 h-32 rounded-full bg-[#1DB954]/20 animate-ring-pulse flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-[#1DB954]/30 animate-ring-pulse flex items-center justify-center" style={{ animationDelay: '0.3s' }}>
+                    <div className="w-16 h-16 rounded-full bg-[#1DB954]/40 flex items-center justify-center animate-call-shake">
+                      <Phone className="h-8 w-8 text-[#1DB954]" />
                     </div>
                   </div>
                 </div>
@@ -265,15 +265,15 @@ export default function IncomingOrderNotification() {
                 >
                   <h2 className="text-xl font-bold text-white mb-1">¡NUEVO PEDIDO!</h2>
                 </motion.div>
-                <p className="text-emerald-400 text-sm font-medium">Pedido #{incomingOrder.orderNumber}</p>
+                <p className="text-[#1DB954] text-sm font-medium">Pedido #{incomingOrder.orderNumber}</p>
 
                 {/* Countdown */}
                 <div className="flex items-center justify-center gap-1.5 mt-2">
-                  <Timer className="h-4 w-4 text-amber-400" />
+                  <Timer className="h-4 w-4 text-[#FFC145]" />
                   <div className="flex gap-1">
                     {[0, 1].map((d) => (
                       <span key={d} className={`text-lg font-mono font-bold ${
-                        countdown <= 10 ? 'text-red-400' : 'text-white'
+                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-white'
                       }`}>
                         {String(Math.floor(countdown / 10)).charAt(d)}
                       </span>
@@ -281,7 +281,7 @@ export default function IncomingOrderNotification() {
                     <span className="text-white/30">:</span>
                     {[0, 1].map((d) => (
                       <span key={d} className={`text-lg font-mono font-bold ${
-                        countdown <= 10 ? 'text-red-400' : 'text-white'
+                        countdown <= 10 ? 'text-[#FF6B6B]' : 'text-white'
                       }`}>
                         {String(countdown % 10).charAt(d)}
                       </span>
@@ -292,11 +292,11 @@ export default function IncomingOrderNotification() {
 
               {/* Order details */}
               <div className="px-6 pb-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 space-y-3">
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 space-y-3 border border-white/5">
                   {/* Price */}
                   <div className="flex items-center justify-between">
                     <span className="text-white/60 text-sm">Precio propuesto</span>
-                    <span className="text-2xl font-bold text-emerald-400">{formatPrice(incomingOrder.proposedPrice)}</span>
+                    <span className="text-2xl font-bold text-[#1DB954]">{formatPrice(incomingOrder.proposedPrice)}</span>
                   </div>
 
                   {/* Distance */}
@@ -313,12 +313,12 @@ export default function IncomingOrderNotification() {
                   {/* Route */}
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#1DB954] mt-1.5 shrink-0" />
                       <span className="text-white/80 text-sm">{incomingOrder.originAddress}</span>
                     </div>
                     <div className="ml-1 border-l border-dashed border-white/20 h-2" />
                     <div className="flex items-start gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#FFC145] mt-1.5 shrink-0" />
                       <span className="text-white/80 text-sm">{incomingOrder.destAddress}</span>
                     </div>
                   </div>
@@ -326,7 +326,7 @@ export default function IncomingOrderNotification() {
                   {/* Cargo */}
                   <div className="flex flex-wrap gap-2">
                     {incomingOrder.cargoType && (
-                      <span className="inline-flex items-center gap-1 bg-white/10 text-emerald-300 text-xs px-2.5 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1 bg-white/10 text-[#1DB954] text-xs px-2.5 py-1 rounded-full">
                         <Package className="h-3 w-3" />
                         {incomingOrder.cargoType}
                       </span>
@@ -355,11 +355,11 @@ export default function IncomingOrderNotification() {
 
               {/* Counter-offer input + slider */}
               <div className="px-6 pb-3">
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3">
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/5">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-white/50 text-xs">Tu contraoferta</span>
                     <div className="relative">
-                      <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-emerald-400" />
+                      <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1DB954]" />
                       <input
                         type="number"
                         min={minPrice}
@@ -372,7 +372,7 @@ export default function IncomingOrderNotification() {
                           val = Math.max(minPrice, Math.min(maxPrice, val))
                           setCounterPrice(val)
                         }}
-                        className="w-28 bg-white/10 border border-white/20 rounded-lg pl-7 pr-2 py-1.5 text-emerald-400 font-bold text-sm text-right focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-28 bg-white/10 border border-white/20 rounded-lg pl-7 pr-2 py-1.5 text-[#1DB954] font-bold text-sm text-right focus:outline-none focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954]/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -401,8 +401,8 @@ export default function IncomingOrderNotification() {
                         <span className="text-white/60 text-xs">{formatPrice(incomingOrder.proposedPrice)}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-emerald-400/80 text-xs">Tu oferta:</span>
-                        <span className={`text-xs font-semibold ${counterPrice < incomingOrder.proposedPrice ? 'text-amber-400' : 'text-emerald-400'}`}>
+                        <span className="text-[#1DB954]/80 text-xs">Tu oferta:</span>
+                        <span className={`text-xs font-semibold ${counterPrice < incomingOrder.proposedPrice ? 'text-[#FFC145]' : 'text-[#1DB954]'}`}>
                           {formatPrice(counterPrice)}
                           {counterPrice < incomingOrder.proposedPrice && ` (-${formatPrice(incomingOrder.proposedPrice - counterPrice)})`}
                         </span>
@@ -417,7 +417,7 @@ export default function IncomingOrderNotification() {
                 <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                   <Button
                     onClick={dismissNotification}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-6 rounded-2xl text-base shadow-lg shadow-red-900/30"
+                    className="w-full bg-[#FF6B6B] hover:bg-[#e55c5c] text-white font-semibold py-6 rounded-2xl text-base"
                     disabled={accepting}
                   >
                     <PhoneOff className="h-5 w-5 mr-2" />
@@ -428,7 +428,7 @@ export default function IncomingOrderNotification() {
                 <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                   <Button
                     onClick={handleCounterOffer}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-6 rounded-2xl text-base shadow-lg shadow-amber-900/30"
+                    className="w-full bg-[#FFC145] hover:bg-[#e0ad3a] text-black font-semibold py-6 rounded-2xl text-base"
                     disabled={accepting || counterPrice === incomingOrder.proposedPrice}
                   >
                     <DollarSign className="h-5 w-5 mr-2" />
@@ -439,7 +439,7 @@ export default function IncomingOrderNotification() {
                 <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                   <Button
                     onClick={handleAccept}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-6 rounded-2xl text-base shadow-lg shadow-emerald-900/30 animate-glow-pulse"
+                    className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-6 rounded-2xl text-base animate-glow-pulse"
                     disabled={accepting}
                   >
                     <Phone className="h-5 w-5 mr-2" />

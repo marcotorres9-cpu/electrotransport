@@ -20,11 +20,11 @@ const typeIcons: Record<string, typeof Bell> = {
 }
 
 const typeColors: Record<string, string> = {
-  order: 'bg-emerald-100 text-emerald-600',
-  payment: 'bg-amber-100 text-amber-600',
-  system: 'bg-slate-100 text-slate-600',
-  info: 'bg-sky-100 text-sky-600',
-  offer: 'bg-orange-100 text-orange-600',
+  order: 'bg-[#1DB954]/15 text-[#1DB954]',
+  payment: 'bg-[#FFC145]/15 text-[#FFC145]',
+  system: 'bg-[#111] text-[#8a8a8a]',
+  info: 'bg-[#00C9A7]/15 text-[#00C9A7]',
+  offer: 'bg-[#FFC145]/15 text-[#FFC145]',
 }
 
 export default function NotificationsPage() {
@@ -70,15 +70,15 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Notificaciones</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
+          <p className="text-sm text-[#8a8a8a]">
             {notifications.filter((n) => !n.isRead).length} sin leer
           </p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+          className="text-[#1DB954] border-[#1DB954]/30 hover:bg-[#1DB954]/10"
           onClick={markAllRead}
         >
           <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -88,8 +88,8 @@ export default function NotificationsPage() {
 
       {notifications.length === 0 ? (
         <div className="text-center py-16">
-          <Bell className="h-16 w-16 text-slate-200 mx-auto mb-4" />
-          <p className="text-muted-foreground">No hay notificaciones</p>
+          <Bell className="h-16 w-16 text-[#333] mx-auto mb-4" />
+          <p className="text-[#666]">No hay notificaciones</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -104,11 +104,11 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
               >
-                <Card className={`border-none shadow-sm ${
+                <Card className={`bg-[#0a0a0a] border border-[#1a1a1a] shadow-none ${
                   !notif.isRead
                     ? isOffer
-                      ? 'border-l-4 border-l-orange-500 bg-orange-50/50'
-                      : 'border-l-4 border-l-emerald-500 bg-emerald-50/30'
+                      ? 'border-l-4 border-l-[#FFC145] bg-[#FFC145]/5'
+                      : 'border-l-4 border-l-[#1DB954] bg-[#1DB954]/5'
                     : ''
                 }`}>
                   <CardContent className="p-4">
@@ -118,27 +118,27 @@ export default function NotificationsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className={`text-sm font-medium ${!notif.isRead ? 'text-slate-800' : 'text-muted-foreground'}`}>
+                          <p className={`text-sm font-medium ${!notif.isRead ? 'text-white' : 'text-[#8a8a8a]'}`}>
                             {notif.title}
                           </p>
                           {!notif.isRead && (
-                            <div className={`w-2 h-2 rounded-full shrink-0 ${isOffer ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${isOffer ? 'bg-[#FFC145]' : 'bg-[#1DB954]'}`} />
                           )}
                           {isOffer && (
-                            <Badge className="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0">
+                            <Badge className="bg-[#FFC145]/15 text-[#FFC145] text-[10px] px-1.5 py-0">
                               OFERTA
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground">{notif.message}</p>
+                        <p className="text-sm text-[#8a8a8a]">{notif.message}</p>
                         <div className="flex items-center justify-between mt-2">
-                          <p className="text-xs text-muted-foreground">{formatDate(notif.createdAt)}</p>
+                          <p className="text-xs text-[#666]">{formatDate(notif.createdAt)}</p>
                           {/* Action button for unread offer notifications with orderId */}
                           {!notif.isRead && isOffer && notif.orderId && (
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-7 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                              className="h-7 text-xs border-[#FFC145]/30 text-[#FFC145] hover:bg-[#FFC145]/10"
                               onClick={() => handleViewOrder(notif.orderId!)}
                             >
                               <Eye className="h-3 w-3 mr-1" />

@@ -95,44 +95,44 @@ export default function DriverDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#050505]">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Driver Sidebar */}
-      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 lg:transform-none ${
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-[#0a0a0a] border-r border-[#1a1a1a] z-50 transform transition-transform duration-300 lg:transform-none ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         <div className="flex flex-col h-full">
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#1DB954] flex items-center justify-center">
                 <Truck className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="font-bold text-slate-800 text-sm">ElectroTransport</h2>
-                <p className="text-xs text-muted-foreground">Panel de Transportista</p>
+                <h2 className="font-bold text-white text-sm">ElectroTransport</h2>
+                <p className="text-xs text-[#666]">Panel de Transportista</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-muted-foreground">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-[#666]">
               <X className="h-5 w-5" />
             </button>
           </div>
-          <Separator />
+          <Separator className="bg-[#1a1a1a]" />
           <div className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                <span className="text-emerald-700 font-semibold text-sm">{currentUser?.name?.charAt(0) || 'T'}</span>
+              <div className="w-10 h-10 rounded-full bg-[#1DB954]/15 flex items-center justify-center">
+                <span className="text-[#1DB954] font-semibold text-sm">{currentUser?.name?.charAt(0) || 'T'}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-slate-800 truncate">{currentUser?.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{currentUser?.email}</p>
+                <p className="font-medium text-sm text-white truncate">{currentUser?.name}</p>
+                <p className="text-xs text-[#666] truncate">{currentUser?.email}</p>
               </div>
             </div>
           </div>
-          <Separator />
+          <Separator className="bg-[#1a1a1a]" />
           <nav className="flex-1 p-3 space-y-1">
             {driverNavItems.map((item) => {
               const isActive = useAppStore.getState().currentView === item.id
@@ -141,11 +141,11 @@ export default function DriverDashboard() {
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
-                    isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'
+                    isActive ? 'bg-[#1DB954]/10 text-[#1DB954]' : 'text-[#8a8a8a] hover:bg-[#111]'
                   }`}
                 >
                   {item.id === 'driver-notifications' && unreadCount > 0 && (
-                    <Badge className="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center mr-auto">
+                    <Badge className="bg-[#FFC145] text-black text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center mr-auto">
                       {unreadCount}
                     </Badge>
                   )}
@@ -156,18 +156,18 @@ export default function DriverDashboard() {
           </nav>
           {currentUser?.driver && (
             <div className="p-4">
-              <div className="bg-emerald-50 rounded-xl p-3 flex items-center gap-3">
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
+              <div className="bg-[#111] border border-[#1a1a1a] rounded-xl p-3 flex items-center gap-3">
+                <Star className="h-5 w-5 text-[#FFC145] fill-[#FFC145]" />
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">{currentUser.driver.rating.toFixed(1)}</p>
-                  <p className="text-xs text-muted-foreground">{currentUser.driver.totalTrips} viajes</p>
+                  <p className="text-sm font-semibold text-white">{currentUser.driver.rating.toFixed(1)}</p>
+                  <p className="text-xs text-[#666]">{currentUser.driver.totalTrips} viajes</p>
                 </div>
               </div>
             </div>
           )}
-          <Separator />
+          <Separator className="bg-[#1a1a1a]" />
           <div className="p-3">
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#FF6B6B] hover:bg-[#FF6B6B]/10 transition-colors">
               Cerrar Sesión
             </button>
           </div>
@@ -177,16 +177,16 @@ export default function DriverDashboard() {
       {/* Main Content */}
       <main className="flex-1 min-w-0">
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(true)} className="text-slate-600">
+        <header className="lg:hidden sticky top-0 z-30 bg-[#0a0a0a] border-b border-[#1a1a1a] px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setSidebarOpen(true)} className="text-[#8a8a8a]">
             <Menu className="h-6 w-6" />
           </button>
-          <Truck className="h-5 w-5 text-emerald-600" />
-          <h1 className="font-semibold text-slate-800 flex-1">Panel</h1>
+          <Truck className="h-5 w-5 text-[#1DB954]" />
+          <h1 className="font-semibold text-white flex-1">Panel</h1>
           <Button
             size="sm"
             variant={isDriverOnline ? 'default' : 'outline'}
-            className={isDriverOnline ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
+            className={isDriverOnline ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black' : 'border-[#1a1a1a] text-[#8a8a8a]'}
             onClick={toggleOnlineStatus}
           >
             {isDriverOnline ? 'En línea' : 'Offline'}
@@ -197,16 +197,16 @@ export default function DriverDashboard() {
           {/* Online Toggle + Stats */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">Panel de Transportista</h1>
-              <p className="text-sm text-muted-foreground">Gestiona tus entregas y gana dinero</p>
+              <h1 className="text-2xl font-bold text-white">Panel de Transportista</h1>
+              <p className="text-sm text-[#8a8a8a]">Gestiona tus entregas y gana dinero</p>
             </div>
             <motion.div whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={toggleOnlineStatus}
-                className={`font-semibold py-5 px-6 shadow-lg transition-all ${
+                className={`font-semibold py-5 px-6 transition-all ${
                   isDriverOnline
-                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white animate-pulse-emerald'
-                    : 'bg-slate-600 hover:bg-slate-700 text-white'
+                    ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black animate-pulse-emerald'
+                    : 'bg-[#333] hover:bg-[#444] text-white'
                 }`}
               >
                 {isDriverOnline ? (
@@ -227,20 +227,20 @@ export default function DriverDashboard() {
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Ganancias', value: formatPrice(totalEarnings), icon: DollarSign, color: 'bg-emerald-100 text-emerald-600' },
-              { label: 'Viajes', value: currentUser?.driver?.totalTrips || 0, icon: CheckCircle2, color: 'bg-sky-100 text-sky-600' },
-              { label: 'En Progreso', value: driverOrders.filter((o) => o.status === 'accepted' || o.status === 'in_progress').length, icon: Truck, color: 'bg-amber-100 text-amber-600' },
-              { label: 'Calificación', value: currentUser?.driver?.rating.toFixed(1) || '0.0', icon: Star, color: 'bg-purple-100 text-purple-600' },
+              { label: 'Ganancias', value: formatPrice(totalEarnings), icon: DollarSign, color: 'bg-[#1DB954]/10 text-[#1DB954]' },
+              { label: 'Viajes', value: currentUser?.driver?.totalTrips || 0, icon: CheckCircle2, color: 'bg-[#00C9A7]/10 text-[#00C9A7]' },
+              { label: 'En Progreso', value: driverOrders.filter((o) => o.status === 'accepted' || o.status === 'in_progress').length, icon: Truck, color: 'bg-[#FFC145]/10 text-[#FFC145]' },
+              { label: 'Calificación', value: currentUser?.driver?.rating.toFixed(1) || '0.0', icon: Star, color: 'bg-[#845EF7]/10 text-[#845EF7]' },
             ].map((stat, i) => (
               <motion.div key={stat.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-                <Card className="border-none shadow-sm">
+                <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
                       <stat.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">{stat.label}</p>
-                      <p className="text-lg font-bold text-slate-800">{stat.value}</p>
+                      <p className="text-xs text-[#666]">{stat.label}</p>
+                      <p className="text-lg font-bold text-white">{stat.value}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -252,11 +252,11 @@ export default function DriverDashboard() {
           {isDriverOnline && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                  <Map className="h-5 w-5 text-emerald-600" />
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Map className="h-5 w-5 text-[#1DB954]" />
                   Radar de Vehículos
                 </h2>
-                <span className="text-xs text-muted-foreground">Quito, Ecuador</span>
+                <span className="text-xs text-[#666]">Quito, Ecuador</span>
               </div>
               <MapView
                 height="300px"
@@ -278,23 +278,23 @@ export default function DriverDashboard() {
           {isDriverOnline && availableOrders.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-slate-800">Pedidos Disponibles</h2>
-                <button onClick={() => setCurrentView('driver-available-orders')} className="text-sm text-emerald-600 font-medium hover:underline">
+                <h2 className="text-lg font-semibold text-white">Pedidos Disponibles</h2>
+                <button onClick={() => setCurrentView('driver-available-orders')} className="text-sm text-[#1DB954] font-medium hover:underline">
                   Ver todos ({availableOrders.length})
                 </button>
               </div>
               <div className="space-y-3">
                 {availableOrders.slice(0, 3).map((order) => (
-                  <div key={order.id} className="bg-white rounded-xl border border-slate-100 p-4 hover:shadow-md transition-shadow">
+                  <div key={order.id} className="bg-[#0a0a0a] rounded-xl border border-[#1a1a1a] p-4 hover:border-[#1DB954]/30 transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
-                        {order.store && <Badge variant="outline" className="text-xs">{order.store.storeName}</Badge>}
+                        <span className="text-xs font-mono text-[#666]">#{order.orderNumber}</span>
+                        {order.store && <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">{order.store.storeName}</Badge>}
                       </div>
-                      <span className="font-bold text-emerald-600">{formatPrice(order.proposedPrice)}</span>
+                      <span className="font-bold text-[#1DB954]">{formatPrice(order.proposedPrice)}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                      <MapPin className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-sm text-[#8a8a8a]">
+                      <MapPin className="h-3.5 w-3.5 text-[#1DB954] shrink-0" />
                       <span className="truncate">{order.originAddress} → {order.destAddress}</span>
                     </div>
                   </div>
@@ -305,11 +305,11 @@ export default function DriverDashboard() {
 
           {!isDriverOnline && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Card className="border-none shadow-sm bg-slate-100">
+              <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
                 <CardContent className="p-8 text-center">
-                  <PowerOff className="h-12 w-12 text-slate-400 mx-auto mb-3" />
-                  <h3 className="font-semibold text-slate-700 mb-1">Estás Offline</h3>
-                  <p className="text-sm text-muted-foreground">Conéctate para ver pedidos disponibles</p>
+                  <PowerOff className="h-12 w-12 text-[#444] mx-auto mb-3" />
+                  <h3 className="font-semibold text-[#8a8a8a] mb-1">Estás Offline</h3>
+                  <p className="text-sm text-[#666]">Conéctate para ver pedidos disponibles</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -318,36 +318,36 @@ export default function DriverDashboard() {
           {/* Active orders */}
           {activeOrders.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <h2 className="text-lg font-semibold text-slate-800 mb-3">Pedidos Activos</h2>
+              <h2 className="text-lg font-semibold text-white mb-3">Pedidos Activos</h2>
               <div className="space-y-3">
                 {activeOrders.map((order) => (
-                  <div key={order.id} className={`bg-white rounded-xl p-4 ${
-                    order.status === 'offer_received' 
-                      ? 'border-2 border-orange-300 animate-pulse-offer' 
-                      : 'border border-emerald-200'
+                  <div key={order.id} className={`bg-[#0a0a0a] rounded-xl p-4 ${
+                    order.status === 'offer_received'
+                      ? 'border-2 border-[#FFC145]/40 animate-pulse-offer'
+                      : 'border border-[#1DB954]/30'
                   }`}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
+                      <span className="text-xs font-mono text-[#666]">#{order.orderNumber}</span>
                       <Badge className={`text-xs ${
-                        order.status === 'offer_received' 
-                          ? 'bg-orange-100 text-orange-700' 
-                          : 'bg-sky-100 text-sky-700'
+                        order.status === 'offer_received'
+                          ? 'bg-[#FFC145]/15 text-[#FFC145]'
+                          : 'bg-[#1DB954]/15 text-[#1DB954]'
                       }`}>
                         {order.status === 'offer_received' ? 'Oferta Enviada' : order.status === 'accepted' ? 'Aceptado' : 'En Progreso'}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
-                      <MapPin className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-sm text-[#8a8a8a] mb-2">
+                      <MapPin className="h-3.5 w-3.5 text-[#1DB954] shrink-0" />
                       <span className="truncate">{order.originAddress} → {order.destAddress}</span>
                     </div>
                     <div className="flex gap-2">
                       {order.status === 'offer_received' && (
-                        <Badge variant="outline" className="text-xs border-orange-200 text-orange-600">
+                        <Badge variant="outline" className="text-xs border-[#FFC145]/30 text-[#FFC145]">
                           Esperando confirmación del local...
                         </Badge>
                       )}
                       {(order.status === 'accepted' || order.status === 'in_progress') && (
-                        <Button size="sm" className="gradient-primary text-white text-xs" onClick={() => {
+                        <Button size="sm" className="bg-[#1DB954] hover:bg-[#17a34a] text-black text-xs" onClick={() => {
                           apiFetch(`/api/orders/${order.id}/complete`, { method: 'POST' }).then(() => {
                             toast.success('Pedido entregado')
                             loadData()

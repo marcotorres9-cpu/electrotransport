@@ -236,13 +236,13 @@ export default function CreateOrderPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setCurrentView('store-dashboard')}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-[#666] hover:text-white transition-colors"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Nuevo Pedido</h1>
-          <p className="text-sm text-muted-foreground">Solicita transporte para tus electrodomésticos</p>
+          <h1 className="text-2xl font-bold text-white">Nuevo Pedido</h1>
+          <p className="text-sm text-[#8a8a8a]">Solicita transporte para tus electrodomésticos</p>
         </div>
       </div>
 
@@ -251,10 +251,10 @@ export default function CreateOrderPage() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className="border border-slate-200/60 shadow-sm overflow-hidden">
+        <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none overflow-hidden">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-emerald-600" />
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+              <MapPin className="h-5 w-5 text-[#1DB954]" />
               Mapa de Ruta
             </CardTitle>
           </CardHeader>
@@ -272,11 +272,11 @@ export default function CreateOrderPage() {
               selectingDest={selectingDest}
               height="280px"
             />
-            <div className="flex gap-2 p-3 bg-slate-50">
+            <div className="flex gap-2 p-3 bg-[#111]">
               <Button
                 size="sm"
                 variant={selectingOrigin ? 'default' : 'outline'}
-                className={`flex-1 text-xs ${selectingOrigin ? 'gradient-primary text-white' : ''}`}
+                className={`flex-1 text-xs ${selectingOrigin ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black' : 'border-[#1a1a1a] text-[#8a8a8a]'}`}
                 onClick={() => { setSelectingOrigin(!selectingOrigin); setSelectingDest(false) }}
               >
                 <MapPin className="h-3 w-3 mr-1" />
@@ -285,7 +285,7 @@ export default function CreateOrderPage() {
               <Button
                 size="sm"
                 variant={selectingDest ? 'default' : 'outline'}
-                className={`flex-1 text-xs ${selectingDest ? 'bg-amber-500 hover:bg-amber-600 text-white' : ''}`}
+                className={`flex-1 text-xs ${selectingDest ? 'bg-[#FFC145] hover:bg-[#e0ad3a] text-black' : 'border-[#1a1a1a] text-[#8a8a8a]'}`}
                 onClick={() => { setSelectingDest(!selectingDest); setSelectingOrigin(false) }}
               >
                 <MapPin className="h-3 w-3 mr-1" />
@@ -299,15 +299,15 @@ export default function CreateOrderPage() {
       {/* Distance Info */}
       {distanceInfo && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="glass-card border border-emerald-200/50 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <Navigation className="h-5 w-5 text-emerald-600" />
+          <div className="bg-[#0a0a0a] border border-[#1DB954]/20 rounded-xl p-3 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#1DB954]/10 flex items-center justify-center">
+              <Navigation className="h-5 w-5 text-[#1DB954]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800">
+              <p className="text-sm font-semibold text-white">
                 {distanceInfo.km.toFixed(1)} km de distancia
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#8a8a8a]">
                 Tiempo estimado de viaje: ~{distanceInfo.time} min
               </p>
             </div>
@@ -321,40 +321,40 @@ export default function CreateOrderPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Card className="glass-card border border-slate-200/60 shadow-sm">
+          <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-emerald-600" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+                <MapPin className="h-5 w-5 text-[#1DB954]" />
                 Origen
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="originAddress">Dirección de origen</Label>
+                <Label htmlFor="originAddress" className="text-[#8a8a8a]">Dirección de origen</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
                     <Input
                       id="originAddress"
                       placeholder="Av. Amazonas #123, Quito"
                       value={originAddress}
                       onChange={(e) => setOriginAddress(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 bg-[#111] border-[#222] text-white"
                     />
                   </div>
-                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeOrigin} disabled={geocodingLoading}>
+                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeOrigin} disabled={geocodingLoading} className="border-[#1a1a1a] text-[#8a8a8a] hover:bg-[#111]">
                     <Search className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="originLat">Latitud</Label>
-                  <Input id="originLat" placeholder="-0.1807" value={originLat} onChange={(e) => setOriginLat(e.target.value)} />
+                  <Label htmlFor="originLat" className="text-[#8a8a8a]">Latitud</Label>
+                  <Input id="originLat" placeholder="-0.1807" value={originLat} onChange={(e) => setOriginLat(e.target.value)} className="bg-[#111] border-[#222] text-white" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="originLng">Longitud</Label>
-                  <Input id="originLng" placeholder="-78.4678" value={originLng} onChange={(e) => setOriginLng(e.target.value)} />
+                  <Label htmlFor="originLng" className="text-[#8a8a8a]">Longitud</Label>
+                  <Input id="originLng" placeholder="-78.4678" value={originLng} onChange={(e) => setOriginLng(e.target.value)} className="bg-[#111] border-[#222] text-white" />
                 </div>
               </div>
             </CardContent>
@@ -367,40 +367,40 @@ export default function CreateOrderPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="glass-card border border-slate-200/60 shadow-sm">
+          <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-amber-500" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+                <MapPin className="h-5 w-5 text-[#FFC145]" />
                 Destino
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="destAddress">Dirección de destino</Label>
+                <Label htmlFor="destAddress" className="text-[#8a8a8a]">Dirección de destino</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
                     <Input
                       id="destAddress"
                       placeholder="Av. Eloy Alfaro #456, Guayaquil"
                       value={destAddress}
                       onChange={(e) => setDestAddress(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 bg-[#111] border-[#222] text-white"
                     />
                   </div>
-                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeDest} disabled={geocodingLoading}>
+                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeDest} disabled={geocodingLoading} className="border-[#1a1a1a] text-[#8a8a8a] hover:bg-[#111]">
                     <Search className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="destLat">Latitud</Label>
-                  <Input id="destLat" placeholder="-2.1701" value={destLat} onChange={(e) => setDestLat(e.target.value)} />
+                  <Label htmlFor="destLat" className="text-[#8a8a8a]">Latitud</Label>
+                  <Input id="destLat" placeholder="-2.1701" value={destLat} onChange={(e) => setDestLat(e.target.value)} className="bg-[#111] border-[#222] text-white" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="destLng">Longitud</Label>
-                  <Input id="destLng" placeholder="-79.9250" value={destLng} onChange={(e) => setDestLng(e.target.value)} />
+                  <Label htmlFor="destLng" className="text-[#8a8a8a]">Longitud</Label>
+                  <Input id="destLng" placeholder="-79.9250" value={destLng} onChange={(e) => setDestLng(e.target.value)} className="bg-[#111] border-[#222] text-white" />
                 </div>
               </div>
             </CardContent>
@@ -413,23 +413,23 @@ export default function CreateOrderPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="glass-card border border-slate-200/60 shadow-sm">
+          <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <Package className="h-5 w-5 text-teal-600" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+                <Package className="h-5 w-5 text-[#1DB954]" />
                 Detalles de la Carga
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label>Tipo de electrodoméstico</Label>
+                <Label className="text-[#8a8a8a]">Tipo de electrodoméstico</Label>
                 <Select value={cargoType} onValueChange={setCargoType}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-[#111] border-[#222] text-white">
                     <SelectValue placeholder="Selecciona el tipo" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#0a0a0a] border-[#1a1a1a]">
                     {cargoTypes.map((ct) => (
-                      <SelectItem key={ct.value} value={ct.value}>
+                      <SelectItem key={ct.value} value={ct.value} className="text-white focus:bg-[#111] focus:text-white">
                         {ct.label}
                       </SelectItem>
                     ))}
@@ -439,31 +439,31 @@ export default function CreateOrderPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="weight">Peso (kg)</Label>
+                  <Label htmlFor="weight" className="text-[#8a8a8a]">Peso (kg)</Label>
                   <div className="relative">
-                    <Weight className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="weight" placeholder="80" value={cargoWeight} onChange={(e) => setCargoWeight(e.target.value)} className="pl-10" />
+                    <Weight className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+                    <Input id="weight" placeholder="80" value={cargoWeight} onChange={(e) => setCargoWeight(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="quantity">Cantidad</Label>
+                  <Label htmlFor="quantity" className="text-[#8a8a8a]">Cantidad</Label>
                   <div className="relative">
-                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="quantity" placeholder="2" value={cargoQuantity} onChange={(e) => setCargoQuantity(e.target.value)} className="pl-10" />
+                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#666]" />
+                    <Input id="quantity" placeholder="2" value={cargoQuantity} onChange={(e) => setCargoQuantity(e.target.value)} className="pl-10 bg-[#111] border-[#222] text-white" />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">Notas especiales</Label>
+                <Label htmlFor="notes" className="text-[#8a8a8a]">Notas especiales</Label>
                 <div className="relative">
-                  <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <FileText className="absolute left-3 top-3 h-4 w-4 text-[#666]" />
                   <Textarea
                     id="notes"
                     placeholder="Fragil, requiere cuidado especial..."
                     value={specialNotes}
                     onChange={(e) => setSpecialNotes(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-[#111] border-[#222] text-white"
                     rows={3}
                   />
                 </div>
@@ -478,30 +478,30 @@ export default function CreateOrderPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Card className="border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 shadow-sm">
+          <Card className="border-2 border-[#1DB954]/30 bg-[#0a0a0a]">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-emerald-800">
-                <DollarSign className="h-5 w-5 text-emerald-600" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-[#1DB954]">
+                <DollarSign className="h-5 w-5 text-[#1DB954]" />
                 Precio Propuesto
               </CardTitle>
-              <CardDescription className="text-emerald-600">
+              <CardDescription className="text-[#8a8a8a]">
                 Elige tu precio. Los transportistas pueden aceptar o contraofertar.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="price" className="text-emerald-700 font-semibold">
+                <Label htmlFor="price" className="text-[#1DB954] font-semibold">
                   ¿Cuánto quieres pagar? (USD)
                 </Label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-600" />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1DB954]" />
                   <Input
                     id="price"
                     type="number"
                     placeholder="50.00"
                     value={proposedPrice}
                     onChange={(e) => setProposedPrice(e.target.value)}
-                    className="pl-10 text-xl font-bold border-emerald-300 bg-white focus:border-emerald-500"
+                    className="pl-10 text-xl font-bold border-[#1DB954]/40 bg-[#111] focus:border-[#1DB954] text-white"
                   />
                 </div>
               </div>
@@ -513,7 +513,7 @@ export default function CreateOrderPage() {
         <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
           <Button
             type="submit"
-            className="w-full gradient-primary text-white font-semibold py-6 text-base shadow-lg hover:shadow-xl"
+            className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-6 text-base"
             disabled={isSubmitting}
           >
             <Send className="h-5 w-5 mr-2" />

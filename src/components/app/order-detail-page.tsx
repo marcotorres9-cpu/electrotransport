@@ -104,7 +104,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1DB954]" />
       </div>
     )
   }
@@ -112,9 +112,9 @@ export default function OrderDetailPage() {
   if (!order) {
     return (
       <div className="text-center py-20">
-        <AlertCircle className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-        <p className="text-muted-foreground">Pedido no encontrado</p>
-        <Button className="mt-4" onClick={() => setCurrentView('store-orders')}>Volver</Button>
+        <AlertCircle className="h-12 w-12 text-[#444] mx-auto mb-3" />
+        <p className="text-[#666]">Pedido no encontrado</p>
+        <Button className="mt-4 bg-[#1DB954] hover:bg-[#17a34a] text-black" onClick={() => setCurrentView('store-orders')}>Volver</Button>
       </div>
     )
   }
@@ -127,12 +127,12 @@ export default function OrderDetailPage() {
     <div className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => setCurrentView('store-orders')} className="text-muted-foreground hover:text-foreground">
+        <button onClick={() => setCurrentView('store-orders')} className="text-[#666] hover:text-white">
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-slate-800">Pedido #{order.orderNumber}</h1>
-          <p className="text-sm text-muted-foreground">{formatDate(order.createdAt)}</p>
+          <h1 className="text-xl font-bold text-white">Pedido #{order.orderNumber}</h1>
+          <p className="text-sm text-[#8a8a8a]">{formatDate(order.createdAt)}</p>
         </div>
         <Badge className={`${getStatusColor(order.status)} text-xs px-3 py-1`}>
           {getStatusLabel(order.status)}
@@ -141,7 +141,7 @@ export default function OrderDetailPage() {
 
       {/* Status Timeline */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-none shadow-sm">
+        <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
           <CardContent className="p-4">
             <div className="flex items-center justify-between overflow-x-auto">
               {statusSteps.map((step, i) => {
@@ -152,19 +152,19 @@ export default function OrderDetailPage() {
                   <div key={step.key} className="flex flex-col items-center flex-1 relative min-w-[60px]">
                     {i > 0 && (
                       <div className={`absolute top-4 right-1/2 left-[-50%] h-0.5 ${
-                        i <= currentStepIndex ? 'bg-emerald-400' : 'bg-slate-200'
+                        i <= currentStepIndex ? 'bg-[#1DB954]' : 'bg-[#222]'
                       }`} />
                     )}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center z-10 ${
                       isCurrent
-                        ? 'bg-emerald-500 text-white ring-4 ring-emerald-100'
+                        ? 'bg-[#1DB954] text-white ring-4 ring-[#1DB954]/20'
                         : isActive
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-slate-200 text-slate-400'
+                        ? 'bg-[#1DB954] text-white'
+                        : 'bg-[#222] text-[#555]'
                     }`}>
                       <Icon className="h-4 w-4" />
                     </div>
-                    <span className={`text-xs mt-1.5 text-center ${isActive ? 'text-emerald-700 font-medium' : 'text-muted-foreground'}`}>
+                    <span className={`text-xs mt-1.5 text-center ${isActive ? 'text-[#1DB954] font-medium' : 'text-[#555]'}`}>
                       {step.label}
                     </span>
                   </div>
@@ -182,28 +182,28 @@ export default function OrderDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
         >
-          <Card className="border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 shadow-md">
+          <Card className="border-2 border-[#FFC145]/40 bg-[#0a0a0a]">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                  <Handshake className="h-5 w-5 text-orange-600" />
+                <div className="w-10 h-10 rounded-full bg-[#FFC145]/15 flex items-center justify-center">
+                  <Handshake className="h-5 w-5 text-[#FFC145]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-orange-800">¡Oferta del Transportista!</p>
-                  <p className="text-sm text-orange-600">Revisa la oferta y decide</p>
+                  <p className="font-semibold text-[#FFC145]">¡Oferta del Transportista!</p>
+                  <p className="text-sm text-[#FFC145]/70">Revisa la oferta y decide</p>
                 </div>
               </div>
 
               {/* Driver Info */}
               {order.driver && (
-                <div className="flex items-center gap-3 mb-4 bg-white/60 rounded-xl p-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <span className="text-emerald-700 font-bold">{order.driver.name?.charAt(0)}</span>
+                <div className="flex items-center gap-3 mb-4 bg-[#111] rounded-xl p-3 border border-[#1a1a1a]">
+                  <div className="w-10 h-10 rounded-full bg-[#1DB954]/15 flex items-center justify-center">
+                    <span className="text-[#1DB954] font-bold">{order.driver.name?.charAt(0)}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-slate-800">{order.driver.name}</p>
+                    <p className="font-medium text-white">{order.driver.name}</p>
                     {order.driver.driver && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <p className="text-xs text-[#8a8a8a] flex items-center gap-1">
                         <Car className="h-3 w-3" />
                         {order.driver.driver.vehicleType}
                         {order.driver.driver.vehiclePlate && ` · ${order.driver.driver.vehiclePlate}`}
@@ -211,7 +211,7 @@ export default function OrderDetailPage() {
                     )}
                   </div>
                   {order.driver.phone && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">
                       <Phone className="h-3 w-3 mr-1" />
                       {order.driver.phone}
                     </Badge>
@@ -220,21 +220,21 @@ export default function OrderDetailPage() {
               )}
 
               {/* Offer Price */}
-              <div className="bg-white/80 rounded-xl p-3 mb-4">
+              <div className="bg-[#111] rounded-xl p-3 mb-4 border border-[#1a1a1a]">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Precio propuesto por ti:</span>
-                  <span className="font-medium text-slate-600">{formatPrice(order.proposedPrice)}</span>
+                  <span className="text-sm text-[#8a8a8a]">Precio propuesto por ti:</span>
+                  <span className="font-medium text-[#ccc]">{formatPrice(order.proposedPrice)}</span>
                 </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-orange-100">
-                  <span className="text-sm font-semibold text-orange-800">Oferta del transportista:</span>
-                  <span className="text-xl font-bold text-orange-700">{formatPrice(order.acceptedPrice || 0)}</span>
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#FFC145]/20">
+                  <span className="text-sm font-semibold text-[#FFC145]">Oferta del transportista:</span>
+                  <span className="text-xl font-bold text-[#FFC145]">{formatPrice(order.acceptedPrice || 0)}</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="space-y-2">
                 <Button
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                  className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold"
                   onClick={handleApproveOffer}
                   disabled={actionLoading === 'approve'}
                 >
@@ -244,7 +244,7 @@ export default function OrderDetailPage() {
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                    className="flex-1 border-[#FF6B6B]/30 text-[#FF6B6B] hover:bg-[#FF6B6B]/10"
                     onClick={handleRejectOffer}
                     disabled={actionLoading === 'reject'}
                   >
@@ -253,7 +253,7 @@ export default function OrderDetailPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50"
+                    className="flex-1 border-[#FFC145]/30 text-[#FFC145] hover:bg-[#FFC145]/10"
                     onClick={handleRejectOffer}
                     disabled={actionLoading === 'reject'}
                   >
@@ -269,27 +269,27 @@ export default function OrderDetailPage() {
 
       {/* Route */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <Card className="border-none shadow-sm">
+        <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-emerald-600" />
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+              <MapPin className="h-5 w-5 text-[#1DB954]" />
               Ruta
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+              <div className="w-3 h-3 rounded-full bg-[#1DB954] mt-1.5 shrink-0" />
               <div>
-                <p className="text-xs text-muted-foreground">Origen</p>
-                <p className="text-sm text-slate-700">{order.originAddress}</p>
+                <p className="text-xs text-[#666]">Origen</p>
+                <p className="text-sm text-[#ccc]">{order.originAddress}</p>
               </div>
             </div>
-            <div className="ml-1.5 border-l-2 border-dashed border-slate-200 h-4" />
+            <div className="ml-1.5 border-l-2 border-dashed border-[#333] h-4" />
             <div className="flex items-start gap-3">
-              <div className="w-3 h-3 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+              <div className="w-3 h-3 rounded-full bg-[#FFC145] mt-1.5 shrink-0" />
               <div>
-                <p className="text-xs text-muted-foreground">Destino</p>
-                <p className="text-sm text-slate-700">{order.destAddress}</p>
+                <p className="text-xs text-[#666]">Destino</p>
+                <p className="text-sm text-[#ccc]">{order.destAddress}</p>
               </div>
             </div>
           </CardContent>
@@ -298,38 +298,38 @@ export default function OrderDetailPage() {
 
       {/* Cargo Details */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-        <Card className="border-none shadow-sm">
+        <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Package className="h-5 w-5 text-teal-600" />
-              Detalles del Carga
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+              <Package className="h-5 w-5 text-[#1DB954]" />
+              Detalles de la Carga
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
               {order.cargoType && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Tipo</p>
-                  <p className="text-sm font-medium">{order.cargoType}</p>
+                  <p className="text-xs text-[#666]">Tipo</p>
+                  <p className="text-sm font-medium text-white">{order.cargoType}</p>
                 </div>
               )}
               {order.cargoWeight && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Peso</p>
-                  <p className="text-sm font-medium">{order.cargoWeight} kg</p>
+                  <p className="text-xs text-[#666]">Peso</p>
+                  <p className="text-sm font-medium text-white">{order.cargoWeight} kg</p>
                 </div>
               )}
               {order.cargoQuantity && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Cantidad</p>
-                  <p className="text-sm font-medium">{order.cargoQuantity} unidades</p>
+                  <p className="text-xs text-[#666]">Cantidad</p>
+                  <p className="text-sm font-medium text-white">{order.cargoQuantity} unidades</p>
                 </div>
               )}
             </div>
             {order.specialNotes && (
-              <div className="mt-3 pt-3 border-t border-slate-50">
-                <p className="text-xs text-muted-foreground mb-1">Notas especiales</p>
-                <p className="text-sm text-slate-600">{order.specialNotes}</p>
+              <div className="mt-3 pt-3 border-t border-[#1a1a1a]">
+                <p className="text-xs text-[#666] mb-1">Notas especiales</p>
+                <p className="text-sm text-[#8a8a8a]">{order.specialNotes}</p>
               </div>
             )}
           </CardContent>
@@ -338,28 +338,28 @@ export default function OrderDetailPage() {
 
       {/* Price */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <Card className="border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 shadow-sm">
+        <Card className="border-2 border-[#1DB954]/30 bg-[#0a0a0a]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2 text-emerald-800">
-              <DollarSign className="h-5 w-5 text-emerald-600" />
+            <CardTitle className="text-base font-semibold flex items-center gap-2 text-[#1DB954]">
+              <DollarSign className="h-5 w-5 text-[#1DB954]" />
               Precios
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-emerald-700">Precio propuesto</span>
-              <span className="font-bold text-emerald-700">{formatPrice(order.proposedPrice)}</span>
+              <span className="text-sm text-[#1DB954]">Precio propuesto</span>
+              <span className="font-bold text-[#1DB954]">{formatPrice(order.proposedPrice)}</span>
             </div>
             {order.counterPrice && (
               <div className="flex justify-between">
-                <span className="text-sm text-amber-700">Contraoferta</span>
-                <span className="font-bold text-amber-700">{formatPrice(order.counterPrice)}</span>
+                <span className="text-sm text-[#FFC145]">Contraoferta</span>
+                <span className="font-bold text-[#FFC145]">{formatPrice(order.counterPrice)}</span>
               </div>
             )}
             {order.acceptedPrice && (
-              <div className="flex justify-between pt-2 border-t border-emerald-200">
-                <span className="text-sm font-semibold text-emerald-800">Precio aceptado</span>
-                <span className="text-lg font-bold text-emerald-800">{formatPrice(order.acceptedPrice)}</span>
+              <div className="flex justify-between pt-2 border-t border-[#1DB954]/20">
+                <span className="text-sm font-semibold text-[#1DB954]">Precio aceptado</span>
+                <span className="text-lg font-bold text-[#1DB954]">{formatPrice(order.acceptedPrice)}</span>
               </div>
             )}
           </CardContent>
@@ -369,22 +369,22 @@ export default function OrderDetailPage() {
       {/* Driver Info (for non-offer statuses) */}
       {order.driver && !isOfferReceived && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <Card className="border-none shadow-sm">
+          <Card className="bg-[#0a0a0a] border border-[#1a1a1a] shadow-none">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <User className="h-5 w-5 text-slate-600" />
+              <CardTitle className="text-base font-semibold flex items-center gap-2 text-white">
+                <User className="h-5 w-5 text-[#8a8a8a]" />
                 Transportista
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <span className="text-emerald-700 font-bold">{order.driver.name?.charAt(0)}</span>
+                <div className="w-12 h-12 rounded-full bg-[#1DB954]/15 flex items-center justify-center">
+                  <span className="text-[#1DB954] font-bold">{order.driver.name?.charAt(0)}</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-800">{order.driver.name}</p>
+                  <p className="font-semibold text-white">{order.driver.name}</p>
                   {order.driver.phone && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <p className="text-sm text-[#8a8a8a] flex items-center gap-1">
                       <Phone className="h-3 w-3" /> {order.driver.phone}
                     </p>
                   )}
@@ -392,12 +392,12 @@ export default function OrderDetailPage() {
               </div>
               {order.driver.driver && (
                 <div className="flex gap-2">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">
                     <Car className="h-3 w-3 mr-1" />
                     {order.driver.driver.vehicleType}
                   </Badge>
                   {order.driver.driver.vehiclePlate && (
-                    <Badge variant="outline" className="text-xs">{order.driver.driver.vehiclePlate}</Badge>
+                    <Badge variant="outline" className="text-xs border-[#1a1a1a] text-[#8a8a8a]">{order.driver.driver.vehiclePlate}</Badge>
                   )}
                 </div>
               )}
@@ -412,7 +412,7 @@ export default function OrderDetailPage() {
           <div className="flex gap-3">
             <Button
               variant="outline"
-              className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+              className="flex-1 border-[#FF6B6B]/30 text-[#FF6B6B] hover:bg-[#FF6B6B]/10"
               onClick={() => setCancelDialog(true)}
             >
               <XCircle className="h-4 w-4 mr-2" />
@@ -424,22 +424,23 @@ export default function OrderDetailPage() {
 
       {/* Cancel Dialog */}
       <Dialog open={cancelDialog} onOpenChange={setCancelDialog}>
-        <DialogContent>
+        <DialogContent className="bg-[#0a0a0a] border-[#1a1a1a]">
           <DialogHeader>
-            <DialogTitle>¿Cancelar pedido #{order.orderNumber}?</DialogTitle>
+            <DialogTitle className="text-white">¿Cancelar pedido #{order.orderNumber}?</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-muted-foreground">Esta acción no se puede deshacer.</p>
+            <p className="text-sm text-[#8a8a8a]">Esta acción no se puede deshacer.</p>
             <Textarea
               placeholder="Razón de cancelación (opcional)"
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               rows={3}
+              className="bg-[#111] border-[#222] text-white"
             />
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setCancelDialog(false)}>No, volver</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" onClick={handleCancel}>
+            <Button variant="outline" onClick={() => setCancelDialog(false)} className="border-[#1a1a1a] text-[#8a8a8a]">No, volver</Button>
+            <Button className="bg-[#FF6B6B] hover:bg-[#e55c5c] text-white" onClick={handleCancel}>
               Sí, cancelar
             </Button>
           </DialogFooter>
