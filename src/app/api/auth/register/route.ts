@@ -27,6 +27,12 @@ export async function POST(request: NextRequest) {
 
     // If email exists and trying to register as admin, promote the existing user
     if (existingUser && role === 'admin') {
+      // Verify password matches existing account
+      const hashedPassword = hashPassword(password)
+      if (existingUser.password !== hashedPassword) {
+        return NextResponse.json({ error: 'La contraseña no coincide con la cuenta existente. Usa la misma contraseña.' }, { status: 403 })
+      }
+
       const token = generateToken()
       const updatedUser = await db.etUser.update({
         where: { id: existingUser.id },

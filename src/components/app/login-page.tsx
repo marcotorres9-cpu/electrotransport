@@ -150,6 +150,8 @@ export default function LoginPage() {
                 ← Volver al inicio
               </button>
             </div>
+
+            <p className="text-center text-[10px] text-gray-300 mt-3">v2.4.0</p>
           </CardContent>
         </Card>
       </motion.div>
