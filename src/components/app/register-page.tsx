@@ -5,7 +5,8 @@ import { useAppStore } from '@/store/use-app-store'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Truck, Store, UserPlus, Mail, Lock, Phone, Eye, EyeOff,
-  Building2, MapPin, Hash, Car, FileText, BadgeCheck, ChevronLeft
+  Building2, MapPin, Hash, Car, FileText, BadgeCheck, ChevronLeft,
+  Shield, LockKeyhole
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,7 +25,7 @@ const vehicleTypes = [
 
 export default function RegisterPage() {
   const { setCurrentView, setCurrentUser, setLoading } = useAppStore()
-  const [role, setRole] = useState<'store' | 'driver'>('store')
+  const [role, setRole] = useState<'store' | 'driver' | 'admin'>('store')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
@@ -101,7 +102,9 @@ export default function RegisterPage() {
       }
 
       setCurrentUser(data.user)
-      if (data.user.role === 'store') {
+      if (data.user.role === 'admin') {
+        setCurrentView('admin-dashboard')
+      } else if (data.user.role === 'store') {
         setCurrentView('store-dashboard')
       } else {
         setCurrentView('driver-dashboard')
@@ -158,42 +161,60 @@ export default function RegisterPage() {
               {/* Role Toggle */}
               <RadioGroup
                 value={role}
-                onValueChange={(v) => setRole(v as 'store' | 'driver')}
-                className="grid grid-cols-2 gap-3 mb-6"
+                onValueChange={(v) => setRole(v as 'store' | 'driver' | 'admin')}
+                className="grid grid-cols-3 gap-3 mb-6"
               >
                 <label className={`cursor-pointer`}>
                   <div
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
                       role === 'store'
                         ? 'border-emerald-500 bg-emerald-50 shadow-sm'
                         : 'border-muted hover:border-emerald-200'
                     }`}
                   >
                     <RadioGroupItem value="store" className="sr-only" />
-                    <Store className={`h-6 w-6 ${role === 'store' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
-                    <div>
+                    <Store className={`h-7 w-7 ${role === 'store' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
+                    <div className="text-center">
                       <p className={`font-semibold text-sm ${role === 'store' ? 'text-emerald-800' : ''}`}>
-                        Local Comercial
+                        Local
                       </p>
-                      <p className="text-xs text-muted-foreground">Vendo electrodomésticos</p>
+                      <p className="text-xs text-muted-foreground">Electrodomésticos</p>
                     </div>
                   </div>
                 </label>
                 <label className={`cursor-pointer`}>
                   <div
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
                       role === 'driver'
                         ? 'border-emerald-500 bg-emerald-50 shadow-sm'
                         : 'border-muted hover:border-emerald-200'
                     }`}
                   >
                     <RadioGroupItem value="driver" className="sr-only" />
-                    <Car className={`h-6 w-6 ${role === 'driver' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
-                    <div>
+                    <Car className={`h-7 w-7 ${role === 'driver' ? 'text-emerald-600' : 'text-muted-foreground'}`} />
+                    <div className="text-center">
                       <p className={`font-semibold text-sm ${role === 'driver' ? 'text-emerald-800' : ''}`}>
-                        Transportista
+                        Transporte
                       </p>
-                      <p className="text-xs text-muted-foreground">Ofrezco servicio de transporte</p>
+                      <p className="text-xs text-muted-foreground">Servicio de carga</p>
+                    </div>
+                  </div>
+                </label>
+                <label className={`cursor-pointer`}>
+                  <div
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                      role === 'admin'
+                        ? 'border-purple-500 bg-purple-50 shadow-sm'
+                        : 'border-muted hover:border-purple-200'
+                    }`}
+                  >
+                    <RadioGroupItem value="admin" className="sr-only" />
+                    <Shield className={`h-7 w-7 ${role === 'admin' ? 'text-purple-600' : 'text-muted-foreground'}`} />
+                    <div className="text-center">
+                      <p className={`font-semibold text-sm ${role === 'admin' ? 'text-purple-800' : ''}`}>
+                        Admin
+                      </p>
+                      <p className="text-xs text-muted-foreground">Gestión total</p>
                     </div>
                   </div>
                 </label>
@@ -244,7 +265,27 @@ export default function RegisterPage() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                  {role === 'store' ? (
+                  {role === 'admin' ? (
+                    <motion.div
+                      key="admin-fields"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-2 pb-1">
+                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-purple-600" />
+                          Acceso de Administrador
+                        </p>
+                      </div>
+                      <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                        <p className="text-sm text-purple-800">
+                          Como administrador tendrás control total sobre la plataforma: gestión de usuarios, activación/desactivación de cuentas, y monitoreo de pedidos.
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : role === 'store' ? (
                     <motion.div
                       key="store-fields"
                       initial={{ opacity: 0, height: 0 }}
