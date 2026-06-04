@@ -169,3 +169,27 @@ Stage Summary:
 - SW cache updated to v3 forces all clients to fetch fresh assets
 - New icon deployed to Android resources and PWA
 - New APK built and available for download
+---
+Task ID: 2
+Agent: Main Agent
+Task: Uber-style dark theme redesign, new icon, fix overlapping text
+
+Work Log:
+- Generated new dark minimalist app icon (black bg, white truck, green accent)
+- Redesigned globals.css with Uber-inspired dark theme (#050505 bg, #1DB954 primary)
+- Redesigned landing-page.tsx with dark hero, subtle ambient glows, grid pattern
+- Redesigned register-page.tsx: compact 3-role selector (no text overlap), dark inputs, purple admin accent
+- Redesigned login-page.tsx with dark cards and inputs
+- Subagent redesigned all 11 dashboard/component files with dark theme
+- Updated SW cache to v4 to force all clients to refresh
+- Copied new icons to all Android mipmap directories
+- Pushed to GitHub, forced Vercel redeploy, assigned production alias
+- Built new APK with updated icon
+
+Stage Summary:
+- All old light theme colors removed (no more slate-50, emerald-50, shadow-xl)
+- Dark theme: #050505 bg, #0a0a0a cards, #1DB954 green accent, #845EF7 admin purple
+- 3 registration roles visible with compact layout (no overlap)
+- New dark minimalist icon generated
+- APK built: /home/z/my-project/download/ElectroTransport.apk (4.1MB)
+- Vercel production confirmed serving dark theme
