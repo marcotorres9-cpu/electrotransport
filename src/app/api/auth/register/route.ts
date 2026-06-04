@@ -24,8 +24,34 @@ export async function POST(request: NextRequest) {
     }
 
     const existingUser = await db.etUser.findUnique({ where: { email } })
+
+    // If email exists and trying to register as admin, promote the existing user
+    if (existingUser && role === 'admin') {
+      const token = generateToken()
+      await db.etUser.update({
+        where: { id: existingUser.id },
+        data: { role: 'admin', token },
+      })
+
+      const updatedUser = await db.etUser.findUnique({ where: { id: existingUser.id } })
+
+      return NextResponse.json({
+        user: {
+          id: updatedUser!.id,
+          name: updatedUser!.name,
+          email: updatedUser!.email,
+          phone: updatedUser!.phone,
+          role: updatedUser!.role,
+          avatar: updatedUser!.avatar,
+          isActive: updatedUser!.isActive,
+          token,
+        },
+      })
+    }
+
+    // If email exists with different role (not admin), show error
     if (existingUser) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
+      return NextResponse.json({ error: 'Email ya registrado. Si quieres acceso Admin, selecciona el rol Admin en el registro.' }, { status: 409 })
     }
 
     const hashedPassword = hashPassword(password)

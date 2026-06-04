@@ -20,7 +20,11 @@ interface MapViewProps {
 
 // Quito, Ecuador center
 const DEFAULT_CENTER: [number, number] = [-0.1807, -78.4678]
-const DEFAULT_ZOOM = 12
+const DEFAULT_ZOOM = 13
+
+// CartoDB Dark Matter tiles - matches dark theme
+const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+const DARK_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
 
 export default function MapView({ className = '', height = '400px', showDriverLocations = true, orders = [] }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -29,20 +33,24 @@ export default function MapView({ className = '', height = '400px', showDriverLo
   const polylinesRef = useRef<any[]>([])
   const [mapReady, setMapReady] = useState(false)
   const [userLocation, setUserLocation] = useState<[number, number]>(DEFAULT_CENTER)
+  const [locating, setLocating] = useState(true)
 
-  // Try to get user location
+  // Try to get user location with high accuracy
   useEffect(() => {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation([position.coords.latitude, position.coords.longitude])
+          setLocating(false)
         },
         () => {
-          // Fallback to Quito
           setUserLocation(DEFAULT_CENTER)
+          setLocating(false)
         },
-        { timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       )
+    } else {
+      setLocating(false)
     }
   }, [])
 
@@ -59,20 +67,18 @@ export default function MapView({ className = '', height = '400px', showDriverLo
 
         if (cancelled || !mapRef.current) return
 
-        // Fix default marker icons
-        delete (L.Icon.Default.prototype as any)._getIconUrl
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-        })
+        const map = L.map(mapRef.current!, {
+          zoomControl: false,
+        }).setView(userLocation, DEFAULT_ZOOM)
 
-        const map = L.map(mapRef.current!).setView(userLocation, DEFAULT_ZOOM)
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        // Dark map tiles
+        L.tileLayer(DARK_TILES, {
+          attribution: DARK_ATTRIBUTION,
           maxZoom: 19,
         }).addTo(map)
+
+        // Add zoom control to bottom-right
+        L.control.zoom({ position: 'bottomright' }).addTo(map)
 
         mapInstanceRef.current = map
         setMapReady(true)
@@ -106,6 +112,18 @@ export default function MapView({ className = '', height = '400px', showDriverLo
 
     const map = mapInstanceRef.current
 
+    // User location marker (blue dot)
+    const userIcon = L.divIcon({
+      html: `<div style="width:14px;height:14px;background:#3B82F6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(59,130,246,0.5);"></div>`,
+      className: 'custom-marker',
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+    })
+    const userMarker = L.marker(userLocation, { icon: userIcon })
+      .addTo(map)
+      .bindPopup('<b>Mi ubicación</b>')
+    markersRef.current.push(userMarker)
+
     // Add order markers and route lines
     orders.forEach((order) => {
       if (order.originLat !== 0 && order.originLng !== 0 && order.destLat !== 0 && order.destLng !== 0) {
@@ -113,47 +131,36 @@ export default function MapView({ className = '', height = '400px', showDriverLo
 
         // Origin marker (green)
         const originIcon = L.divIcon({
-          html: `<div class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-lg flex items-center justify-center text-white text-[8px] font-bold">O</div>`,
+          html: `<div style="width:28px;height:28px;background:#1DB954;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;">O</div>`,
           className: 'custom-marker',
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
         })
 
         const originMarker = L.marker([order.originLat, order.originLng], { icon: originIcon })
           .addTo(map)
-          .bindPopup(`<b>Origen - ${order.orderNumber}</b><br>${order.status === 'accepted' ? 'Aceptado' : order.status === 'in_progress' ? 'En Progreso' : ''}`)
-
+          .bindPopup(`<b>Origen - ${order.orderNumber}</b>`)
         markersRef.current.push(originMarker)
 
         // Destination marker (amber)
         const destIcon = L.divIcon({
-          html: `<div class="w-6 h-6 rounded-full bg-amber-500 border-2 border-white shadow-lg flex items-center justify-center text-white text-[8px] font-bold">D</div>`,
+          html: `<div style="width:28px;height:28px;background:#FFC145;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;">D</div>`,
           className: 'custom-marker',
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
         })
 
         const destMarker = L.marker([order.destLat, order.destLng], { icon: destIcon })
           .addTo(map)
           .bindPopup(`<b>Destino - ${order.orderNumber}</b>`)
-
         markersRef.current.push(destMarker)
 
         // Route line for active orders
         if (isActive) {
           const polyline = L.polyline(
-            [
-              [order.originLat, order.originLng],
-              [order.destLat, order.destLng],
-            ],
-            {
-              color: '#059669',
-              weight: 3,
-              opacity: 0.7,
-              dashArray: '10, 6',
-            }
+            [[order.originLat, order.originLng], [order.destLat, order.destLng]],
+            { color: '#1DB954', weight: 3, opacity: 0.8, dashArray: '10, 6' }
           ).addTo(map)
-
           polylinesRef.current.push(polyline)
         }
       }
@@ -168,21 +175,15 @@ export default function MapView({ className = '', height = '400px', showDriverLo
         if (data.drivers) {
           data.drivers.forEach((driver: { lat: number; lng: number; name: string; vehicleType: string }) => {
             const driverIcon = L.divIcon({
-              html: `
-                <div class="relative">
-                  <div class="w-4 h-4 rounded-full bg-emerald-400 border-2 border-white shadow-lg animate-pulse"></div>
-                  <div class="absolute inset-0 w-4 h-4 rounded-full bg-emerald-400 animate-ping opacity-40"></div>
-                </div>
-              `,
+              html: `<div style="position:relative;"><div style="width:12px;height:12px;background:#1DB954;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(29,185,84,0.6);"></div><div style="position:absolute;inset:0;width:12px;height:12px;background:#1DB954;border-radius:50%;animation:ping 2s infinite;opacity:0.4;"></div></div>`,
               className: 'custom-marker',
-              iconSize: [16, 16],
-              iconAnchor: [8, 8],
+              iconSize: [12, 12],
+              iconAnchor: [6, 6],
             })
 
             const marker = L.marker([driver.lat, driver.lng], { icon: driverIcon })
               .addTo(map)
               .bindPopup(`<b>${driver.name}</b><br>${driver.vehicleType}`)
-
             markersRef.current.push(marker)
           })
         }
@@ -190,28 +191,37 @@ export default function MapView({ className = '', height = '400px', showDriverLo
         // silently fail
       }
     }
-  }, [mapReady, orders, showDriverLocations])
+  }, [mapReady, orders, showDriverLocations, userLocation])
 
   useEffect(() => {
     updateMarkers()
   }, [updateMarkers])
 
   return (
-    <Card className={`border-none shadow-sm overflow-hidden ${className}`}>
+    <div className={`relative rounded-xl overflow-hidden ${className}`}>
       <div
         ref={mapRef}
         style={{ height, width: '100%' }}
-        className="z-0 rounded-xl"
+        className="z-0"
       />
       {/* Loading overlay */}
       {!mapReady && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 rounded-xl z-10" style={{ height, width: '100%' }}>
+        <div className="absolute inset-0 flex items-center justify-center bg-[#1e1e1e] rounded-xl z-10" style={{ height, width: '100%' }}>
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">Cargando mapa...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1DB954] mx-auto mb-2" />
+            <p className="text-xs text-[#888]">Cargando mapa...</p>
           </div>
         </div>
       )}
-    </Card>
+      {/* Locating indicator */}
+      {mapReady && locating && (
+        <div className="absolute top-3 right-3 z-[1000]">
+          <div className="bg-[#262626] border border-[#333] rounded-lg px-3 py-1.5 text-xs text-[#aaa] flex items-center gap-2">
+            <div className="animate-spin rounded-full h-3 w-3 border-b border-[#1DB954]" />
+            Detectando ubicación...
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

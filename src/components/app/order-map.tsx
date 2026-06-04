@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+// CartoDB Dark Matter tiles
+const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+
 interface OrderMapProps {
   originLat?: number
   originLng?: number
@@ -64,20 +67,21 @@ export default function OrderMap({
       mapInstanceRef.current = null
     }
 
-    // Determine center
-    const hasOrigin = originLat && originLng
-    const hasDest = destLat && destLng
-    let centerLat = -0.1807  // Quito, Ecuador default
+    // Determine center - use user location as priority
+    let centerLat = -0.1807
     let centerLng = -78.4678
     let zoom = 12
 
-    // Use user's detected location if available
+    // Priority 1: user detected location
     if (userLocation?.lat && userLocation?.lng) {
       centerLat = userLocation.lat
       centerLng = userLocation.lng
-      zoom = 13
+      zoom = 14
     }
 
+    // Priority 2: both origin and dest
+    const hasOrigin = originLat && originLng
+    const hasDest = destLat && destLng
     if (hasOrigin && hasDest) {
       centerLat = (originLat + destLat) / 2
       centerLng = (originLng + destLng) / 2
@@ -95,18 +99,19 @@ export default function OrderMap({
     const map = L.map(mapRef.current, {
       center: [centerLat, centerLng],
       zoom,
-      zoomControl: true,
+      zoomControl: false,
       scrollWheelZoom: interactive,
       dragging: interactive,
       tap: interactive,
       attributionControl: false,
     })
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Dark map tiles
+    L.tileLayer(DARK_TILES, {
       maxZoom: 19,
     }).addTo(map)
 
-    L.control.attribution({ prefix: false }).addTo(map)
+    L.control.zoom({ position: 'bottomright' }).addTo(map)
     mapInstanceRef.current = map
     setMapReady(true)
 
@@ -116,7 +121,13 @@ export default function OrderMap({
         mapInstanceRef.current = null
       }
     }
-  }, []) // Only create map once
+  }, [])
+
+  // Update center when user location changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !userLocation?.lat) return
+    mapInstanceRef.current.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
+  }, [userLocation])
 
   // Handle click events
   useEffect(() => {
@@ -150,10 +161,10 @@ export default function OrderMap({
     // Origin marker
     if (originLat && originLng) {
       const originIcon = L.divIcon({
-        className: 'origin-marker',
-        html: '',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        className: 'custom-marker',
+        html: `<div style="width:28px;height:28px;background:#1DB954;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">O</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
       })
       L.marker([originLat, originLng], { icon: originIcon })
         .addTo(map)
@@ -164,10 +175,10 @@ export default function OrderMap({
     // Destination marker
     if (destLat && destLng) {
       const destIcon = L.divIcon({
-        className: 'dest-marker',
-        html: '',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        className: 'custom-marker',
+        html: `<div style="width:28px;height:28px;background:#FFC145;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#000;font-size:11px;font-weight:700;">D</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
       })
       L.marker([destLat, destLng], { icon: destIcon })
         .addTo(map)
@@ -175,23 +186,26 @@ export default function OrderMap({
       markers.push([destLat, destLng])
     }
 
+    // User location blue dot
+    if (userLocation?.lat && userLocation?.lng) {
+      const userIcon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="width:14px;height:14px;background:#3B82F6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(59,130,246,0.5);"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 7],
+      })
+      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup('<b>Mi ubicación</b>')
+    }
+
     // Route line between origin and destination
     if (originLat && originLng && destLat && destLng) {
       const routeLine = L.polyline(
-        [
-          [originLat, originLng],
-          [destLat, destLng],
-        ],
-        {
-          color: '#059669',
-          weight: 3,
-          opacity: 0.7,
-          dashArray: '10, 10',
-        }
+        [[originLat, originLng], [destLat, destLng]],
+        { color: '#1DB954', weight: 3, opacity: 0.8, dashArray: '10, 10' }
       ).addTo(map)
-      routeLine.bindPopup('Ruta estimada')
 
-      // Fit bounds to route
       const bounds = L.latLngBounds([
         [originLat, originLng],
         [destLat, destLng],
@@ -204,12 +218,10 @@ export default function OrderMap({
       orders.forEach((order) => {
         if (order.originLat && order.originLng) {
           const orderIcon = L.divIcon({
-            className: '',
-            html: `<div class="driver-marker" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            </div>`,
-            iconSize: [36, 36],
-            iconAnchor: [18, 18],
+            className: 'custom-marker',
+            html: `<div style="width:32px;height:32px;background:linear-gradient(135deg,#FFC145,#d97706);border:2px solid #fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">$</div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
           })
           L.marker([order.originLat, order.originLng], { icon: orderIcon })
             .addTo(map)
@@ -224,10 +236,10 @@ export default function OrderMap({
       drivers.forEach((driver) => {
         if (driver.lat && driver.lng) {
           const driverIcon = L.divIcon({
-            className: '',
-            html: `<div class="driver-radar-marker"><div class="radar-ping"></div><div class="radar-core"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div></div>`,
-            iconSize: [36, 36],
-            iconAnchor: [18, 18],
+            className: 'custom-marker',
+            html: `<div style="position:relative;"><div style="width:16px;height:16px;background:#1DB954;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(29,185,84,0.6);"></div><div style="position:absolute;inset:-4px;width:24px;height:24px;background:rgba(29,185,84,0.2);border-radius:50%;animation:ping 2s infinite;"></div></div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
           })
           L.marker([driver.lat, driver.lng], { icon: driverIcon })
             .addTo(map)
@@ -242,10 +254,10 @@ export default function OrderMap({
       const bounds = L.latLngBounds(markers)
       map.fitBounds(bounds, { padding: [30, 30] })
     }
-  }, [mapReady, originLat, originLng, destLat, destLng, orders, drivers])
+  }, [mapReady, originLat, originLng, destLat, destLng, orders, drivers, userLocation])
 
   return (
-    <div className="relative rounded-xl overflow-hidden shadow-md border border-slate-200">
+    <div className="relative rounded-xl overflow-hidden border border-[#333]">
       <div
         ref={mapRef}
         style={{ height, width: '100%' }}
@@ -253,8 +265,8 @@ export default function OrderMap({
       />
       {(selectingOrigin || selectingDest) && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000]">
-          <div className="glass-card rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 shadow-lg">
-            📍 Haz clic en el mapa para marcar {selectingOrigin ? 'el origen' : 'el destino'}
+          <div className="bg-[#262626] border border-[#333] rounded-lg px-3 py-2 text-xs font-medium text-[#1DB954] shadow-lg">
+            📍 Toca el mapa para marcar {selectingOrigin ? 'el origen' : 'el destino'}
           </div>
         </div>
       )}
