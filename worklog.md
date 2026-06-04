@@ -147,3 +147,25 @@
 - `leaflet` v1.9.4
 - `react-leaflet` v5.0.0
 - `@types/leaflet` v1.9.21
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix missing Admin role in registration and update app icon
+
+Work Log:
+- Analyzed screenshot from user showing only 2 roles (Local Comercial, Transportista) - labels don't match current code
+- Verified register-page.tsx has all 3 roles (Local, Transporte, Admin) correctly
+- Found root cause: Service Worker caching old version (v1), and APK built with old code
+- Updated SW cache name from v1 to v3 to force cache refresh
+- Generated new app icon with AI (green gradient truck + appliance)
+- Created icon sizes: 1024px, 512px, 192px for PWA
+- Copied icons to all Android mipmap directories (mdpi through xxxhdpi)
+- Pushed all changes to GitHub
+- Built new APK with Capacitor + Gradle (JDK 21 + Android SDK)
+- APK saved to /home/z/my-project/download/ElectroTransport.apk (4.2MB)
+
+Stage Summary:
+- Admin role was always in the code but old cached version was being served
+- SW cache updated to v3 forces all clients to fetch fresh assets
+- New icon deployed to Android resources and PWA
+- New APK built and available for download
