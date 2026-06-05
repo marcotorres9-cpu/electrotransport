@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion } from 'framer-motion'
 import {
@@ -37,10 +37,11 @@ export default function AdminDashboard() {
 
   const loadData = useCallback(async () => {
     try {
-      const [usersData] = await Promise.all([
-        apiFetch('/api/admin/users'),
-      ])
+      console.log('[AdminDashboard] Loading users... currentUser:', currentUser?.name, 'role:', currentUser?.role)
+      const usersData = await apiFetch('/api/admin/users')
+      console.log('[AdminDashboard] API response:', usersData)
       const userList = usersData.users || []
+      console.log('[AdminDashboard] Users found:', userList.length)
       setUsers(userList)
       setStats({
         totalUsers: userList.length,
@@ -49,16 +50,17 @@ export default function AdminDashboard() {
         pendingOrders: 0,
         activeAdmins: userList.filter((u: AdminUser) => u.role === 'admin' && u.isActive).length,
       })
-    } catch {
-      // silently fail
+    } catch (err) {
+      console.error('[AdminDashboard] Error loading users:', err)
+      toast.error('Error al cargar usuarios')
     }
-  }, [])
+  }, [currentUser?.id, currentUser?.role])
 
-  const initialized = useRef(false)
-  if (initialized.current == null) {
-    initialized.current = true
-    loadData()
-  }
+  useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      loadData()
+    }
+  }, [loadData, currentUser?.role])
 
   async function toggleUserStatus(userId: string, currentActive: boolean) {
     try {
