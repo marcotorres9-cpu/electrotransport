@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import crypto from 'crypto'
+
+function hashPassword(password: string): string {
+  return crypto.createHash('sha256').update(password + 'electro-salt-2024').digest('hex')
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,7 +45,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { userId, isActive } = body
+    const { userId, isActive, newPassword } = body
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
@@ -51,9 +56,19 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // If newPassword provided, reset password
+    const updateData: any = {}
+    if (isActive !== undefined) updateData.isActive = isActive
+    if (newPassword) {
+      if (newPassword.length < 4) {
+        return NextResponse.json({ error: 'Contraseña muy corta (min 4)' }, { status: 400 })
+      }
+      updateData.password = hashPassword(newPassword)
+    }
+
     const updatedUser = await db.etUser.update({
       where: { id: userId },
-      data: { isActive: isActive !== undefined ? isActive : !user.isActive },
+      data: updateData,
       select: {
         id: true,
         name: true,

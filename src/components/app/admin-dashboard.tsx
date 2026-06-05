@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Shield, Users, Store, Truck, Package, Menu, X, Search,
   ToggleLeft, ToggleRight, Trash2, AlertTriangle, PackageSearch,
-  ChevronRight, Clock, CheckCircle2, MapPin
+  ChevronRight, Clock, CheckCircle2, MapPin, KeyRound
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -55,6 +55,8 @@ export default function AdminDashboard() {
   const [roleFilter, setRoleFilter] = useState('all')
   const [activeTab, setActiveTab] = useState<AdminTab>('users')
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [passwordReset, setPasswordReset] = useState<string | null>(null)
+  const [newPassword, setNewPassword] = useState('')
   const [stats, setStats] = useState({ totalUsers: 0, activeStores: 0, activeDrivers: 0, activeAdmins: 0, totalOrders: 0, pendingOrders: 0 })
 
   const loadUsers = useCallback(async () => {
@@ -120,6 +122,24 @@ export default function AdminDashboard() {
     }
   }
 
+  async function resetPassword(userId: string) {
+    if (!newPassword || newPassword.length < 4) {
+      toast.error('La contraseña debe tener al menos 4 caracteres')
+      return
+    }
+    try {
+      await apiFetch('/api/admin/users', {
+        method: 'PATCH',
+        body: JSON.stringify({ userId, newPassword }),
+      })
+      toast.success('Contraseña actualizada')
+      setPasswordReset(null)
+      setNewPassword('')
+    } catch (err) {
+      toast.error('Error al cambiar contraseña')
+    }
+  }
+
   function handleNavClick(viewId: string) {
     setCurrentView(viewId as any)
     setSidebarOpen(false)
@@ -152,6 +172,49 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
+      {/* Password reset modal */}
+      <AnimatePresence>
+        {passwordReset && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
+            onClick={() => { setPasswordReset(null); setNewPassword('') }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#845EF7]/15 flex items-center justify-center">
+                  <KeyRound className="h-6 w-6 text-[#845EF7]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Cambiar Contraseña</h3>
+                  <p className="text-xs text-gray-500">Establece una nueva contraseña</p>
+                </div>
+              </div>
+              <Input
+                type="text"
+                placeholder="Nueva contraseña (mínimo 4 caracteres)"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="mb-4"
+                onKeyDown={(e) => { if (e.key === 'Enter') resetPassword(passwordReset) }}
+              />
+              <div className="flex gap-3">
+                <Button variant="outline" className="flex-1 border-gray-200" onClick={() => { setPasswordReset(null); setNewPassword('') }}>Cancelar</Button>
+                <Button className="flex-1 bg-[#845EF7] hover:bg-[#7050d4] text-white font-semibold" onClick={() => resetPassword(passwordReset)}>Guardar</Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Delete confirmation modal */}
       <AnimatePresence>
         {deleteConfirm && (
@@ -455,6 +518,15 @@ export default function AdminDashboard() {
                                   ) : (
                                     <><ToggleLeft className="h-4 w-4 mr-1" /><span className="hidden sm:inline">Activar</span></>
                                   )}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setPasswordReset(user.id)}
+                                  className="text-xs text-gray-400 hover:bg-gray-100"
+                                  title="Cambiar contraseña"
+                                >
+                                  <KeyRound className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
