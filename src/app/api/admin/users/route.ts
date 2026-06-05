@@ -10,7 +10,14 @@ export async function GET(request: NextRequest) {
     }
 
     const users = await db.etUser.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
         store: { select: { id: true, storeName: true, address: true, city: true, rating: true, totalOrders: true } },
         driver: { select: { id: true, vehicleType: true, vehiclePlate: true, isOnline: true, rating: true, totalTrips: true, earnings: true } },
       },
@@ -47,7 +54,14 @@ export async function PATCH(request: NextRequest) {
     const updatedUser = await db.etUser.update({
       where: { id: userId },
       data: { isActive: isActive !== undefined ? isActive : !user.isActive },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
         store: { select: { id: true, storeName: true } },
         driver: { select: { id: true, vehicleType: true, isOnline: true } },
       },
