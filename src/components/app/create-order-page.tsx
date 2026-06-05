@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAppStore } from '@/store/use-app-store'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import {
   MapPin, DollarSign, Package, Weight, Hash, FileText,
-  ChevronLeft, Send, Navigation, Search
+  ChevronLeft, Send, Navigation, Clock, X, ChevronUp, ChevronDown,
+  Truck, Sparkles, CheckCircle2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -22,91 +22,82 @@ import {
 } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/api'
+import AddressSearch from './address-search'
 
 const OrderMap = dynamic(() => import('./order-map'), { ssr: false })
 
 const cargoTypes = [
-  { value: 'refrigeradora', label: 'Refrigeradora' },
-  { value: 'lavadora', label: 'Lavadora' },
-  { value: 'microondas', label: 'Microondas' },
-  { value: 'television', label: 'Televisión' },
-  { value: 'cocina', label: 'Cocina / Estufa' },
-  { value: 'aire_acondicionado', label: 'Aire Acondicionado' },
-  { value: 'secadora', label: 'Secadora' },
-  { value: 'lavavajillas', label: 'Lavavajillas' },
-  { value: 'varios', label: 'Varios' },
+  { value: 'refrigeradora', label: 'Refrigeradora', emoji: '🧊' },
+  { value: 'lavadora', label: 'Lavadora', emoji: '🫧' },
+  { value: 'microondas', label: 'Microondas', emoji: '📡' },
+  { value: 'television', label: 'Televisión', emoji: '📺' },
+  { value: 'cocina', label: 'Cocina / Estufa', emoji: '🔥' },
+  { value: 'aire_acondicionado', label: 'Aire Acondicionado', emoji: '❄️' },
+  { value: 'secadora', label: 'Secadora', emoji: '🌀' },
+  { value: 'lavavajillas', label: 'Lavavajillas', emoji: '🍽️' },
+  { value: 'varios', label: 'Varios', emoji: '📦' },
 ]
 
-export default function CreateOrderPage() {
-  const { setCurrentView, setOrders, userLocation } = useAppStore()
+type Step = 'addresses' | 'details' | 'price' | 'confirm'
 
+export default function CreateOrderPage() {
+  const { setCurrentView, setOrders, userLocation, setUserLocation } = useAppStore()
+
+  // Address state
   const [originAddress, setOriginAddress] = useState('')
-  const [originLat, setOriginLat] = useState('')
-  const [originLng, setOriginLng] = useState('')
+  const [originLat, setOriginLat] = useState<number | null>(null)
+  const [originLng, setOriginLng] = useState<number | null>(null)
   const [destAddress, setDestAddress] = useState('')
-  const [destLat, setDestLat] = useState('')
-  const [destLng, setDestLng] = useState('')
+  const [destLat, setDestLat] = useState<number | null>(null)
+  const [destLng, setDestLng] = useState<number | null>(null)
+
+  // Map interaction state
+  const [selectingOnMap, setSelectingOnMap] = useState<'origin' | 'dest' | null>(null)
+  const [showFullMap, setShowFullMap] = useState(false)
+
+  // Details state
   const [cargoType, setCargoType] = useState('')
   const [cargoWeight, setCargoWeight] = useState('')
   const [cargoQuantity, setCargoQuantity] = useState('')
   const [specialNotes, setSpecialNotes] = useState('')
   const [proposedPrice, setProposedPrice] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectingOrigin, setSelectingOrigin] = useState(false)
-  const [selectingDest, setSelectingDest] = useState(false)
-  const [geocodingLoading, setGeocodingLoading] = useState(false)
-  const [distanceInfo, setDistanceInfo] = useState<{ km: number; time: number } | null>(null)
 
-  // Auto-detect user location
+  // UI state
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [distanceInfo, setDistanceInfo] = useState<{ km: number; time: number } | null>(null)
+  const [currentStep, setCurrentStep] = useState<Step>('addresses')
+  const [gpsLocating, setGpsLocating] = useState(false)
+
+  // Auto-detect user location with high accuracy
   useEffect(() => {
-    if (navigator.geolocation && !userLocation) {
+    if (navigator.geolocation) {
+      setGpsLocating(true)
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude, longitude } = pos.coords
-          useAppStore.getState().setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-          // Reverse geocode to get city
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+          setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+          // Reverse geocode
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=es`)
             .then(r => r.json())
             .then(data => {
               const city = data.address?.city || data.address?.town || data.address?.state || ''
               const country = data.address?.country || ''
-              useAppStore.getState().setUserLocation({ lat: latitude, lng: longitude, city, country })
+              setUserLocation({ lat: latitude, lng: longitude, city, country })
             })
             .catch(() => {})
+          setGpsLocating(false)
         },
-        () => {}, // silently fail
-        { enableHighAccuracy: false, timeout: 10000 }
+        () => {
+          setGpsLocating(false)
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
       )
     }
   }, [])
 
-  // Geocode address using Nominatim
-  async function geocodeAddress(address: string) {
-    if (!address || address.length < 5) return null
-    setGeocodingLoading(true)
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
-      )
-      const data = await res.json()
-      if (data.length > 0) {
-        return {
-          lat: parseFloat(data[0].lat),
-          lng: parseFloat(data[0].lon),
-          displayName: data[0].display_name,
-        }
-      }
-    } catch {
-      // silently fail
-    } finally {
-      setGeocodingLoading(false)
-    }
-    return null
-  }
-
-  // Estimate distance between two points (Haversine formula)
+  // Calculate distance
   function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371 // Earth radius in km
+    const R = 6371
     const dLat = (lat2 - lat1) * Math.PI / 180
     const dLon = (lon2 - lon1) * Math.PI / 180
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -116,77 +107,117 @@ export default function CreateOrderPage() {
     return R * c
   }
 
-  // Update distance estimate when coordinates change
   useEffect(() => {
     if (originLat && originLng && destLat && destLng) {
-      const lat1 = parseFloat(originLat)
-      const lon1 = parseFloat(originLng)
-      const lat2 = parseFloat(destLat)
-      const lon2 = parseFloat(destLng)
-
-      if (lat1 !== 0 && lon1 !== 0 && lat2 !== 0 && lon2 !== 0) {
-        const km = calculateDistance(lat1, lon1, lat2, lon2)
-        // Average speed ~30 km/h in city
-        const timeMin = Math.round((km / 30) * 60)
-        setDistanceInfo({ km, time: timeMin })
-      }
+      const km = calculateDistance(originLat, originLng, destLat, destLng)
+      const timeMin = Math.round((km / 25) * 60) // ~25 km/h in Quito
+      setDistanceInfo({ km, time: timeMin })
     } else {
       setDistanceInfo(null)
     }
   }, [originLat, originLng, destLat, destLng])
 
-  // Handle map click
+  // Handle origin address selection
+  function handleOriginChange(address: string, lat: number, lng: number) {
+    setOriginAddress(address)
+    setOriginLat(lat)
+    setOriginLng(lng)
+  }
+
+  // Handle destination address selection
+  function handleDestChange(address: string, lat: number, lng: number) {
+    setDestAddress(address)
+    setDestLat(lat)
+    setDestLng(lng)
+  }
+
+  // Use my location as origin
+  function useMyLocationAsOrigin() {
+    if (userLocation?.lat && userLocation?.lng) {
+      setOriginLat(userLocation.lat)
+      setOriginLng(userLocation.lng)
+      // Reverse geocode
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLocation.lat}&lon=${userLocation.lng}&accept-language=es`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.display_name) {
+            const addr = data.address || {}
+            const short = [addr.road || addr.suburb || '', addr.city || addr.town || 'Quito'].filter(Boolean).join(', ')
+            setOriginAddress(short)
+          }
+        })
+        .catch(() => {
+          setOriginAddress('Mi ubicación actual')
+        })
+      toast.success('Ubicación actual usada como origen')
+    } else {
+      // Request location
+      navigator.geolocation?.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords
+          setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+          setOriginLat(latitude)
+          setOriginLng(longitude)
+          setOriginAddress('Mi ubicación actual')
+          toast.success('Ubicación actual usada como origen')
+        },
+        () => {
+          toast.error('No se pudo obtener tu ubicación')
+        },
+        { enableHighAccuracy: true, timeout: 15000 }
+      )
+    }
+  }
+
+  // Handle map click for selecting origin/dest
   function handleMapClick(lat: number, lng: number) {
-    if (selectingOrigin) {
-      setOriginLat(lat.toString())
-      setOriginLng(lng.toString())
-      setSelectingOrigin(false)
-      // Reverse geocode
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-        .then((r) => r.json())
-        .then((data) => {
+    if (!selectingOnMap) return
+
+    if (selectingOnMap === 'origin') {
+      setOriginLat(lat)
+      setOriginLng(lng)
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=es`)
+        .then(r => r.json())
+        .then(data => {
           if (data.display_name) {
-            setOriginAddress(data.display_name.split(',').slice(0, 3).join(','))
+            const addr = data.address || {}
+            const short = [addr.road || addr.suburb || '', addr.city || addr.town || 'Quito'].filter(Boolean).join(', ')
+            setOriginAddress(short)
           }
         })
         .catch(() => {})
-    } else if (selectingDest) {
-      setDestLat(lat.toString())
-      setDestLng(lng.toString())
-      setSelectingDest(false)
-      // Reverse geocode
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-        .then((r) => r.json())
-        .then((data) => {
+    } else {
+      setDestLat(lat)
+      setDestLng(lng)
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=es`)
+        .then(r => r.json())
+        .then(data => {
           if (data.display_name) {
-            setDestAddress(data.display_name.split(',').slice(0, 3).join(','))
+            const addr = data.address || {}
+            const short = [addr.road || addr.suburb || '', addr.city || addr.town || 'Quito'].filter(Boolean).join(', ')
+            setDestAddress(short)
           }
         })
         .catch(() => {})
     }
+    setSelectingOnMap(null)
+    setShowFullMap(false)
   }
 
-  async function handleGeocodeOrigin() {
-    const result = await geocodeAddress(originAddress)
-    if (result) {
-      setOriginLat(result.lat.toString())
-      setOriginLng(result.lng.toString())
-      toast.success('Origen localizado en el mapa')
-    } else {
-      toast.error('No se encontró la dirección')
-    }
+  // Handle map GPS click
+  function handleMapGpsClick() {
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords
+        setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 15000 }
+    )
   }
 
-  async function handleGeocodeDest() {
-    const result = await geocodeAddress(destAddress)
-    if (result) {
-      setDestLat(result.lat.toString())
-      setDestLng(result.lng.toString())
-      toast.success('Destino localizado en el mapa')
-    } else {
-      toast.error('No se encontró la dirección')
-    }
-  }
+  // Can proceed to details
+  const canProceed = originLat !== null && originLng !== null && destLat !== null && destLng !== null
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -203,11 +234,11 @@ export default function CreateOrderPage() {
         method: 'POST',
         body: JSON.stringify({
           originAddress,
-          originLat: originLat ? parseFloat(originLat) : 0,
-          originLng: originLng ? parseFloat(originLng) : 0,
+          originLat: originLat || 0,
+          originLng: originLng || 0,
           destAddress,
-          destLat: destLat ? parseFloat(destLat) : 0,
-          destLng: destLng ? parseFloat(destLng) : 0,
+          destLat: destLat || 0,
+          destLng: destLng || 0,
           cargoType: cargoType || null,
           cargoWeight: cargoWeight ? parseFloat(cargoWeight) : null,
           cargoQuantity: cargoQuantity ? parseInt(cargoQuantity) : null,
@@ -218,7 +249,6 @@ export default function CreateOrderPage() {
 
       toast.success('¡Pedido creado exitosamente! Esperando transportistas...')
 
-      // Reload orders
       const ordersData = await apiFetch('/api/orders')
       setOrders(ordersData.orders)
 
@@ -231,296 +261,353 @@ export default function CreateOrderPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setCurrentView('store-dashboard')}
-          className="text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Nuevo Pedido</h1>
-          <p className="text-sm text-gray-500">Solicita transporte para tus electrodomésticos</p>
-        </div>
-      </div>
-
-      {/* Map for selecting addresses */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <Card className="bg-white border border-gray-200 shadow-none overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
-              <MapPin className="h-5 w-5 text-[#1DB954]" />
-              Mapa de Ruta
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+    <div className="relative min-h-screen bg-[#F5F5F5]">
+      {/* Full-screen map overlay */}
+      <AnimatePresence>
+        {showFullMap && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed inset-0 z-50 bg-white"
+          >
             <OrderMap
               userLocation={userLocation}
-              originLat={originLat ? parseFloat(originLat) : undefined}
-              originLng={originLng ? parseFloat(originLng) : undefined}
-              destLat={destLat ? parseFloat(destLat) : undefined}
-              destLng={destLng ? parseFloat(destLng) : undefined}
+              originLat={originLat || undefined}
+              originLng={originLng || undefined}
+              destLat={destLat || undefined}
+              destLng={destLng || undefined}
               originAddress={originAddress}
               destAddress={destAddress}
               onMapClick={handleMapClick}
-              selectingOrigin={selectingOrigin}
-              selectingDest={selectingDest}
-              height="280px"
+              selectingOrigin={selectingOnMap === 'origin'}
+              selectingDest={selectingOnMap === 'dest'}
+              height="100%"
+              fullScreen
+              showGpsButton
+              onGpsClick={handleMapGpsClick}
             />
-            <div className="flex gap-2 p-3 bg-[#F9FAFB]">
-              <Button
-                size="sm"
-                variant={selectingOrigin ? 'default' : 'outline'}
-                className={`flex-1 text-xs ${selectingOrigin ? 'bg-[#1DB954] hover:bg-[#17a34a] text-black' : 'border-gray-200 text-gray-500'}`}
-                onClick={() => { setSelectingOrigin(!selectingOrigin); setSelectingDest(false) }}
-              >
-                <MapPin className="h-3 w-3 mr-1" />
-                {selectingOrigin ? 'Haz clic en el mapa...' : 'Marcar Origen'}
-              </Button>
-              <Button
-                size="sm"
-                variant={selectingDest ? 'default' : 'outline'}
-                className={`flex-1 text-xs ${selectingDest ? 'bg-[#FFC145] hover:bg-[#e0ad3a] text-black' : 'border-gray-200 text-gray-500'}`}
-                onClick={() => { setSelectingDest(!selectingDest); setSelectingOrigin(false) }}
-              >
-                <MapPin className="h-3 w-3 mr-1" />
-                {selectingDest ? 'Haz clic en el mapa...' : 'Marcar Destino'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
 
-      {/* Distance Info */}
-      {distanceInfo && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="bg-white border border-[#1DB954]/20 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#1DB954]/10 flex items-center justify-center">
-              <Navigation className="h-5 w-5 text-[#1DB954]" />
+            {/* Top bar */}
+            <div className="absolute top-0 left-0 right-0 z-[1001] bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3">
+              <div className="flex items-center justify-between max-w-2xl mx-auto">
+                <button
+                  onClick={() => { setShowFullMap(false); setSelectingOnMap(null) }}
+                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"
+                >
+                  <X className="h-5 w-5 text-gray-700" />
+                </button>
+                <p className="text-sm font-semibold text-gray-900">
+                  {selectingOnMap === 'origin' ? 'Seleccionar origen en el mapa' : selectingOnMap === 'dest' ? 'Seleccionar destino en el mapa' : 'Mapa de ruta'}
+                </p>
+                <div className="w-10" />
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-900">
-                {distanceInfo.km.toFixed(1)} km de distancia
-              </p>
-              <p className="text-xs text-gray-500">
-                Tiempo estimado de viaje: ~{distanceInfo.time} min
-              </p>
-            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3">
+        <div className="flex items-center gap-3 max-w-2xl mx-auto">
+          <button
+            onClick={() => setCurrentView('store-dashboard')}
+            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5 text-gray-700" />
+          </button>
+          <div>
+            <h1 className="text-lg font-bold text-gray-900">Nuevo Pedido</h1>
+            <p className="text-xs text-gray-500">Solicita transporte para tus electrodomésticos</p>
           </div>
-        </motion.div>
-      )}
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Origin */}
+      {/* Main content */}
+      <div className="max-w-2xl mx-auto">
+        {/* Map section */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="relative"
         >
-          <Card className="bg-white border border-gray-200 shadow-none">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
-                <MapPin className="h-5 w-5 text-[#1DB954]" />
-                Origen
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="originAddress" className="text-gray-500">Dirección de origen</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <Input
-                      id="originAddress"
-                      placeholder="Av. Amazonas #123, Quito"
-                      value={originAddress}
-                      onChange={(e) => setOriginAddress(e.target.value)}
-                      className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
-                    />
-                  </div>
-                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeOrigin} disabled={geocodingLoading} className="border-gray-200 text-gray-500 hover:bg-[#F9FAFB]">
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
+          <OrderMap
+            userLocation={userLocation}
+            originLat={originLat || undefined}
+            originLng={originLng || undefined}
+            destLat={destLat || undefined}
+            destLng={destLng || undefined}
+            originAddress={originAddress}
+            destAddress={destAddress}
+            onMapClick={handleMapClick}
+            selectingOrigin={selectingOnMap === 'origin'}
+            selectingDest={selectingOnMap === 'dest'}
+            height="220px"
+            showGpsButton
+            onGpsClick={handleMapGpsClick}
+          />
+
+          {/* Expand map button */}
+          <button
+            onClick={() => setShowFullMap(true)}
+            className="absolute top-3 right-3 z-[1000] w-9 h-9 bg-white rounded-xl shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+          >
+            <ChevronUp className="h-5 w-5 text-gray-600" />
+          </button>
+
+          {/* GPS locating indicator */}
+          {gpsLocating && (
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000]">
+              <div className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-500 flex items-center gap-2 shadow-sm">
+                <div className="animate-spin rounded-full h-3 w-3 border-2 border-[#3B82F6] border-t-transparent" />
+                Detectando ubicación...
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="originLat" className="text-gray-500">Latitud</Label>
-                  <Input id="originLat" placeholder="-0.1807" value={originLat} onChange={(e) => setOriginLat(e.target.value)} className="bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="originLng" className="text-gray-500">Longitud</Label>
-                  <Input id="originLng" placeholder="-78.4678" value={originLng} onChange={(e) => setOriginLng(e.target.value)} className="bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          )}
         </motion.div>
 
-        {/* Destination */}
+        {/* Distance Info Bar */}
+        <AnimatePresence>
+          {distanceInfo && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-white border-b border-gray-100"
+            >
+              <div className="px-4 py-2.5 flex items-center gap-3 max-w-2xl mx-auto">
+                <div className="flex items-center gap-2">
+                  <Navigation className="h-4 w-4 text-[#1DB954]" />
+                  <span className="text-sm font-semibold text-gray-900">{distanceInfo.km.toFixed(1)} km</span>
+                </div>
+                <div className="h-3 w-px bg-gray-200" />
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-gray-400" />
+                  <span className="text-xs text-gray-500">~{distanceInfo.time} min</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Address Search Section - Uber Style */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
+          className="bg-white -mt-4 rounded-t-2xl border-t border-gray-200 relative z-10"
         >
-          <Card className="bg-white border border-gray-200 shadow-none">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
-                <MapPin className="h-5 w-5 text-[#FFC145]" />
-                Destino
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="destAddress" className="text-gray-500">Dirección de destino</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          {/* Connecting dots line */}
+          <div className="absolute -top-4 left-8 w-0.5 h-4 bg-gray-200" />
+
+          <div className="p-4 space-y-3">
+            {/* Origin search */}
+            <div className="flex items-start gap-2">
+              <div className="flex flex-col items-center mt-4 gap-1">
+                <div className="w-3 h-3 rounded-full bg-[#1DB954]" />
+                <div className="w-0.5 h-8 bg-gray-200" />
+                <div className="w-3 h-3 rounded-full bg-[#FFC145]" />
+              </div>
+              <div className="flex-1 space-y-3">
+                <AddressSearch
+                  label="Origen"
+                  placeholder="¿Dónde recoger?"
+                  value={originAddress}
+                  onChange={handleOriginChange}
+                  color="green"
+                  showMyLocation
+                  onUseMyLocation={useMyLocationAsOrigin}
+                />
+                <AddressSearch
+                  label="Destino"
+                  placeholder="¿A dónde llevar?"
+                  value={destAddress}
+                  onChange={handleDestChange}
+                  color="amber"
+                />
+              </div>
+            </div>
+
+            {/* Select on map buttons */}
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className={`flex-1 text-xs ${selectingOnMap === 'origin' ? 'bg-[#1DB954]/10 border-[#1DB954] text-[#1DB954]' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                onClick={() => {
+                  setSelectingOnMap(selectingOnMap === 'origin' ? null : 'origin')
+                  if (selectingOnMap !== 'origin') setShowFullMap(true)
+                }}
+              >
+                <MapPin className="h-3 w-3 mr-1.5" />
+                Origen en mapa
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className={`flex-1 text-xs ${selectingOnMap === 'dest' ? 'bg-[#FFC145]/10 border-[#FFC145] text-[#FFC145]' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                onClick={() => {
+                  setSelectingOnMap(selectingOnMap === 'dest' ? null : 'dest')
+                  if (selectingOnMap !== 'dest') setShowFullMap(true)
+                }}
+              >
+                <MapPin className="h-3 w-3 mr-1.5" />
+                Destino en mapa
+              </Button>
+            </div>
+
+            {/* Proceed to details button */}
+            {canProceed && currentStep === 'addresses' && (
+              <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                <Button
+                  onClick={() => setCurrentStep('details')}
+                  className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-5 rounded-xl"
+                >
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Continuar con detalles
+                </Button>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Details Section */}
+        <AnimatePresence>
+          {currentStep !== 'addresses' && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-white border-t border-gray-100 p-4 space-y-4">
+                {/* Cargo Details */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4 text-[#1DB954]" />
+                    <h3 className="text-sm font-semibold text-gray-900">Detalles de la Carga</h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-500 text-xs">Tipo de electrodoméstico</Label>
+                    <Select value={cargoType} onValueChange={setCargoType}>
+                      <SelectTrigger className="bg-[#F9FAFB] border-gray-200 text-gray-900">
+                        <SelectValue placeholder="Selecciona el tipo" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-gray-200">
+                        {cargoTypes.map((ct) => (
+                          <SelectItem key={ct.value} value={ct.value} className="text-gray-900">
+                            {ct.emoji} {ct.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="weight" className="text-gray-500 text-xs">Peso (kg)</Label>
+                      <div className="relative">
+                        <Weight className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input id="weight" placeholder="80" value={cargoWeight} onChange={(e) => setCargoWeight(e.target.value)} className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="quantity" className="text-gray-500 text-xs">Cantidad</Label>
+                      <div className="relative">
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input id="quantity" placeholder="2" value={cargoQuantity} onChange={(e) => setCargoQuantity(e.target.value)} className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="notes" className="text-gray-500 text-xs">Notas especiales</Label>
+                    <div className="relative">
+                      <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Textarea
+                        id="notes"
+                        placeholder="Fragil, requiere cuidado especial, acceso restringido..."
+                        value={specialNotes}
+                        onChange={(e) => setSpecialNotes(e.target.value)}
+                        className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price Section */}
+                <div className="bg-gradient-to-br from-[#1DB954]/5 to-[#1DB954]/10 border border-[#1DB954]/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <DollarSign className="h-4 w-4 text-[#1DB954]" />
+                    <h3 className="text-sm font-semibold text-[#1DB954]">Precio Propuesto</h3>
+                    <Sparkles className="h-3.5 w-3.5 text-[#1DB954]/50" />
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3">Elige tu precio. Los transportistas pueden aceptar o contraofertar.</p>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-[#1DB954]">$</span>
                     <Input
-                      id="destAddress"
-                      placeholder="Av. Eloy Alfaro #456, Guayaquil"
-                      value={destAddress}
-                      onChange={(e) => setDestAddress(e.target.value)}
-                      className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
+                      type="number"
+                      placeholder="50.00"
+                      value={proposedPrice}
+                      onChange={(e) => setProposedPrice(e.target.value)}
+                      className="pl-8 text-2xl font-bold border-[#1DB954]/30 bg-white focus:border-[#1DB954] text-gray-900 rounded-xl h-12"
                     />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">USD</span>
                   </div>
-                  <Button type="button" size="icon" variant="outline" onClick={handleGeocodeDest} disabled={geocodingLoading} className="border-gray-200 text-gray-500 hover:bg-[#F9FAFB]">
-                    <Search className="h-4 w-4" />
+                </div>
+
+                {/* Route summary */}
+                {(originAddress || destAddress) && (
+                  <div className="bg-gray-50 rounded-xl p-3 space-y-2">
+                    <div className="flex items-start gap-2 text-xs">
+                      <div className="w-2 h-2 rounded-full bg-[#1DB954] mt-1.5 shrink-0" />
+                      <span className="text-gray-600">{originAddress || 'Origen no definido'}</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-xs">
+                      <div className="w-2 h-2 rounded-full bg-[#FFC145] mt-1.5 shrink-0" />
+                      <span className="text-gray-600">{destAddress || 'Destino no definido'}</span>
+                    </div>
+                    {distanceInfo && (
+                      <div className="flex items-center gap-3 pt-1 text-xs text-gray-400">
+                        <span>{distanceInfo.km.toFixed(1)} km</span>
+                        <span>~{distanceInfo.time} min</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Submit */}
+                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                  <Button
+                    type="button"
+                    onClick={(e) => handleSubmit(e as any)}
+                    className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-6 text-base rounded-xl shadow-[0_0_24px_rgba(29,185,84,0.2)]"
+                    disabled={isSubmitting || !originAddress || !destAddress || !proposedPrice}
+                  >
+                    <Send className="h-5 w-5 mr-2" />
+                    {isSubmitting ? 'Publicando Pedido...' : 'Publicar Pedido'}
                   </Button>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="destLat" className="text-gray-500">Latitud</Label>
-                  <Input id="destLat" placeholder="-2.1701" value={destLat} onChange={(e) => setDestLat(e.target.value)} className="bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="destLng" className="text-gray-500">Longitud</Label>
-                  <Input id="destLng" placeholder="-79.9250" value={destLng} onChange={(e) => setDestLng(e.target.value)} className="bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+                </motion.div>
 
-        {/* Cargo */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="bg-white border border-gray-200 shadow-none">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-gray-900">
-                <Package className="h-5 w-5 text-[#1DB954]" />
-                Detalles de la Carga
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label className="text-gray-500">Tipo de electrodoméstico</Label>
-                <Select value={cargoType} onValueChange={setCargoType}>
-                  <SelectTrigger className="bg-[#F9FAFB] border-gray-200 text-gray-900">
-                    <SelectValue placeholder="Selecciona el tipo" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-gray-200">
-                    {cargoTypes.map((ct) => (
-                      <SelectItem key={ct.value} value={ct.value} className="text-gray-900 focus:bg-[#F9FAFB] focus:text-gray-900">
-                        {ct.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <button
+                  onClick={() => setCurrentStep('addresses')}
+                  className="w-full text-xs text-gray-400 hover:text-gray-600 py-2 text-center"
+                >
+                  ← Volver a direcciones
+                </button>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="weight" className="text-gray-500">Peso (kg)</Label>
-                  <div className="relative">
-                    <Weight className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <Input id="weight" placeholder="80" value={cargoWeight} onChange={(e) => setCargoWeight(e.target.value)} className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity" className="text-gray-500">Cantidad</Label>
-                  <div className="relative">
-                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <Input id="quantity" placeholder="2" value={cargoQuantity} onChange={(e) => setCargoQuantity(e.target.value)} className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900" />
-                  </div>
-                </div>
+                <p className="text-center text-[10px] text-gray-400 pb-2">v2.7.0</p>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              <div className="space-y-2">
-                <Label htmlFor="notes" className="text-gray-500">Notas especiales</Label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
-                  <Textarea
-                    id="notes"
-                    placeholder="Fragil, requiere cuidado especial..."
-                    value={specialNotes}
-                    onChange={(e) => setSpecialNotes(e.target.value)}
-                    className="pl-10 bg-[#F9FAFB] border-gray-200 text-gray-900"
-                    rows={3}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Price */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="border-2 border-[#1DB954]/30 bg-white">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold flex items-center gap-2 text-[#1DB954]">
-                <DollarSign className="h-5 w-5 text-[#1DB954]" />
-                Precio Propuesto
-              </CardTitle>
-              <CardDescription className="text-gray-500">
-                Elige tu precio. Los transportistas pueden aceptar o contraofertar.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-[#1DB954] font-semibold">
-                  ¿Cuánto quieres pagar? (USD)
-                </Label>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1DB954]" />
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder="50.00"
-                    value={proposedPrice}
-                    onChange={(e) => setProposedPrice(e.target.value)}
-                    className="pl-10 text-xl font-bold border-[#1DB954]/40 bg-[#F9FAFB] focus:border-[#1DB954] text-gray-900"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Submit */}
-        <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-          <Button
-            type="submit"
-            className="w-full bg-[#1DB954] hover:bg-[#17a34a] text-black font-semibold py-6 text-base"
-            disabled={isSubmitting}
-          >
-            <Send className="h-5 w-5 mr-2" />
-            {isSubmitting ? 'Publicando Pedido...' : 'Publicar Pedido'}
-          </Button>
-        </motion.div>
-      </form>
+        {/* Bottom padding */}
+        <div className="h-8" />
+      </div>
     </div>
   )
 }

@@ -655,7 +655,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Version */}
-          <p className="text-center text-[10px] text-gray-400">v2.6.0</p>
+          <p className="text-center text-[10px] text-gray-400">v2.7.0</p>
         </div>
       </main>
     </div>
