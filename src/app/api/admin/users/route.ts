@@ -73,3 +73,51 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const role = request.headers.get('x-user-role')
+    if (role !== 'admin') {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
+    }
+
+    // Prevent deleting yourself
+    const adminId = request.headers.get('x-user-id')
+    if (userId === adminId) {
+      return NextResponse.json({ error: 'No puedes eliminar tu propia cuenta' }, { status: 400 })
+    }
+
+    const user = await db.etUser.findUnique({
+      where: { id: userId },
+      include: { store: true, driver: true },
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Delete related records
+    await db.etNotification.deleteMany({ where: { userId } })
+    await db.etOrder.updateMany({ where: { createdBy: userId }, data: { createdBy: null } })
+    await db.etOrder.updateMany({ where: { acceptedBy: userId }, data: { acceptedBy: null } })
+    if (user.driver) {
+      await db.etDriver.delete({ where: { id: user.driver.id } })
+    }
+    if (user.store) {
+      await db.etStore.delete({ where: { id: user.store.id } })
+    }
+    await db.etUser.delete({ where: { id: userId } })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Delete user error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
