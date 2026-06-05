@@ -1,4 +1,4 @@
-const CACHE_NAME = 'electrotransport-v8';
+const CACHE_NAME = 'electrotransport-v9';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -40,7 +40,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache first
+  // HTML pages and app shell: network first (always get latest)
+  if (request.mode === 'navigate' || request.url.endsWith('/') || request.url.includes('_next/static') || request.url.includes('/page')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Other static assets: cache first
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;

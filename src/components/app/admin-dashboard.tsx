@@ -33,7 +33,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
-  const [stats, setStats] = useState({ totalUsers: 0, activeStores: 0, activeDrivers: 0, pendingOrders: 0 })
+  const [stats, setStats] = useState({ totalUsers: 0, activeStores: 0, activeDrivers: 0, activeAdmins: 0, pendingOrders: 0 })
 
   const loadData = useCallback(async () => {
     try {
@@ -47,6 +47,7 @@ export default function AdminDashboard() {
         activeStores: userList.filter((u: AdminUser) => u.role === 'store' && u.isActive).length,
         activeDrivers: userList.filter((u: AdminUser) => u.role === 'driver' && u.isActive).length,
         pendingOrders: 0,
+        activeAdmins: userList.filter((u: AdminUser) => u.role === 'admin' && u.isActive).length,
       })
     } catch {
       // silently fail
@@ -236,6 +237,7 @@ export default function AdminDashboard() {
                       { value: 'all', label: 'Todos' },
                       { value: 'store', label: 'Locales' },
                       { value: 'driver', label: 'Transportistas' },
+                      { value: 'admin', label: 'Admins' },
                     ].map((f) => (
                       <button
                         key={f.value}
@@ -277,10 +279,10 @@ export default function AdminDashboard() {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                user.role === 'store' ? 'bg-[#1DB954]/15' : 'bg-[#00C9A7]/15'
+                                user.role === 'store' ? 'bg-[#1DB954]/15' : user.role === 'admin' ? 'bg-[#845EF7]/15' : 'bg-[#00C9A7]/15'
                               }`}>
                                 <span className={`font-semibold text-xs ${
-                                  user.role === 'store' ? 'text-[#1DB954]' : 'text-[#00C9A7]'
+                                  user.role === 'store' ? 'text-[#1DB954]' : user.role === 'admin' ? 'text-[#845EF7]' : 'text-[#00C9A7]'
                                 }`}>
                                   {user.name.charAt(0)}
                                 </span>
@@ -296,10 +298,12 @@ export default function AdminDashboard() {
                             <Badge variant="outline" className={`text-xs ${
                               user.role === 'store'
                                 ? 'border-[#1DB954]/30 text-[#1DB954]'
-                                : 'border-[#00C9A7]/30 text-[#00C9A7]'
+                                : user.role === 'admin'
+                                  ? 'border-[#845EF7]/30 text-[#845EF7]'
+                                  : 'border-[#00C9A7]/30 text-[#00C9A7]'
                             }`}>
-                              {user.role === 'store' ? <Store className="h-3 w-3 mr-1" /> : <Truck className="h-3 w-3 mr-1" />}
-                              {user.role === 'store' ? 'Local' : 'Transportista'}
+                              {user.role === 'admin' ? <Shield className="h-3 w-3 mr-1" /> : user.role === 'store' ? <Store className="h-3 w-3 mr-1" /> : <Truck className="h-3 w-3 mr-1" />}
+                              {user.role === 'admin' ? 'Admin' : user.role === 'store' ? 'Local' : 'Transportista'}
                             </Badge>
                           </td>
                           <td className="px-4 py-3">

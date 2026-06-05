@@ -10,9 +10,6 @@ export async function GET(request: NextRequest) {
     }
 
     const users = await db.etUser.findMany({
-      where: {
-        role: { in: ['store', 'driver'] },
-      },
       include: {
         store: { select: { id: true, storeName: true, address: true, city: true, rating: true, totalOrders: true } },
         driver: { select: { id: true, vehicleType: true, vehiclePlate: true, isOnline: true, rating: true, totalTrips: true, earnings: true } },

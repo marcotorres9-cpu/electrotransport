@@ -357,7 +357,7 @@ export default function LandingPage() {
             <p className="text-gray-400 text-xs">
               © {new Date().getFullYear()} ElectroTransport. Todos los derechos reservados.
             </p>
-            <p className="text-[10px] text-gray-300">v2.4.0</p>
+            <p className="text-[10px] text-gray-400">v2.5.0</p>
           </div>
         </div>
       </footer>
