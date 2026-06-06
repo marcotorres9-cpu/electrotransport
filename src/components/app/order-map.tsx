@@ -5,13 +5,8 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 // Google Maps tiles - most up-to-date street data for Quito/Ecuador
-const GOOGLE_TILES = 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
-const OSM_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-
-const SUBDOMAINS: Record<string, string> = {
-  google: '0123',
-  osm: 'abc',
-}
+const GOOGLE_TILES = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+const SATELLITE_TILES = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
 
 interface OrderMapProps {
   originLat?: number
@@ -61,14 +56,14 @@ export default function OrderMap({
   const tileLayerRef = useRef<L.TileLayer | null>(null)
   const [mapReady, setMapReady] = useState(false)
   const [mapError, setMapError] = useState(false)
-  const [tileSource, setTileSource] = useState<'google' | 'osm'>('google')
+  const [tileSource, setTileSource] = useState<'google' | 'satellite'>('google')
 
   // Quito center - always default here
   const QUITO_CENTER: [number, number] = [-0.1807, -78.4678]
 
   // Get tile URL
   function getTileUrl() {
-    return tileSource === 'google' ? GOOGLE_TILES : OSM_TILES
+    return tileSource === 'google' ? GOOGLE_TILES : SATELLITE_TILES
   }
 
   // Initialize map
@@ -112,10 +107,8 @@ export default function OrderMap({
       })
 
       const url = getTileUrl()
-      const sub = tileSource === 'google' ? SUBDOMAINS.google : SUBDOMAINS.osm
       tileLayerRef.current = L.tileLayer(url, {
         maxZoom: 20,
-        subdomains: sub,
       }).addTo(map)
 
       L.control.zoom({ position: 'bottomright' }).addTo(map)
@@ -262,7 +255,7 @@ export default function OrderMap({
 
   // Switch tile layer
   function handleSwitchTiles() {
-    const next = tileSource === 'google' ? 'osm' : 'google'
+    const next = tileSource === 'google' ? 'satellite' : 'google'
     setTileSource(next)
   }
 
@@ -301,7 +294,7 @@ export default function OrderMap({
           className={`absolute ${fullScreen ? 'top-16' : 'top-3'} right-3 z-[1000] px-2.5 py-1.5 bg-white rounded-lg shadow-md border border-gray-200 text-[10px] font-semibold text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors`}
           title="Cambiar tipo de mapa"
         >
-          {tileSource === 'google' ? '🗺️ Google' : '🌍 OSM'}
+          {tileSource === 'google' ? '🗺️ Calles' : '🛰️ Satélite'}
         </button>
       )}
 

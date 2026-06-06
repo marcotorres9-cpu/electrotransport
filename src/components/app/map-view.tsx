@@ -22,9 +22,21 @@ interface MapViewProps {
 const DEFAULT_CENTER: [number, number] = [-0.1807, -78.4678]
 const DEFAULT_ZOOM = 13
 
-// CartoDB Voyager tiles - light theme
-const LIGHT_TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-const LIGHT_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+// Google Maps tiles - most up-to-date street data
+const GOOGLE_TILES = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+
+// Quito bounds for GPS validation
+const QUITO_BOUNDS = {
+  minLat: -0.35,
+  maxLat: 0.05,
+  minLng: -78.65,
+  maxLng: -78.35,
+}
+
+function isInQuitoBounds(lat: number, lng: number): boolean {
+  return lat >= QUITO_BOUNDS.minLat && lat <= QUITO_BOUNDS.maxLat &&
+         lng >= QUITO_BOUNDS.minLng && lng <= QUITO_BOUNDS.maxLng
+}
 
 export default function MapView({ className = '', height = '400px', showDriverLocations = true, orders = [] }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -34,25 +46,54 @@ export default function MapView({ className = '', height = '400px', showDriverLo
   const [mapReady, setMapReady] = useState(false)
   const [userLocation, setUserLocation] = useState<[number, number]>(DEFAULT_CENTER)
   const [locating, setLocating] = useState(true)
+  const [gpsError, setGpsError] = useState<string | null>(null)
+  const [gpsSuccess, setGpsSuccess] = useState(false)
 
   // Try to get user location with high accuracy
-  useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude])
-          setLocating(false)
-        },
-        () => {
-          setUserLocation(DEFAULT_CENTER)
-          setLocating(false)
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-      )
-    } else {
+  const getUserLocation = useCallback(() => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setGpsError('GPS no disponible en este dispositivo')
       setLocating(false)
+      setUserLocation(DEFAULT_CENTER)
+      return
     }
+    setLocating(true)
+    setGpsError(null)
+    setGpsSuccess(false)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        if (isInQuitoBounds(lat, lng)) {
+          setUserLocation([lat, lng])
+          setGpsSuccess(true)
+        } else {
+          // GPS returned location outside Quito, use default
+          setUserLocation(DEFAULT_CENTER)
+          setGpsError('Tu ubicación está fuera de Quito. Mostrando centro de Quito.')
+        }
+        setLocating(false)
+      },
+      (err) => {
+        console.error('GPS error:', err.message)
+        setUserLocation(DEFAULT_CENTER)
+        setLocating(false)
+        if (err.code === err.PERMISSION_DENIED) {
+          setGpsError('Permiso de ubicación denegado. Activa el GPS.')
+        } else if (err.code === err.TIMEOUT) {
+          setGpsError('GPS tardó demasiado. Intenta de nuevo.')
+        } else {
+          setGpsError('No se pudo obtener ubicación. Verifica tu GPS.')
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    )
   }, [])
+
+  useEffect(() => {
+    getUserLocation()
+  }, [getUserLocation])
 
   // Initialize map dynamically (client-side only)
   useEffect(() => {
@@ -71,10 +112,9 @@ export default function MapView({ className = '', height = '400px', showDriverLo
           zoomControl: false,
         }).setView(userLocation, DEFAULT_ZOOM)
 
-        // Light map tiles
-        L.tileLayer(LIGHT_TILES, {
-          attribution: LIGHT_ATTRIBUTION,
-          maxZoom: 19,
+        // Google Maps street tiles
+        L.tileLayer(GOOGLE_TILES, {
+          maxZoom: 20,
         }).addTo(map)
 
         // Add zoom control to bottom-right
@@ -219,6 +259,23 @@ export default function MapView({ className = '', height = '400px', showDriverLo
           <div className="bg-[#F9FAFB] border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-500 flex items-center gap-2">
             <div className="animate-spin rounded-full h-3 w-3 border-b border-[#1DB954]" />
             Detectando ubicación...
+          </div>
+        </div>
+      )}
+      {/* GPS success */}
+      {mapReady && gpsSuccess && !locating && (
+        <div className="absolute top-3 right-3 z-[1000]">
+          <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 text-xs text-green-700 flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+            Ubicación detectada
+          </div>
+        </div>
+      )}
+      {/* GPS error - with retry button */}
+      {mapReady && gpsError && !locating && (
+        <div className="absolute top-3 right-3 z-[1000]">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs text-amber-700 flex items-center gap-2">
+            <button onClick={getUserLocation} className="underline font-semibold hover:text-amber-900">Retry GPS</button>
           </div>
         </div>
       )}
