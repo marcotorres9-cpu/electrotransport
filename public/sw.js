@@ -1,4 +1,4 @@
-const CACHE_NAME = 'electrotransport-v11';
+const CACHE_NAME = 'electrotransport-v12';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -10,16 +10,25 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
+  // Immediately activate new service worker
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  // Delete ALL old caches to force fresh content
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
+  // Take control of all clients immediately
   self.clients.claim();
+  // Reload all open windows so they get the new content
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage({ type: 'SW_UPDATED', version: CACHE_NAME });
+    });
+  });
 });
 
 self.addEventListener('fetch', (event) => {
@@ -40,33 +49,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML pages and app shell: network first (always get latest)
-  if (request.mode === 'navigate' || request.url.endsWith('/') || request.url.includes('_next/static') || request.url.includes('/page')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // Other static assets: cache first
+  // ALL other requests: NETWORK FIRST - always get latest version
+  // This ensures the app always loads the newest code, not cached old versions
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
+    fetch(request)
+      .then((response) => {
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
         return response;
-      });
-    })
-  );
+      })
+      .catch(() => caches.match(request))
+    );
 });

@@ -50,6 +50,31 @@ export default function RootLayout({
           {children}
           <Toaster />
         </TooltipProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Service Worker auto-registration with forced update
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                  // Check for updates every 30 seconds
+                  setInterval(() => reg.update(), 30000);
+                });
+                // Listen for SW update messages and auto-reload
+                navigator.serviceWorker.addEventListener('message', event => {
+                  if (event.data && event.data.type === 'SW_UPDATED') {
+                    console.log('SW updated, reloading...');
+                    window.location.reload();
+                  }
+                });
+                // Reload when a new SW takes control
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                  console.log('New SW controller, reloading...');
+                  window.location.reload();
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
