@@ -175,12 +175,16 @@ function MapSelectorModal({
   const [tempLng, setTempLng] = useState<number | null>(null)
   const [tempAddress, setTempAddress] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [searchText, setSearchText] = useState('')
+  const [searchResults, setSearchResults] = useState<Array<{ display_name: string; lat: string; lon: string }>>([])
+  const [showResults, setShowResults] = useState(false)
+  const searchTimer = useRef<NodeJS.Timeout | null>(null)
 
   function handleMapClick(lat: number, lng: number) {
     setTempLat(lat)
     setTempLng(lng)
     setError(null)
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=es`)
       .then((r) => r.json())
       .then((data) => {
         if (data.display_name) {
@@ -192,9 +196,36 @@ function MapSelectorModal({
       })
   }
 
+  function handleSearch(text: string) {
+    setSearchText(text)
+    if (searchTimer.current) clearTimeout(searchTimer.current)
+    if (text.length < 3) { setSearchResults([]); setShowResults(false); return }
+    searchTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(text + ' Quito Ecuador')}&limit=5&viewbox=-78.7,-0.5,-78.2,0.0&bounded=1&addressdetails=1`
+        )
+        const data = await res.json()
+        setSearchResults(data)
+        setShowResults(data.length > 0)
+      } catch { /* silent */ }
+    }, 400)
+  }
+
+  function handleSearchSelect(s: { display_name: string; lat: string; lon: string }) {
+    const lat = parseFloat(s.lat)
+    const lng = parseFloat(s.lon)
+    setTempLat(lat)
+    setTempLng(lng)
+    setTempAddress(s.display_name.split(',').slice(0, 4).join(','))
+    setSearchText(s.display_name.split(',').slice(0, 3).join(','))
+    setShowResults(false)
+    setError(null)
+  }
+
   function handleConfirm() {
     if (!tempLat || !tempLng) {
-      setError('Primero toca un punto en el mapa para seleccionar la ubicaci\u00f3n')
+      setError('Primero toca un punto en el mapa o busca una dirección para seleccionar la ubicación')
       return
     }
     onConfirm(tempLat, tempLng, tempAddress)
@@ -222,9 +253,37 @@ function MapSelectorModal({
         </Button>
       </div>
 
+      {/* Search bar */}
+      <div className="px-4 pt-3 relative">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Buscar dirección en Quito..."
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-[#F9FAFB] border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] outline-none"
+          />
+        </div>
+        {/* Search results */}
+        {showResults && (
+          <div className="absolute z-50 left-4 right-4 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+            {searchResults.map((s, i) => (
+              <button
+                key={i}
+                className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
+                onClick={() => handleSearchSelect(s)}
+              >
+                <span className="text-sm text-gray-700">{s.display_name.split(',').slice(0, 4).join(',')}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Error message */}
       {error && (
-        <div className="mx-4 mt-3 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
+        <div className="mx-4 mt-2 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
           <X className="h-4 w-4 text-red-500 flex-shrink-0" />
           <p className="text-sm text-red-700">{error}</p>
         </div>
@@ -232,17 +291,19 @@ function MapSelectorModal({
 
       {/* Selected address preview */}
       {tempLat && (
-        <div className="mx-4 mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
-          <p className="text-xs text-green-600 font-medium mb-1">Ubicaci\u00f3n seleccionada:</p>
+        <div className="mx-4 mt-2 bg-green-50 border border-green-200 rounded-lg p-3">
+          <p className="text-xs text-green-600 font-medium mb-1">Ubicación seleccionada:</p>
           <p className="text-sm text-gray-800">{tempAddress || `${tempLat.toFixed(5)}, ${tempLng?.toFixed(5)}`}</p>
         </div>
       )}
 
       {/* Instruction */}
-      <div className="mx-4 mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center">
-        <Navigation className="h-4 w-4 mr-2 flex-shrink-0" />
-        Toca un punto en el mapa para seleccionar la ubicaci\u00f3n
-      </div>
+      {!tempLat && (
+        <div className="mx-4 mt-2 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center">
+          <Navigation className="h-4 w-4 mr-2 flex-shrink-0" />
+          Busca una dirección o toca el mapa para seleccionar
+        </div>
+      )}
 
       {/* Full screen map */}
       <div className="flex-1 mt-2">
@@ -285,141 +346,50 @@ export default function CreateOrderPage() {
     return lat >= -0.35 && lat <= 0.05 && lng >= -78.65 && lng <= -78.35
   }
 
-  // Auto-detect user location with AGGRESSIVE HIGH ACCURACY
-  useEffect(() => {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) return
-    setGpsLoading(true)
+  // Do NOT auto-detect GPS on mount. Default to Quito center.
+  // User must explicitly tap "Usar mi ubicación" to trigger GPS.
+  // This prevents wrong IP-based locations from showing on the map.
 
-    // Strategy: Try multiple GPS approaches
-    function tryGps() {
-      let bestPos: GeolocationPosition | null = null
-      let attempts = 0
-      const maxAttempts = 3
-
-      const watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          const { latitude, longitude, accuracy } = pos.coords
-          attempts++
-          console.log(`GPS attempt ${attempts}: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} accuracy=${accuracy}m`)
-
-          // Only accept if reasonable accuracy AND near Quito
-          if (accuracy <= 100 && isNearQuito(latitude, longitude)) {
-            console.log(`GPS fix accepted: ${accuracy}m accuracy`)
-            setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-            navigator.geolocation.clearWatch(watchId)
-            setGpsLoading(false)
-            bestPos = pos
-            // Reverse geocode
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=16&addressdetails=1&accept-language=es`)
-              .then((r) => r.json())
-              .then((data) => {
-                const city = data.address?.city || data.address?.town || data.address?.state || ''
-                const country = data.address?.country || ''
-                setUserLocation({ lat: latitude, lng: longitude, city, country })
-              })
-              .catch(() => {})
-            return
-          }
-
-          // If not near Quito but decent accuracy, still use it (user might be outside Quito)
-          if (accuracy <= 50) {
-            setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-            navigator.geolocation.clearWatch(watchId)
-            setGpsLoading(false)
-            bestPos = pos
-          }
-
-          // Give up after max attempts
-          if (attempts >= maxAttempts) {
-            if (bestPos) {
-              // Use whatever we got
-              console.log(`Using best position after ${maxAttempts} attempts`)
-            }
-            navigator.geolocation.clearWatch(watchId)
-            setGpsLoading(false)
-          }
-        },
-        (err) => {
-          console.warn('GPS error:', err.message, err.code)
-          // Try one more time with lower accuracy
-          if (!bestPos) {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                const { latitude, longitude } = pos.coords
-                console.log(`Fallback GPS: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
-                setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-              },
-              () => { setGpsLoading(false) },
-              { enableHighAccuracy: false, timeout: 15000 }
-            )
-          } else {
-            setGpsLoading(false)
-          }
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 30000,
-          maximumAge: 0,
-        }
-      )
-
-      return watchId
-    }
-
-    const watchId = tryGps()
-    return () => { navigator.geolocation.clearWatch(watchId) }
-  }, [])
-
-  // Use my location as origin - AGGRESSIVE
+  // Use my location as origin - only when user explicitly taps button
   function handleUseMyLocation() {
     setGpsLoading(true)
-    toast.loading('Obteniendo ubicaci\u00f3n GPS...', { id: 'gps-toast' })
+    toast.loading('Obteniendo ubicación GPS...', { id: 'gps-toast' })
 
-    function doGps() {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude, accuracy } = pos.coords
-          console.log(`Manual GPS: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} acc=${accuracy}m nearQuito=${isNearQuito(latitude, longitude)}`)
-          setOriginLat(latitude.toString())
-          setOriginLng(longitude.toString())
-          setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=es`)
-            .then((r) => r.json())
-            .then((data) => {
-              const addr = data.display_name?.split(',').slice(0, 4).join(',') || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
-              setOriginAddress(addr)
-              toast.success(`Ubicaci\u00f3n GPS detectada (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
-            })
-            .catch(() => {
-              setOriginAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
-              toast.success(`Ubicaci\u00f3n GPS (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
-            })
-            .finally(() => setGpsLoading(false))
-        },
-        (err) => {
-          console.warn('Manual GPS error:', err.message)
-          // Try without high accuracy
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              const { latitude, longitude } = pos.coords
-              setOriginLat(latitude.toString())
-              setOriginLng(longitude.toString())
-              setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-              setOriginAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
-              toast.success('Ubicaci\u00f3n detectada (baja precisi\u00f3n)', { id: 'gps-toast' })
-              setGpsLoading(false)
-            },
-            () => {
-              setGpsLoading(false)
-              toast.error('No se pudo obtener tu ubicaci\u00f3n GPS. Intenta con el mapa o escribe una direcci\u00f3n.', { id: 'gps-toast' })
-            },
-            { enableHighAccuracy: false, timeout: 15000 }
-          )
-        },
-        { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-      )
-    }
-    doGps()
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords
+        console.log(`GPS: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} acc=${accuracy}m`)
+
+        // Validate location is near Quito
+        if (!isNearQuito(latitude, longitude)) {
+          setGpsLoading(false)
+          toast.error('Tu ubicación GPS no está en Quito. Usa el mapa o busca una dirección.', { id: 'gps-toast' })
+          return
+        }
+
+        setOriginLat(latitude.toString())
+        setOriginLng(longitude.toString())
+        setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=es`)
+          .then((r) => r.json())
+          .then((data) => {
+            const addr = data.display_name?.split(',').slice(0, 4).join(',') || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
+            setOriginAddress(addr)
+            toast.success(`Ubicación GPS detectada (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
+          })
+          .catch(() => {
+            setOriginAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
+            toast.success(`Ubicación GPS (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
+          })
+          .finally(() => setGpsLoading(false))
+      },
+      (err) => {
+        console.warn('GPS error:', err.message)
+        setGpsLoading(false)
+        toast.error('No se pudo obtener GPS. Busca una dirección o selecciona en el mapa.', { id: 'gps-toast' })
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+    )
   }
 
   // Estimate distance
