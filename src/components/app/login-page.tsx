@@ -248,7 +248,7 @@ export default function LoginPage() {
                     </button>
                   </div>
 
-                  <p className="text-center text-[10px] text-gray-400 mt-3">v3.0.0</p>
+                  <p className="text-center text-[10px] text-gray-400 mt-3">v3.1.0</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -352,7 +352,7 @@ export default function LoginPage() {
                     </button>
                   </div>
 
-                  <p className="text-center text-[10px] text-gray-400 mt-3">v3.0.0</p>
+                  <p className="text-center text-[10px] text-gray-400 mt-3">v3.1.0</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -424,7 +424,7 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <p className="text-center text-[10px] text-gray-400 mt-3">v3.0.0</p>
+              <p className="text-center text-[10px] text-gray-400 mt-3">v3.1.0</p>
             </motion.div>
           )}
         </AnimatePresence>

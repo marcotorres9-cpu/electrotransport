@@ -1,10 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const LIGHT_TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+// Google Maps tiles - most up-to-date street data for Quito/Ecuador
+const GOOGLE_TILES = 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
+const OSM_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+const SUBDOMAINS: Record<string, string> = {
+  google: '0123',
+  osm: 'abc',
+}
 
 interface OrderMapProps {
   originLat?: number
@@ -46,14 +53,23 @@ export default function OrderMap({
   originAddress, destAddress, orders, drivers,
   height = '300px', interactive = true,
   onMapClick, selectingOrigin = false, selectingDest = false,
-  userLocation, showGpsButton = true, onGpsLocate,
+  userLocation, showGpsButton = false, onGpsLocate,
   fullScreen = false, selectingLabel,
 }: OrderMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
+  const tileLayerRef = useRef<L.TileLayer | null>(null)
   const [mapReady, setMapReady] = useState(false)
-  const [locating, setLocating] = useState(false)
   const [mapError, setMapError] = useState(false)
+  const [tileSource, setTileSource] = useState<'google' | 'osm'>('google')
+
+  // Quito center - always default here
+  const QUITO_CENTER: [number, number] = [-0.1807, -78.4678]
+
+  // Get tile URL
+  function getTileUrl() {
+    return tileSource === 'google' ? GOOGLE_TILES : OSM_TILES
+  }
 
   // Initialize map
   useEffect(() => {
@@ -65,15 +81,9 @@ export default function OrderMap({
     }
 
     try {
-      let centerLat = -0.1807
-      let centerLng = -78.4678
+      let centerLat = QUITO_CENTER[0]
+      let centerLng = QUITO_CENTER[1]
       let zoom = 13
-
-      if (userLocation?.lat && userLocation?.lng) {
-        centerLat = userLocation.lat
-        centerLng = userLocation.lng
-        zoom = 15
-      }
 
       const hasOrigin = originLat && originLng
       const hasDest = destLat && destLng
@@ -84,11 +94,11 @@ export default function OrderMap({
       } else if (hasOrigin) {
         centerLat = originLat!
         centerLng = originLng!
-        zoom = 15
+        zoom = 16
       } else if (hasDest) {
         centerLat = destLat!
         centerLng = destLng!
-        zoom = 15
+        zoom = 16
       }
 
       const map = L.map(mapRef.current, {
@@ -101,7 +111,13 @@ export default function OrderMap({
         attributionControl: false,
       })
 
-      L.tileLayer(LIGHT_TILES, { maxZoom: 19 }).addTo(map)
+      const url = getTileUrl()
+      const sub = tileSource === 'google' ? SUBDOMAINS.google : SUBDOMAINS.osm
+      tileLayerRef.current = L.tileLayer(url, {
+        maxZoom: 20,
+        subdomains: sub,
+      }).addTo(map)
+
       L.control.zoom({ position: 'bottomright' }).addTo(map)
       mapInstanceRef.current = map
       setMapReady(true)
@@ -117,15 +133,7 @@ export default function OrderMap({
         mapInstanceRef.current = null
       }
     }
-  }, [fullScreen]) // Re-init when fullScreen changes
-
-  // Update center when user location changes
-  useEffect(() => {
-    if (!mapInstanceRef.current || !userLocation?.lat) return
-    try {
-      mapInstanceRef.current.setView([userLocation.lat, userLocation.lng], 16, { animate: true })
-    } catch {}
-  }, [userLocation])
+  }, [fullScreen, tileSource]) // Re-init when fullscreen or tile source changes
 
   // Handle click
   useEffect(() => {
@@ -195,21 +203,6 @@ export default function OrderMap({
         markers.push([destLat, destLng])
       }
 
-      // User location blue dot
-      if (userLocation?.lat && userLocation?.lng) {
-        const userIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="position:relative;width:24px;height:24px;">
-            <div style="width:14px;height:14px;background:#3B82F6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(59,130,246,0.6);position:absolute;top:5px;left:5px;"></div>
-            <div style="width:24px;height:24px;background:rgba(59,130,246,0.15);border-radius:50%;animation:ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
-          </div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        })
-        L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
-          .addTo(map)
-      }
-
       // Route line
       if (originLat && originLng && destLat && destLng) {
         L.polyline(
@@ -265,37 +258,12 @@ export default function OrderMap({
         map.fitBounds(bounds, { padding: [30, 30] })
       }
     } catch {}
-  }, [mapReady, originLat, originLng, destLat, destLng, orders, drivers, userLocation])
+  }, [mapReady, originLat, originLng, destLat, destLng, orders, drivers])
 
-  // GPS locate
-  async function handleGpsLocate() {
-    if (!navigator.geolocation) return
-    setLocating(true)
-
-    // Force GPS on Android with high accuracy
-    const options: PositionOptions = {
-      enableHighAccuracy: true,
-      timeout: 20000,
-      maximumAge: 0,
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.setView([latitude, longitude], 17, { animate: true })
-        }
-        if (onGpsLocate) {
-          onGpsLocate(latitude, longitude)
-        }
-        setLocating(false)
-      },
-      (err) => {
-        console.warn('GPS error:', err.message)
-        setLocating(false)
-      },
-      options
-    )
+  // Switch tile layer
+  function handleSwitchTiles() {
+    const next = tileSource === 'google' ? 'osm' : 'google'
+    setTileSource(next)
   }
 
   // Invalidate map size after fullscreen transition
@@ -326,22 +294,14 @@ export default function OrderMap({
         </div>
       )}
 
-      {/* GPS Button */}
-      {showGpsButton && interactive && !mapError && (
+      {/* Tile layer switcher */}
+      {!mapError && (
         <button
-          onClick={handleGpsLocate}
-          className={`absolute ${fullScreen ? 'bottom-8' : 'bottom-3'} left-3 z-[1000] w-11 h-11 bg-white rounded-xl shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors`}
-          title="Mi ubicación GPS"
+          onClick={handleSwitchTiles}
+          className={`absolute ${fullScreen ? 'top-16' : 'top-3'} right-3 z-[1000] px-2.5 py-1.5 bg-white rounded-lg shadow-md border border-gray-200 text-[10px] font-semibold text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors`}
+          title="Cambiar tipo de mapa"
         >
-          {locating ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#3B82F6] border-t-transparent" />
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-              <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-            </svg>
-          )}
+          {tileSource === 'google' ? '🗺️ Google' : '🌍 OSM'}
         </button>
       )}
 

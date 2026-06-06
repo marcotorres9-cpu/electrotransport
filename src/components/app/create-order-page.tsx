@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAppStore } from '@/store/use-app-store'
 import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import {
   MapPin, DollarSign, Package, Weight, Hash, FileText,
-  ChevronLeft, Send, Navigation, Search, X, LocateFixed,
+  ChevronLeft, Send, Navigation, Search, X,
   Loader2, ArrowRight, CheckCircle2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -38,13 +38,16 @@ const cargoTypes = [
   { value: 'refrigeradora', label: 'Refrigeradora' },
   { value: 'lavadora', label: 'Lavadora' },
   { value: 'microondas', label: 'Microondas' },
-  { value: 'television', label: 'Televisi\u00f3n' },
+  { value: 'television', label: 'Televisión' },
   { value: 'cocina', label: 'Cocina / Estufa' },
   { value: 'aire_acondicionado', label: 'Aire Acondicionado' },
   { value: 'secadora', label: 'Secadora' },
   { value: 'lavavajillas', label: 'Lavavajillas' },
   { value: 'varios', label: 'Varios' },
 ]
+
+// Quito center coordinates
+const QUITO_CENTER = [-0.1807, -78.4678]
 
 /* =========================================================
    Address Autocomplete - self-contained, no external deps
@@ -156,7 +159,7 @@ function AddressAutocomplete({
 }
 
 /* =========================================================
-   Map Selector Modal - full screen with back button
+   Map Selector Modal - full screen with search + back button
    ========================================================= */
 function MapSelectorModal({
   title,
@@ -225,7 +228,7 @@ function MapSelectorModal({
 
   function handleConfirm() {
     if (!tempLat || !tempLng) {
-      setError('Primero toca un punto en el mapa o busca una dirección para seleccionar la ubicación')
+      setError('Primero busca una dirección o toca un punto en el mapa')
       return
     }
     onConfirm(tempLat, tempLng, tempAddress)
@@ -253,25 +256,26 @@ function MapSelectorModal({
         </Button>
       </div>
 
-      {/* Search bar */}
+      {/* Search bar - PROMINENT */}
       <div className="px-4 pt-3 relative">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Buscar dirección en Quito..."
+            placeholder="Escribe tu dirección en Quito..."
             value={searchText}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-[#F9FAFB] border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] outline-none"
+            className="w-full pl-11 pr-4 py-3.5 bg-[#F9FAFB] border-2 border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] outline-none font-medium"
+            autoFocus
           />
         </div>
         {/* Search results */}
         {showResults && (
-          <div className="absolute z-50 left-4 right-4 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+          <div className="absolute z-50 left-4 right-4 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-48 overflow-y-auto">
             {searchResults.map((s, i) => (
               <button
                 key={i}
-                className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
+                className="w-full text-left px-4 py-3 hover:bg-green-50 border-b border-gray-100 last:border-0 transition-colors"
                 onClick={() => handleSearchSelect(s)}
               >
                 <span className="text-sm text-gray-700">{s.display_name.split(',').slice(0, 4).join(',')}</span>
@@ -297,11 +301,11 @@ function MapSelectorModal({
         </div>
       )}
 
-      {/* Instruction */}
-      {!tempLat && (
-        <div className="mx-4 mt-2 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center">
-          <Navigation className="h-4 w-4 mr-2 flex-shrink-0" />
-          Busca una dirección o toca el mapa para seleccionar
+      {/* Instruction when no selection */}
+      {!tempLat && !showResults && (
+        <div className="mx-4 mt-2 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center gap-2">
+          <Search className="h-4 w-4 flex-shrink-0" />
+          <span><strong>Busca tu dirección</strong> arriba o toca un punto en el mapa</span>
         </div>
       )}
 
@@ -323,7 +327,7 @@ function MapSelectorModal({
    Main Create Order Page
    ========================================================= */
 export default function CreateOrderPage() {
-  const { setCurrentView, setOrders, userLocation, setUserLocation } = useAppStore()
+  const { setCurrentView, setOrders } = useAppStore()
 
   const [originAddress, setOriginAddress] = useState('')
   const [originLat, setOriginLat] = useState('')
@@ -337,60 +341,8 @@ export default function CreateOrderPage() {
   const [specialNotes, setSpecialNotes] = useState('')
   const [proposedPrice, setProposedPrice] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [gpsLoading, setGpsLoading] = useState(false)
   const [showMapSelector, setShowMapSelector] = useState<'origin' | 'dest' | null>(null)
   const [distanceInfo, setDistanceInfo] = useState<{ km: number; time: number } | null>(null)
-
-  // Check if coords are within Quito metro area
-  function isNearQuito(lat: number, lng: number): boolean {
-    return lat >= -0.35 && lat <= 0.05 && lng >= -78.65 && lng <= -78.35
-  }
-
-  // Do NOT auto-detect GPS on mount. Default to Quito center.
-  // User must explicitly tap "Usar mi ubicación" to trigger GPS.
-  // This prevents wrong IP-based locations from showing on the map.
-
-  // Use my location as origin - only when user explicitly taps button
-  function handleUseMyLocation() {
-    setGpsLoading(true)
-    toast.loading('Obteniendo ubicación GPS...', { id: 'gps-toast' })
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords
-        console.log(`GPS: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} acc=${accuracy}m`)
-
-        // Validate location is near Quito
-        if (!isNearQuito(latitude, longitude)) {
-          setGpsLoading(false)
-          toast.error('Tu ubicación GPS no está en Quito. Usa el mapa o busca una dirección.', { id: 'gps-toast' })
-          return
-        }
-
-        setOriginLat(latitude.toString())
-        setOriginLng(longitude.toString())
-        setUserLocation({ lat: latitude, lng: longitude, city: '', country: '' })
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=es`)
-          .then((r) => r.json())
-          .then((data) => {
-            const addr = data.display_name?.split(',').slice(0, 4).join(',') || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
-            setOriginAddress(addr)
-            toast.success(`Ubicación GPS detectada (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
-          })
-          .catch(() => {
-            setOriginAddress(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`)
-            toast.success(`Ubicación GPS (${accuracy.toFixed(0)}m)`, { id: 'gps-toast' })
-          })
-          .finally(() => setGpsLoading(false))
-      },
-      (err) => {
-        console.warn('GPS error:', err.message)
-        setGpsLoading(false)
-        toast.error('No se pudo obtener GPS. Busca una dirección o selecciona en el mapa.', { id: 'gps-toast' })
-      },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-    )
-  }
 
   // Estimate distance
   useEffect(() => {
@@ -428,7 +380,7 @@ export default function CreateOrderPage() {
       setDestAddress(address)
     }
     setShowMapSelector(null)
-    toast.success(showMapSelector === 'origin' ? 'Origen seleccionado en el mapa' : 'Destino seleccionado en el mapa')
+    toast.success(showMapSelector === 'origin' ? 'Origen seleccionado' : 'Destino seleccionado')
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -455,7 +407,7 @@ export default function CreateOrderPage() {
           proposedPrice: parseFloat(proposedPrice),
         }),
       })
-      toast.success('\u00a1Pedido creado exitosamente! Esperando transportistas...')
+      toast.success('¡Pedido creado exitosamente! Esperando transportistas...')
       const ordersData = await apiFetch('/api/orders')
       setOrders(ordersData.orders)
       setCurrentView('store-orders')
@@ -465,8 +417,6 @@ export default function CreateOrderPage() {
       setIsSubmitting(false)
     }
   }
-
-  const defaultCenter = userLocation?.lat ? [userLocation.lat, userLocation.lng] : [-0.1807, -78.4678]
 
   return (
     <>
@@ -481,35 +431,26 @@ export default function CreateOrderPage() {
           </button>
           <div>
             <h1 className="text-xl font-bold text-gray-900">Nuevo Pedido</h1>
-            <p className="text-xs text-gray-500">Solicita transporte para tus electrodom\u00e9sticos</p>
+            <p className="text-xs text-gray-500">Solicita transporte para tus electrodomésticos</p>
           </div>
+        </div>
+
+        {/* Info banner */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-start gap-2">
+          <Search className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-blue-700">
+            <strong>Busca tu dirección</strong> en el campo de texto o toca el botón del mapa para seleccionar en el mapa. El mapa muestra las calles más recientes de Google Maps.
+          </p>
         </div>
 
         {/* Origin Card */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="bg-white border border-gray-200 shadow-none">
+          <Card className="bg-white border-2 border-[#1DB954]/20 shadow-none">
             <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-gray-900">
-                  <div className="w-3 h-3 rounded-full bg-[#1DB954]" />
-                  Origen
-                </CardTitle>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleUseMyLocation}
-                  disabled={gpsLoading}
-                  className="text-xs text-[#1DB954] hover:text-[#17a34a] hover:bg-green-50 h-7 px-2"
-                >
-                  {gpsLoading ? (
-                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                  ) : (
-                    <LocateFixed className="h-3 w-3 mr-1" />
-                  )}
-                  Usar mi ubicaci\u00f3n
-                </Button>
-              </div>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-gray-900">
+                <div className="w-3 h-3 rounded-full bg-[#1DB954]" />
+                Origen (punto de recogida)
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
               <AddressAutocomplete
@@ -521,7 +462,7 @@ export default function CreateOrderPage() {
                   setOriginLng(lng)
                   toast.success('Origen localizado')
                 }}
-                placeholder="Escribe direcci\u00f3n de origen..."
+                placeholder="Escribe dirección de origen, ej: Amazonas y Eloy Alfaro..."
                 icon={MapPin}
                 color="text-[#1DB954]"
               />
@@ -531,25 +472,12 @@ export default function CreateOrderPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowMapSelector('origin')}
-                  className="text-xs border-gray-200 text-gray-500 hover:bg-gray-50 h-8"
+                  className="text-xs border-[#1DB954]/30 text-[#1DB954] hover:bg-green-50 h-8 font-medium"
                 >
-                  <Navigation className="h-3 w-3 mr-1" />
-                  Seleccionar en mapa
+                  <Navigation className="h-3.5 w-3.5 mr-1" />
+                  Seleccionar en el mapa
                 </Button>
               </div>
-              {/* Editable coordinates */}
-              {originLat && originLng && (
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400">Lat</span>
-                    <Input value={originLat} onChange={(e) => setOriginLat(e.target.value)} className="pl-8 text-[10px] h-7 bg-gray-50 border-gray-200 text-gray-600" />
-                  </div>
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400">Lng</span>
-                    <Input value={originLng} onChange={(e) => setOriginLng(e.target.value)} className="pl-9 text-[10px] h-7 bg-gray-50 border-gray-200 text-gray-600" />
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </motion.div>
@@ -561,11 +489,11 @@ export default function CreateOrderPage() {
 
         {/* Destination Card */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <Card className="bg-white border border-gray-200 shadow-none">
+          <Card className="bg-white border-2 border-[#FFC145]/20 shadow-none">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold flex items-center gap-2 text-gray-900">
                 <div className="w-3 h-3 rounded-full bg-[#FFC145]" />
-                Destino
+                Destino (punto de entrega)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
@@ -578,7 +506,7 @@ export default function CreateOrderPage() {
                   setDestLng(lng)
                   toast.success('Destino localizado')
                 }}
-                placeholder="Escribe direcci\u00f3n de destino..."
+                placeholder="Escribe dirección de destino, ej: Centro Comercial Quicentro..."
                 icon={MapPin}
                 color="text-[#FFC145]"
               />
@@ -588,25 +516,12 @@ export default function CreateOrderPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowMapSelector('dest')}
-                  className="text-xs border-gray-200 text-gray-500 hover:bg-gray-50 h-8"
+                  className="text-xs border-[#FFC145]/30 text-[#FFC145] hover:bg-yellow-50 h-8 font-medium"
                 >
-                  <Navigation className="h-3 w-3 mr-1" />
-                  Seleccionar en mapa
+                  <Navigation className="h-3.5 w-3.5 mr-1" />
+                  Seleccionar en el mapa
                 </Button>
               </div>
-              {/* Editable coordinates */}
-              {destLat && destLng && (
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400">Lat</span>
-                    <Input value={destLat} onChange={(e) => setDestLat(e.target.value)} className="pl-8 text-[10px] h-7 bg-gray-50 border-gray-200 text-gray-600" />
-                  </div>
-                  <div className="relative">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400">Lng</span>
-                    <Input value={destLng} onChange={(e) => setDestLng(e.target.value)} className="pl-9 text-[10px] h-7 bg-gray-50 border-gray-200 text-gray-600" />
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </motion.div>
@@ -633,7 +548,6 @@ export default function CreateOrderPage() {
         {/* Map preview */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <OrderMap
-            userLocation={userLocation}
             originLat={originLat ? parseFloat(originLat) : undefined}
             originLng={originLng ? parseFloat(originLng) : undefined}
             destLat={destLat ? parseFloat(destLat) : undefined}
@@ -657,7 +571,7 @@ export default function CreateOrderPage() {
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 <div className="space-y-1">
-                  <Label className="text-xs text-gray-500">Tipo de electrodom\u00e9stico</Label>
+                  <Label className="text-xs text-gray-500">Tipo de electrodoméstico</Label>
                   <Select value={cargoType} onValueChange={setCargoType}>
                     <SelectTrigger className="bg-[#F9FAFB] border-gray-200 text-gray-900 h-9 text-sm">
                       <SelectValue placeholder="Selecciona el tipo" />
@@ -746,9 +660,9 @@ export default function CreateOrderPage() {
       <AnimatePresence>
         {showMapSelector && (
           <MapSelectorModal
-            title={showMapSelector === 'origin' ? 'Seleccionar Origen en el Mapa' : 'Seleccionar Destino en el Mapa'}
-            initialLat={defaultCenter[0]}
-            initialLng={defaultCenter[1]}
+            title={showMapSelector === 'origin' ? 'Seleccionar Origen' : 'Seleccionar Destino'}
+            initialLat={QUITO_CENTER[0]}
+            initialLng={QUITO_CENTER[1]}
             onClose={() => setShowMapSelector(null)}
             onConfirm={handleMapSelectorConfirm}
           />
