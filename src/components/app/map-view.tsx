@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
+import { getUserLocation, type LocationResult, QUITO_CENTER } from '@/lib/geolocation'
 
 interface MapViewProps {
   className?: string
@@ -18,25 +19,10 @@ interface MapViewProps {
   }>
 }
 
-// Quito, Ecuador center
-const DEFAULT_CENTER: [number, number] = [-0.1807, -78.4678]
 const DEFAULT_ZOOM = 13
 
 // Google Maps tiles - most up-to-date street data
 const GOOGLE_TILES = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'
-
-// Quito bounds for GPS validation
-const QUITO_BOUNDS = {
-  minLat: -0.35,
-  maxLat: 0.05,
-  minLng: -78.65,
-  maxLng: -78.35,
-}
-
-function isInQuitoBounds(lat: number, lng: number): boolean {
-  return lat >= QUITO_BOUNDS.minLat && lat <= QUITO_BOUNDS.maxLat &&
-         lng >= QUITO_BOUNDS.minLng && lng <= QUITO_BOUNDS.maxLng
-}
 
 export default function MapView({ className = '', height = '400px', showDriverLocations = true, orders = [] }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -44,56 +30,44 @@ export default function MapView({ className = '', height = '400px', showDriverLo
   const markersRef = useRef<any[]>([])
   const polylinesRef = useRef<any[]>([])
   const [mapReady, setMapReady] = useState(false)
-  const [userLocation, setUserLocation] = useState<[number, number]>(DEFAULT_CENTER)
+  const [userLocation, setUserLocation] = useState<[number, number]>(QUITO_CENTER)
   const [locating, setLocating] = useState(true)
-  const [gpsError, setGpsError] = useState<string | null>(null)
-  const [gpsSuccess, setGpsSuccess] = useState(false)
+  const [locMessage, setLocMessage] = useState<string | null>('Detectando ubicación...')
+  const [locType, setLocType] = useState<'loading' | 'success' | 'warning' | 'error'>('loading')
 
-  // Try to get user location with high accuracy
-  const getUserLocation = useCallback(() => {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      setGpsError('GPS no disponible en este dispositivo')
-      setLocating(false)
-      setUserLocation(DEFAULT_CENTER)
-      return
+  // Get user location with fallbacks
+  const doGetLocation = useCallback(async (showSpinner = true) => {
+    if (showSpinner) {
+      setLocating(true)
+      setLocMessage('Detectando ubicación...')
+      setLocType('loading')
     }
-    setLocating(true)
-    setGpsError(null)
-    setGpsSuccess(false)
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
-        if (isInQuitoBounds(lat, lng)) {
-          setUserLocation([lat, lng])
-          setGpsSuccess(true)
-        } else {
-          // GPS returned location outside Quito, use default
-          setUserLocation(DEFAULT_CENTER)
-          setGpsError('Tu ubicación está fuera de Quito. Mostrando centro de Quito.')
-        }
-        setLocating(false)
-      },
-      (err) => {
-        console.error('GPS error:', err.message)
-        setUserLocation(DEFAULT_CENTER)
-        setLocating(false)
-        if (err.code === err.PERMISSION_DENIED) {
-          setGpsError('Permiso de ubicación denegado. Activa el GPS.')
-        } else if (err.code === err.TIMEOUT) {
-          setGpsError('GPS tardó demasiado. Intenta de nuevo.')
-        } else {
-          setGpsError('No se pudo obtener ubicación. Verifica tu GPS.')
-        }
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    )
+    try {
+      const result: LocationResult = await getUserLocation()
+      setUserLocation([result.lat, result.lng])
+
+      if (result.source === 'gps') {
+        setLocMessage('GPS activo')
+        setLocType('success')
+      } else if (result.source === 'ip_api') {
+        setLocMessage(result.message)
+        setLocType('warning')
+      } else {
+        setLocMessage('Mostrando centro de Quito')
+        setLocType('warning')
+      }
+    } catch {
+      setUserLocation(QUITO_CENTER)
+      setLocMessage('No se detectó ubicación')
+      setLocType('warning')
+    }
+    setLocating(false)
   }, [])
 
   useEffect(() => {
-    getUserLocation()
-  }, [getUserLocation])
+    doGetLocation()
+  }, [doGetLocation])
 
   // Initialize map dynamically (client-side only)
   useEffect(() => {
@@ -253,31 +227,35 @@ export default function MapView({ className = '', height = '400px', showDriverLo
           </div>
         </div>
       )}
-      {/* Locating indicator */}
-      {mapReady && locating && (
-        <div className="absolute top-3 right-3 z-[1000]">
-          <div className="bg-[#F9FAFB] border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-500 flex items-center gap-2">
+      {/* Location status indicator */}
+      {mapReady && locMessage && (
+        <div className="absolute top-3 left-3 z-[1000]">
+          <div className={`rounded-lg px-2.5 py-1.5 text-[11px] font-medium flex items-center gap-1.5 ${
+            locType === 'loading' ? 'bg-gray-50 border border-gray-200 text-gray-500' :
+            locType === 'success' ? 'bg-green-50 border border-green-200 text-green-700' :
+            locType === 'warning' ? 'bg-amber-50 border border-amber-200 text-amber-700' :
+            'bg-red-50 border border-red-200 text-red-700'
+          }`}>
+            {locType === 'loading' && <div className="animate-spin rounded-full h-2.5 w-2.5 border-b border-[#1DB954]" />}
+            {locType === 'success' && <div className="w-2 h-2 rounded-full bg-green-500" />}
+            {locType === 'warning' && <div className="text-amber-500 text-xs">~</div>}
+            {locMessage}
+          </div>
+        </div>
+      )}
+      {/* Retry button (always visible when not loading) */}
+      {mapReady && !locating && (
+        <button
+          onClick={() => doGetLocation(false)}
+          className="absolute top-3 right-3 z-[1000] bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-[10px] font-medium text-gray-500 hover:bg-gray-50 active:bg-gray-100 shadow-sm"
+          title="Actualizar ubicación"
+        >
+          {locating ? (
             <div className="animate-spin rounded-full h-3 w-3 border-b border-[#1DB954]" />
-            Detectando ubicación...
-          </div>
-        </div>
-      )}
-      {/* GPS success */}
-      {mapReady && gpsSuccess && !locating && (
-        <div className="absolute top-3 right-3 z-[1000]">
-          <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 text-xs text-green-700 flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            Ubicación detectada
-          </div>
-        </div>
-      )}
-      {/* GPS error - with retry button */}
-      {mapReady && gpsError && !locating && (
-        <div className="absolute top-3 right-3 z-[1000]">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs text-amber-700 flex items-center gap-2">
-            <button onClick={getUserLocation} className="underline font-semibold hover:text-amber-900">Retry GPS</button>
-          </div>
-        </div>
+          ) : (
+            'Recargar'
+          )}
+        </button>
       )}
     </div>
   )

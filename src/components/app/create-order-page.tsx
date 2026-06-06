@@ -184,12 +184,14 @@ function MapSelectorModal({
   const searchTimer = useRef<NodeJS.Timeout | null>(null)
   const [gpsLoading, setGpsLoading] = useState(false)
   const [gpsStatus, setGpsStatus] = useState<string | null>(null)
+  const [gpsStatusType, setGpsStatusType] = useState<'success' | 'warning' | 'error' | null>(null)
 
   function handleMapClick(lat: number, lng: number) {
     setTempLat(lat)
     setTempLng(lng)
     setError(null)
     setGpsStatus(null)
+    setGpsStatusType(null)
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=es`)
       .then((r) => r.json())
       .then((data) => {
@@ -202,54 +204,53 @@ function MapSelectorModal({
       })
   }
 
-  // GPS location function
-  function handleGpsLocate() {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      setGpsStatus('GPS no disponible')
-      return
-    }
+  // GPS with multi-strategy: GPS high -> GPS low -> IP geolocation fallback
+  async function handleGpsLocate() {
     setGpsLoading(true)
     setGpsStatus(null)
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
-        // Validate Quito bounds
-        if (lat >= -0.35 && lat <= 0.05 && lng >= -78.65 && lng <= -78.35) {
-          setTempLat(lat)
-          setTempLng(lng)
-          setError(null)
-          setGpsStatus('ubicación obtenida')
-          // Reverse geocode
-          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=es`)
-            .then((r) => r.json())
-            .then((data) => {
-              if (data.display_name) {
-                const addr = data.display_name.split(',').slice(0, 4).join(',')
-                setTempAddress(addr)
-                setSearchText(addr)
-              }
-            })
-            .catch(() => {
-              setTempAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`)
-            })
-        } else {
-          setGpsStatus('Tu GPS está fuera de Quito. Busca manualmente.')
-        }
-        setGpsLoading(false)
-      },
-      (err) => {
-        setGpsLoading(false)
-        if (err.code === err.PERMISSION_DENIED) {
-          setGpsStatus('Permiso denegado. Activa el GPS del celular.')
-        } else if (err.code === err.TIMEOUT) {
-          setGpsStatus('GPS tardó demasiado. Intenta de nuevo.')
-        } else {
-          setGpsStatus('Error de GPS. Verifica tu conexión.')
-        }
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    )
+    setGpsStatusType(null)
+
+    try {
+      const { getUserLocation } = await import('@/lib/geolocation')
+      const result = await getUserLocation()
+
+      if (result.source === 'gps') {
+        setTempLat(result.lat)
+        setTempLng(result.lng)
+        setError(null)
+        setGpsStatus('Ubicación GPS detectada')
+        setGpsStatusType('success')
+        // Reverse geocode
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${result.lat}&lon=${result.lng}&zoom=18&addressdetails=1&accept-language=es`)
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.display_name) {
+              const addr = data.display_name.split(',').slice(0, 4).join(',')
+              setTempAddress(addr)
+              setSearchText(addr)
+            }
+          })
+          .catch(() => {
+            setTempAddress(`${result.lat.toFixed(5)}, ${result.lng.toFixed(5)}`)
+          })
+      } else if (result.source === 'ip_api') {
+        // IP location found in Quito
+        setTempLat(result.lat)
+        setTempLng(result.lng)
+        setError(null)
+        setGpsStatus('Ubicación aproximada por IP (no es GPS exacto)')
+        setGpsStatusType('warning')
+        setTempAddress(result.message)
+      } else {
+        // Only got Quito center default
+        setGpsStatus('No se detectó ubicación. Busca tu dirección arriba.')
+        setGpsStatusType('warning')
+      }
+    } catch {
+      setGpsStatus('Error al detectar ubicación. Busca tu dirección arriba.')
+      setGpsStatusType('error')
+    }
+    setGpsLoading(false)
   }
 
   function handleSearch(text: string) {
@@ -330,7 +331,7 @@ function MapSelectorModal({
             className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all ${
               gpsLoading
                 ? 'bg-gray-100 border-gray-300'
-                : gpsStatus === 'ubicación obtenida'
+                : gpsStatusType === 'success'
                   ? 'bg-green-50 border-green-300'
                   : 'bg-[#1DB954]/10 border-[#1DB954]/30 active:bg-[#1DB954]/20'
             }`}
@@ -339,18 +340,20 @@ function MapSelectorModal({
             {gpsLoading ? (
               <Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
             ) : (
-              <Navigation className={`h-5 w-5 ${gpsStatus === 'ubicación obtenida' ? 'text-green-600' : 'text-[#1DB954]'}`} />
+              <Navigation className={`h-5 w-5 ${gpsStatusType === 'success' ? 'text-green-600' : 'text-[#1DB954]'}`} />
             )}
           </button>
         </div>
         {/* GPS status */}
         {gpsStatus && (
           <div className={`mt-1.5 text-[11px] px-2 py-1 rounded-lg ${
-            gpsStatus === 'ubicación obtenida'
+            gpsStatusType === 'success'
               ? 'text-green-700 bg-green-50'
-              : 'text-amber-700 bg-amber-50'
+              : gpsStatusType === 'warning'
+                ? 'text-amber-700 bg-amber-50'
+                : 'text-red-700 bg-red-50'
           }`}>
-            {gpsStatus === 'ubicación obtenida' ? '✓ ' : '⚠ '}{gpsStatus}
+            {gpsStatusType === 'success' ? '✓ ' : gpsStatusType === 'warning' ? '~ ' : '⚠ '}{gpsStatus}
           </div>
         )}
         {/* Search results */}
@@ -388,8 +391,8 @@ function MapSelectorModal({
       {/* Instruction when no selection */}
       {!tempLat && !showResults && !gpsLoading && (
         <div className="mx-4 mt-2 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 flex items-center gap-2">
-          <Navigation className="h-4 w-4 flex-shrink-0" />
-          <span>Usa el <strong>botón GPS</strong> para tu ubicación, <strong>busca</strong> una dirección, o <strong>toca</strong> un punto en el mapa</span>
+          <Search className="h-4 w-4 flex-shrink-0" />
+          <span><strong>Escribe tu dirección</strong> en la barra de arriba. También puedes <strong>tocar el mapa</strong> para marcar un punto.</span>
         </div>
       )}
 

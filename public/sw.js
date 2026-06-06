@@ -1,4 +1,4 @@
-const CACHE_NAME = 'electrotransport-v30';
+const CACHE_NAME = 'electrotransport-v35';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
